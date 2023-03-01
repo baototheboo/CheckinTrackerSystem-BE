@@ -13,10 +13,12 @@ import java.time.Instant;
 @Data
 
 public class AccountDTO {
+    private Integer id;
     @NotBlank(message = "Username is required")
     private String username;
-    private String roleName;
+    private String email;
     private String staffName;
+    private String roleName;
     private Instant lastLogin;
     private Byte enable;
 }
