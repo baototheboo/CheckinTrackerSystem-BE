@@ -48,7 +48,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeRequests()
-                .antMatchers("/auth/login").permitAll()
+                .antMatchers("/auth/login","/accounts/getAllAccount").permitAll()
                 //.antMatchers("/products").hasAuthority("ROLE_EDITOR")
                 .anyRequest().authenticated();
 

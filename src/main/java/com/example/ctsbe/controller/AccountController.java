@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequestMapping("/accounts")
+@CrossOrigin(origins = "*")
 public class AccountController {
 
     @Autowired
@@ -34,6 +35,7 @@ public class AccountController {
     ResponseModel responseModel = new ResponseModel();
 
     @GetMapping("/getAllAccount")
+
     public ResponseEntity<Map<String,Object>>  getAllAccount(@RequestParam(defaultValue = "1") int page
             ,@RequestParam(defaultValue = "3") int size
             ,@RequestParam(required = false) String username ){
@@ -67,7 +69,9 @@ public class AccountController {
 
     private AccountDTO convertEntityToDTO(Account account){
         AccountDTO dto = new AccountDTO();
+        dto.setId(account.getId());
         dto.setUsername(account.getUsername());
+        dto.setEmail(account.getStaff().getEmail());
         dto.setRoleName(account.getRole().getRoleName());
         dto.setStaffName(account.getStaff().getFirstName() + " " + account.getStaff().getSurname());
         dto.setLastLogin(account.getLastLogin());
