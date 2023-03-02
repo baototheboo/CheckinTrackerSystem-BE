@@ -1,7 +1,10 @@
 package com.example.ctsbe.controller;
 
+import com.example.ctsbe.dto.AccountDTO;
 import com.example.ctsbe.dto.LoginDTO;
 import com.example.ctsbe.entity.Account;
+import com.example.ctsbe.mapper.AccountMapper;
+import com.example.ctsbe.response.AuthResponse;
 import com.example.ctsbe.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,10 +34,16 @@ public class AuthController {
             );
 
             Account user = (Account) authentication.getPrincipal();
+            AccountDTO dto = AccountMapper.convertEntityToDTO(user);
+            /*dto.setId(user.getId());
+            dto.setUsername(user.getUsername());
+            dto.setEmail(user.getStaff().getEmail());
+            dto.setStaffName(user.getStaff().getFirstName() + " " + user.getStaff().getSurname());
+            dto.setRoleName(user.getRole().getRoleName());*/
             String accessToken = jwtUtil.generateAccessToken(user);
-            //AuthResponse response = new AuthResponse(user.getEmail(), accessToken);
+            AuthResponse response = new AuthResponse(dto, accessToken);
 
-            return ResponseEntity.ok().body(accessToken);
+            return ResponseEntity.ok().body(response);
 
         } catch (BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
