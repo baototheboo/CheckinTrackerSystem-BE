@@ -2,6 +2,9 @@ package com.example.ctsbe.service;
 
 
 
+import com.example.ctsbe.dto.AccountAddDTO;
+import com.example.ctsbe.dto.AccountDTO;
+import com.example.ctsbe.dto.AccountUpdateDTO;
 import com.example.ctsbe.entity.Account;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +17,15 @@ public interface AccountService {
 
     Page<Account> findAccountByUsernameContain(String name, Pageable pageable);
 
-    void addAccount(Account account);
+    Page<Account> findAccountByVerified(byte filter,Pageable pageable);
+
+    Page<Account> findAccountByNameAndFilter(String username,int filter, Pageable pageable);
+
+    void addAccount(AccountAddDTO accountAddDTO);
+
+    Account getAccountById(int id);
+
+    AccountUpdateDTO updateAccount(AccountUpdateDTO accountUpdateDTO);
 
     Optional<Account> findByUsername(String username);
 }

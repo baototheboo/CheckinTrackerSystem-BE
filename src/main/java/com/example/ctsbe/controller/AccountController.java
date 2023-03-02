@@ -1,10 +1,16 @@
 package com.example.ctsbe.controller;
 
 
+import com.example.ctsbe.dto.AccountAddDTO;
 import com.example.ctsbe.dto.AccountDTO;
-import com.example.ctsbe.dto.ResponseModel;
+import com.example.ctsbe.dto.AccountUpdateDTO;
 import com.example.ctsbe.entity.Account;
+import com.example.ctsbe.mapper.AccountMapper;
 import com.example.ctsbe.service.AccountService;
+import com.example.ctsbe.service.PromotionLevelService;
+import com.example.ctsbe.service.RoleService;
+import com.example.ctsbe.util.DateUtil;
+import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +19,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.Convert;
+import javax.validation.Valid;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,25 +42,32 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
-    ResponseModel responseModel = new ResponseModel();
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private PromotionLevelService promotionLevelService;
+
+
+
 
     @GetMapping("/getAllAccount")
 
     public ResponseEntity<Map<String,Object>>  getAllAccount(@RequestParam(defaultValue = "1") int page
             ,@RequestParam(defaultValue = "3") int size
-            ,@RequestParam(required = false) String username ){
+            ,@RequestParam(required = false) String username){
         try{
             List<Account> list = new ArrayList<>();
             Pageable pageable =  PageRequest.of(page-1,size);
             Page<Account> accountPage;
             if(username == null){
                 accountPage = accountService.getAll(pageable);
-            } else {
+            }
+            else {
                 accountPage = accountService.findAccountByUsernameContain(username,pageable);
             }
             list = accountPage.getContent();
             List<AccountDTO> listDto = list.stream().
-                    map(this::convertEntityToDTO).collect(Collectors.toList());
+                    map(AccountMapper::convertEntityToDTO).collect(Collectors.toList());
             Map<String,Object> response = new HashMap<>();
             response.put("list",listDto);
             response.put("currentPage",accountPage.getNumber());
@@ -63,19 +80,26 @@ public class AccountController {
     }
 
     @PostMapping("/addAccount")
-    public void addAccount(){
+    public ResponseEntity<?> addAccount(@Valid @RequestBody AccountAddDTO dto){
+        try{
+            accountService.addAccount(dto);
+            return new  ResponseEntity<>("Add account "+dto.getUsername()+" successfully",HttpStatus.OK) ;
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+        }
 
     }
 
-    private AccountDTO convertEntityToDTO(Account account){
-        AccountDTO dto = new AccountDTO();
-        dto.setId(account.getId());
-        dto.setUsername(account.getUsername());
-        dto.setEmail(account.getStaff().getEmail());
-        dto.setRoleName(account.getRole().getRoleName());
-        dto.setStaffName(account.getStaff().getFirstName() + " " + account.getStaff().getSurname());
-        dto.setLastLogin(account.getLastLogin());
-        dto.setEnable(account.getStaff().getEnable());
-        return dto;
+    @PutMapping("/updateAccount")
+    public ResponseEntity<?> updateAccount(@Valid @RequestBody AccountUpdateDTO dto){
+        try{
+            AccountUpdateDTO updateDTO =  accountService.updateAccount(dto);
+            return new ResponseEntity<>("Update account with id "+dto.getId()+" successfully!",HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+        }
+
     }
+
+
 }
