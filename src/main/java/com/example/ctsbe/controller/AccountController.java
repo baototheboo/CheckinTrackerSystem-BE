@@ -47,38 +47,7 @@ public class AccountController {
     @Autowired
     private PromotionLevelService promotionLevelService;
 
-
-
-
-    @GetMapping("/getAllAccount2")
-
-    public ResponseEntity<Map<String,Object>>  getAllAccount2(@RequestParam(defaultValue = "1") int page
-            ,@RequestParam(defaultValue = "3") int size
-            ,@RequestParam(required = false) String username){
-        try{
-            List<Account> list = new ArrayList<>();
-            Pageable pageable =  PageRequest.of(page-1,size);
-            Page<Account> accountPage;
-            if(username == null){
-                accountPage = accountService.getAll(pageable);
-            }
-            else {
-                accountPage = accountService.findAccountByUsernameContain(username,pageable);
-            }
-            list = accountPage.getContent();
-            List<AccountDTO> listDto = list.stream().
-                    map(AccountMapper::convertEntityToDTO).collect(Collectors.toList());
-            Map<String,Object> response = new HashMap<>();
-            response.put("list",listDto);
-            response.put("currentPage",accountPage.getNumber());
-            response.put("allProducts",accountPage.getTotalElements());
-            response.put("allPages",accountPage.getTotalPages());
-            return new ResponseEntity<>(response,HttpStatus.OK);
-        }catch (Exception e){
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
+    
     @PostMapping("/addAccount")
     public ResponseEntity<?> addAccount(@Valid @RequestBody AccountAddDTO dto){
         try{
@@ -119,8 +88,12 @@ public class AccountController {
                 }
             }
             else {
-                //accountPage = accountService.findAccountByUsernameContain(username,pageable);
-                accountPage = accountService.getListAccount(username,(byte) enable,pageable);
+                if(enable == 2){
+                    accountPage = accountService.getAccountByUsernameContain(username,pageable);
+                }else {
+                    accountPage = accountService.getListAccount(username,(byte) enable,pageable);
+                }
+
             }
             list = accountPage.getContent();
             List<AccountDTO> listDto = list.stream().
