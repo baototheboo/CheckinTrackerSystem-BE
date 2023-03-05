@@ -47,7 +47,7 @@ public class AccountController {
     @Autowired
     private PromotionLevelService promotionLevelService;
 
-    
+
     @PostMapping("/addAccount")
     public ResponseEntity<?> addAccount(@Valid @RequestBody AccountAddDTO dto){
         try{
