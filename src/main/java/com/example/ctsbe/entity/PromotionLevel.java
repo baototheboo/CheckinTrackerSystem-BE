@@ -35,7 +35,6 @@ public class PromotionLevel {
     @OneToMany(mappedBy = "promotionLevel")
     private Set<Staff> staff = new LinkedHashSet<>();
 
-
     public Integer getId() {
         return id;
     }

@@ -31,7 +31,7 @@ public class StaffServiceImpl implements StaffService{
         staff.setSurname(dto.getSurname());
         staff.setCreatedDate(Instant.now());
         staff.setLastUpdated(Instant.now());
-        staff.setDateOfBirth(dateUtil.convertStringToInstant(dto.getDateOfBirth() + " 00:00:00"));
+        staff.setDateOfBirth(dateUtil.convertStringToLocalDate(dto.getDateOfBirth()));
         staff.setPhone(dto.getPhone());
         staff.setEnable((byte)1);
         staff.setPromotionLevel(promotionLevelService.getPromotionLevelById(dto.getPromotionLevelId()));

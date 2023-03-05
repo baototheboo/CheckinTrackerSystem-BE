@@ -4,8 +4,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.Instant;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "project")
@@ -35,9 +33,6 @@ public class Project {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
     private Group group;
-
-    @OneToMany(mappedBy = "project")
-    private Set<StaffProject> staffProjects = new LinkedHashSet<>();
 
     public Integer getId() {
         return id;
@@ -85,14 +80,6 @@ public class Project {
 
     public void setGroup(Group group) {
         this.group = group;
-    }
-
-    public Set<StaffProject> getStaffProjects() {
-        return staffProjects;
-    }
-
-    public void setStaffProjects(Set<StaffProject> staffProjects) {
-        this.staffProjects = staffProjects;
     }
 
 }
