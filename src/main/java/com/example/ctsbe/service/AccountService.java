@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface AccountService {
     Page<Account> getAll(Pageable pageable);
 
-    Page<Account> findAccountByUsernameContain(String name, Pageable pageable);
+    Page<Account> getAccountByUsernameContain(String name, Pageable pageable);
 
     Page<Account> getListAccount(String username,byte enable,Pageable pageable);
 

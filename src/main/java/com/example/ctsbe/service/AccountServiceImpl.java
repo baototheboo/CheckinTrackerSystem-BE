@@ -39,7 +39,7 @@ public class AccountServiceImpl implements AccountService{
     }
 
     @Override
-    public Page<Account> findAccountByUsernameContain(String name, Pageable pageable) {
+    public Page<Account> getAccountByUsernameContain(String name, Pageable pageable) {
         return accountRepository.findByUsernameContaining(name,pageable);
     }
 
