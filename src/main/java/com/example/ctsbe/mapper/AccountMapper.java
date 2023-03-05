@@ -24,6 +24,7 @@ public class AccountMapper {
         dto.setEmail(account.getStaff().getEmail());
         dto.setRoleName(account.getRole().getRoleName());
         dto.setStaffName(account.getStaff().getFirstName() + " " + account.getStaff().getSurname());
+        dto.setIsEnable((account.getEnable() == 1) ? "Enable" : "Disable");
         return dto;
     }
 

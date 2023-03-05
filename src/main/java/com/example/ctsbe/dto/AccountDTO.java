@@ -14,4 +14,5 @@ public class AccountDTO {
     private String email;
     private String staffName;
     private String roleName;
+    private String isEnable;
 }
