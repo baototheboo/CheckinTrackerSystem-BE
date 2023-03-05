@@ -15,9 +15,13 @@ public interface AccountRepository extends JpaRepository<Account,Integer>{
 
     Page<Account> findByUsernameContaining(String username, Pageable pageable);
 
-    Page<Account> findByUsernameContainingAndVerified(String username,int filter, Pageable pageable);
+    //Page<Account> findByUsernameContainingAndVerified(String username,int filter, Pageable pageable);
 
-    Page<Account> findByVerified(int filter,Pageable pageable);
+    Page<Account> findByUsernameContainingAndEnable(String username,byte enable,Pageable pageable);
+
+    Page<Account> findAccountByEnable(byte enable,Pageable pageable);
+
+
 
 
 }

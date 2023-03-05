@@ -17,9 +17,9 @@ public interface AccountService {
 
     Page<Account> findAccountByUsernameContain(String name, Pageable pageable);
 
-    Page<Account> findAccountByVerified(byte filter,Pageable pageable);
+    Page<Account> getListAccount(String username,byte enable,Pageable pageable);
 
-    Page<Account> findAccountByNameAndFilter(String username,int filter, Pageable pageable);
+    Page<Account> getAccountByEnable(byte enable,Pageable pageable);
 
     void addAccount(AccountAddDTO accountAddDTO);
 

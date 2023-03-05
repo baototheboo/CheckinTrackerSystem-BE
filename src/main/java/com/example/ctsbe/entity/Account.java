@@ -1,6 +1,5 @@
 package com.example.ctsbe.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,7 +12,6 @@ import java.util.*;
 
 @Entity
 @Table(name = "account")
-
 public class Account implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,13 +33,18 @@ public class Account implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id")
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
+    public void addRole(Role role) {
+        this.role = role;
+    }
+
     @NotNull
-    @Column(name = "verified", nullable = false)
-    private Byte verified;
+    @Column(name = "enable", nullable = false)
+    private Byte enable;
 
     @NotNull
     @Column(name = "last_login", nullable = false)
@@ -109,10 +112,6 @@ public class Account implements UserDetails {
         return authorities;
     }
 
-    public void addRole(Role role) {
-        this.role = role;
-    }
-
     public String getPassword() {
         return password;
     }
@@ -129,12 +128,12 @@ public class Account implements UserDetails {
         this.role = role;
     }
 
-    public Byte getVerified() {
-        return verified;
+    public Byte getEnable() {
+        return enable;
     }
 
-    public void setVerified(Byte verified) {
-        this.verified = verified;
+    public void setEnable(Byte enable) {
+        this.enable = enable;
     }
 
     public Instant getLastLogin() {

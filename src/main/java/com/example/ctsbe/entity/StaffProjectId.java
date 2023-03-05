@@ -4,13 +4,14 @@ import org.hibernate.Hibernate;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
 public class StaffProjectId implements Serializable {
-    private static final long serialVersionUID = 2574561263555307663L;
+    private static final long serialVersionUID = 5955254630495481327L;
     @NotNull
     @Column(name = "project_id", nullable = false)
     private Integer projectId;

@@ -6,6 +6,7 @@ import com.example.ctsbe.entity.Account;
 import com.example.ctsbe.mapper.AccountMapper;
 import com.example.ctsbe.response.AuthResponse;
 import com.example.ctsbe.util.JwtTokenUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-
+@Slf4j
 @RestController
 public class AuthController {
     @Autowired
@@ -35,11 +36,6 @@ public class AuthController {
 
             Account user = (Account) authentication.getPrincipal();
             AccountDTO dto = AccountMapper.convertEntityToDTO(user);
-            /*dto.setId(user.getId());
-            dto.setUsername(user.getUsername());
-            dto.setEmail(user.getStaff().getEmail());
-            dto.setStaffName(user.getStaff().getFirstName() + " " + user.getStaff().getSurname());
-            dto.setRoleName(user.getRole().getRoleName());*/
             String accessToken = jwtUtil.generateAccessToken(user);
             AuthResponse response = new AuthResponse(dto, accessToken);
 

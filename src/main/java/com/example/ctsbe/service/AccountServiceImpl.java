@@ -44,14 +44,15 @@ public class AccountServiceImpl implements AccountService{
     }
 
     @Override
-    public Page<Account> findAccountByVerified(byte filter, Pageable pageable) {
-        return accountRepository.findByVerified(filter,pageable);
+    public Page<Account> getListAccount(String username, byte enable, Pageable pageable) {
+        return accountRepository.findByUsernameContainingAndEnable(username, enable, pageable);
     }
 
     @Override
-    public Page<Account> findAccountByNameAndFilter(String username, int filter, Pageable pageable) {
-        return accountRepository.findByUsernameContainingAndVerified(username, filter, pageable);
+    public Page<Account> getAccountByEnable(byte enable, Pageable pageable) {
+        return accountRepository.findAccountByEnable(enable, pageable);
     }
+
 
     @Override
     public void addAccount(AccountAddDTO dto) {
@@ -82,12 +83,11 @@ public class AccountServiceImpl implements AccountService{
 
     private Account convertAccountAddDTOToAccount(AccountAddDTO accountAddDTO) {
         Account account = new Account();
-        DateUtil dateUtil = new DateUtil();
         account.setStaff(staffService.addStaff(accountAddDTO.getStaffDTO()));
         account.setUsername(accountAddDTO.getUsername());
         account.setPassword(passwordEncoder.encode(accountAddDTO.getPassword()));
         account.setRole(roleService.findRoleById(accountAddDTO.getRoleId()));
-        account.setVerified((byte) 1);
+        account.setEnable((byte) 1);
         account.setLastLogin(Instant.now());
         account.setLastUpdated(Instant.now());
         account.setCreatedDate(Instant.now());

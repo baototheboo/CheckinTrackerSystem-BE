@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -37,7 +38,7 @@ public class Staff {
     private Instant lastUpdated;
 
     @Column(name = "date_of_birth")
-    private Instant dateOfBirth;
+    private LocalDate dateOfBirth;
 
     @Size(max = 50)
     @Column(name = "phone", length = 50)
@@ -125,11 +126,11 @@ public class Staff {
         this.lastUpdated = lastUpdated;
     }
 
-    public Instant getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(Instant dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 

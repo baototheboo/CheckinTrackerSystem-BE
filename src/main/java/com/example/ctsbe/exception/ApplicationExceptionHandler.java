@@ -13,13 +13,16 @@ import java.util.Map;
 public class ApplicationExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String,String> handleMethodArgumentException(MethodArgumentNotValidException exception){
+    public ExceptionObject  handleMethodArgumentException(MethodArgumentNotValidException exception){
+        ExceptionObject exceptionObject = new ExceptionObject();
         Map<String,String> errorMap = new HashMap<>();
         exception.getBindingResult().getFieldErrors().forEach(
                 fieldError -> {
                     errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
+                    exceptionObject.setError(errorMap);
+                    exceptionObject.setCode(HttpStatus.OK.value());
                 }
         );
-        return errorMap;
+        return exceptionObject;
     }
 }
