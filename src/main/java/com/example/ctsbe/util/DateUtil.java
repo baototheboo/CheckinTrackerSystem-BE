@@ -12,4 +12,10 @@ public class DateUtil {
         LocalDate localDate = LocalDate.parse(date,formatter);
         return localDate;
     }
+
+    public String convertLocalDateToString(LocalDate date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String dateFormat = date.format(formatter);
+        return dateFormat;
+    }
 }

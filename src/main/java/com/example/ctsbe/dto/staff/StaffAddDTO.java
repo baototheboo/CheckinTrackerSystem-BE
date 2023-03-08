@@ -1,14 +1,12 @@
-package com.example.ctsbe.dto;
+package com.example.ctsbe.dto.staff;
 
 import lombok.Data;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
-import java.time.Instant;
 
 @Data
-public class StaffDTO {
+public class StaffAddDTO {
     @NotBlank(message = "Email không được để trống")
     @Email(message = "Email không hợp lệ, email phải được để dưới dạng @gmail.com")
     private String email;

@@ -1,4 +1,4 @@
-package com.example.ctsbe.dto;
+package com.example.ctsbe.dto.account;
 
 import lombok.Data;
 
@@ -14,5 +14,5 @@ public class AccountDTO {
     private String email;
     private String staffName;
     private String roleName;
-    private String isEnable;
+    private boolean enable;
 }

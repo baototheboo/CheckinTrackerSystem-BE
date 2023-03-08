@@ -1,10 +1,13 @@
 package com.example.ctsbe.service;
 
-import com.example.ctsbe.dto.StaffDTO;
+import com.example.ctsbe.dto.staff.StaffAddDTO;
+import com.example.ctsbe.entity.Account;
 import com.example.ctsbe.entity.Staff;
 import com.example.ctsbe.repository.StaffRepository;
 import com.example.ctsbe.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -18,12 +21,34 @@ public class StaffServiceImpl implements StaffService{
     private PromotionLevelService promotionLevelService;
 
     @Override
-    public Staff addStaff(StaffDTO staffDTO) {
-        Staff staff = convertStaffDTOToStaff(staffDTO);
+    public Staff addStaff(StaffAddDTO staffAddDTO) {
+        Staff staff = convertStaffAddDTOToStaff(staffAddDTO);
          return staffRepository.save(staff);
     }
 
-    public Staff convertStaffDTOToStaff(StaffDTO dto){
+    @Override
+    public Page<Staff> getAllStaff(Pageable pageable) {
+        return staffRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Staff> getStaffByName(String surname,String firstname, Pageable pageable) {
+        return staffRepository.findBySurnameContainingOrFirstNameContaining(surname,firstname,pageable);
+    }
+
+    @Override
+    public void changeEnableStaff(int id) {
+        Staff staff = staffRepository.getById(id);
+        if(staff.getEnable() == 1){
+            staff.setEnable((byte)0);
+        } else {
+            staff.setEnable((byte)1);
+        }
+        staffRepository.save(staff);
+    }
+
+
+    public Staff convertStaffAddDTOToStaff(StaffAddDTO dto){
         DateUtil dateUtil = new DateUtil();
         Staff  staff = new Staff();
         staff.setEmail(dto.getEmail());

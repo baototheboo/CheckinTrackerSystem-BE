@@ -1,10 +1,10 @@
-package com.example.ctsbe.dto;
+package com.example.ctsbe.dto.account;
 
+import com.example.ctsbe.dto.staff.StaffAddDTO;
 import lombok.Data;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import java.time.Instant;
 
 @Data
 public class AccountAddDTO {
@@ -16,7 +16,7 @@ public class AccountAddDTO {
     private Integer roleId;
 
     @Valid
-    private StaffDTO staffDTO;
+    private StaffAddDTO staffAddDTO;
 
 
 }

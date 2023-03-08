@@ -1,6 +1,6 @@
 package com.example.ctsbe.controller;
 
-import com.example.ctsbe.dto.AccountDTO;
+import com.example.ctsbe.dto.account.AccountDTO;
 import com.example.ctsbe.dto.LoginDTO;
 import com.example.ctsbe.entity.Account;
 import com.example.ctsbe.mapper.AccountMapper;

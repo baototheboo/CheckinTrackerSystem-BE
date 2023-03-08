@@ -1,7 +1,7 @@
 package com.example.ctsbe.mapper;
 
-import com.example.ctsbe.dto.AccountDTO;
-import com.example.ctsbe.dto.AccountUpdateDTO;
+import com.example.ctsbe.dto.account.AccountDTO;
+import com.example.ctsbe.dto.account.AccountUpdateDTO;
 import com.example.ctsbe.entity.Account;
 
 
@@ -24,7 +24,7 @@ public class AccountMapper {
         dto.setEmail(account.getStaff().getEmail());
         dto.setRoleName(account.getRole().getRoleName());
         dto.setStaffName(account.getStaff().getFirstName() + " " + account.getStaff().getSurname());
-        dto.setIsEnable((account.getEnable() == 1) ? "Enable" : "Disable");
+        dto.setEnable((account.getEnable() == 1) ? true: false);
         return dto;
     }
 
