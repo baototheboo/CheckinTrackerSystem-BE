@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +46,18 @@ public class StaffController {
         try{
             staffService.changeEnableStaff(id);
             return new ResponseEntity<>("Update enable status successfully",HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    @PutMapping("/changePromotionLevel/{staffId}/{levelId}")
+    @RolesAllowed("ROLE_HUMAN RESOURCE")
+    public ResponseEntity<?> changePromotionLevel(@PathVariable("staffId") int staffId,@PathVariable("levelId") int levelId){
+        try{
+            staffService.changePromotionLevel(staffId, levelId);
+            return new ResponseEntity<>("Update promotion level successfully",HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
