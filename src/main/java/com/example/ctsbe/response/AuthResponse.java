@@ -1,6 +1,6 @@
 package com.example.ctsbe.response;
 
-import com.example.ctsbe.dto.AccountDTO;
+import com.example.ctsbe.dto.account.AccountDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

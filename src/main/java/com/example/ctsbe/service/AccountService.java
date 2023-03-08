@@ -2,14 +2,12 @@ package com.example.ctsbe.service;
 
 
 
-import com.example.ctsbe.dto.AccountAddDTO;
-import com.example.ctsbe.dto.AccountDTO;
-import com.example.ctsbe.dto.AccountUpdateDTO;
+import com.example.ctsbe.dto.account.AccountAddDTO;
+import com.example.ctsbe.dto.account.AccountUpdateDTO;
 import com.example.ctsbe.entity.Account;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface AccountService {
@@ -26,6 +24,8 @@ public interface AccountService {
     Account getAccountById(int id);
 
     AccountUpdateDTO updateAccount(AccountUpdateDTO accountUpdateDTO);
+
+    void changeEnableAccount(int id);
 
     Optional<Account> findByUsername(String username);
 }

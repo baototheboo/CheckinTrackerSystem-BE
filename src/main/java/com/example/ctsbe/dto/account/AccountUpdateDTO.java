@@ -1,4 +1,4 @@
-package com.example.ctsbe.dto;
+package com.example.ctsbe.dto.account;
 
 import lombok.*;
 
