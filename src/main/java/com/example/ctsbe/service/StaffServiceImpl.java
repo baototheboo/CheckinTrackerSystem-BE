@@ -2,6 +2,7 @@ package com.example.ctsbe.service;
 
 import com.example.ctsbe.dto.staff.StaffAddDTO;
 import com.example.ctsbe.entity.Account;
+import com.example.ctsbe.entity.PromotionLevel;
 import com.example.ctsbe.entity.Staff;
 import com.example.ctsbe.repository.StaffRepository;
 import com.example.ctsbe.util.DateUtil;
@@ -44,6 +45,13 @@ public class StaffServiceImpl implements StaffService{
         } else {
             staff.setEnable((byte)1);
         }
+        staffRepository.save(staff);
+    }
+
+    @Override
+    public void changePromotionLevel(int staffId,int levelId) {
+        Staff staff = staffRepository.getById(staffId);
+        staff.setPromotionLevel(promotionLevelService.getPromotionLevelById(levelId));
         staffRepository.save(staff);
     }
 

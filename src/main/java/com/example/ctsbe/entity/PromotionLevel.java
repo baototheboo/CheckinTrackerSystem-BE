@@ -83,4 +83,12 @@ public class PromotionLevel {
         this.staff = staff;
     }
 
+    @Override
+    public String toString() {
+        return "PromotionLevel{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

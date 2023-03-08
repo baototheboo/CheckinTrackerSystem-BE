@@ -14,4 +14,6 @@ public interface StaffService {
 
     void changeEnableStaff(int id);
 
+    void changePromotionLevel(int staffId,int levelId);
+
 }
