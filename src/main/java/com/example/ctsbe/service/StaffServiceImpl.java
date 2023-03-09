@@ -52,6 +52,7 @@ public class StaffServiceImpl implements StaffService{
     public void changePromotionLevel(int staffId,int levelId) {
         Staff staff = staffRepository.getById(staffId);
         staff.setPromotionLevel(promotionLevelService.getPromotionLevelById(levelId));
+        staff.setLastUpdated(Instant.now());
         staffRepository.save(staff);
     }
 
