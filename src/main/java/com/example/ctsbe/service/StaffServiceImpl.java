@@ -39,13 +39,13 @@ public class StaffServiceImpl implements StaffService{
 
     @Override
     public void changeEnableStaff(int id) {
-        Staff staff = staffRepository.getById(id);
+        /*Staff staff = staffRepository.getById(id);
         if(staff.getEnable() == 1){
             staff.setEnable((byte)0);
         } else {
             staff.setEnable((byte)1);
         }
-        staffRepository.save(staff);
+        staffRepository.save(staff);*/
     }
 
     @Override
@@ -66,7 +66,6 @@ public class StaffServiceImpl implements StaffService{
         staff.setLastUpdated(Instant.now());
         staff.setDateOfBirth(dateUtil.convertStringToLocalDate(dto.getDateOfBirth()));
         staff.setPhone(dto.getPhone());
-        staff.setEnable((byte)1);
         staff.setPromotionLevel(promotionLevelService.getPromotionLevelById(dto.getPromotionLevelId()));
         return  staff;
     }

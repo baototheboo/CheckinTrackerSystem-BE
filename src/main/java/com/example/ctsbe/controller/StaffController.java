@@ -3,6 +3,7 @@ package com.example.ctsbe.controller;
 import com.example.ctsbe.dto.account.AccountDTO;
 import com.example.ctsbe.dto.staff.StaffAddDTO;
 import com.example.ctsbe.dto.staff.StaffDTO;
+import com.example.ctsbe.dto.staff.StaffUpdateDTO;
 import com.example.ctsbe.entity.Account;
 import com.example.ctsbe.entity.Staff;
 import com.example.ctsbe.mapper.AccountMapper;
@@ -52,12 +53,12 @@ public class StaffController {
 
     }
 
-    @PutMapping("/changePromotionLevel/{staffId}/{levelId}")
-    @RolesAllowed("ROLE_HUMAN RESOURCE")
-    public ResponseEntity<?> changePromotionLevel(@PathVariable("staffId") int staffId,@PathVariable("levelId") int levelId){
+    @PutMapping("/changePromotionLevel")
+    //@RolesAllowed("ROLE_HUMAN RESOURCE")
+    public ResponseEntity<?> changePromotionLevel(@RequestBody StaffUpdateDTO dto){
         try{
-            staffService.changePromotionLevel(staffId, levelId);
-            return new ResponseEntity<>("Update promotion level successfully",HttpStatus.OK);
+            staffService.changePromotionLevel(dto.getStaffId(), dto.getLevelId());
+            return new ResponseEntity<>("Update promotion level of staff with id"+dto.getStaffId()+" successfully",HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
         }

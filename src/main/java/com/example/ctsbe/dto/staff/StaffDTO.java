@@ -13,4 +13,5 @@ public class StaffDTO {
     private String dateOfBirth;
     private String phone;
     private String promotionLevel;
+    private String roleName;
 }
