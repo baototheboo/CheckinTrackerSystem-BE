@@ -48,10 +48,6 @@ public class Staff {
     @Column(name = "facial_recognition_status")
     private String facialRecognitionStatus;
 
-    @NotNull
-    @Column(name = "enable", nullable = false)
-    private Byte enable;
-
     @Column(name = "last_trained_time")
     private Instant lastTrainedTime;
 
@@ -150,13 +146,6 @@ public class Staff {
         this.facialRecognitionStatus = facialRecognitionStatus;
     }
 
-    public Byte getEnable() {
-        return enable;
-    }
-
-    public void setEnable(Byte enable) {
-        this.enable = enable;
-    }
 
     public Instant getLastTrainedTime() {
         return lastTrainedTime;
