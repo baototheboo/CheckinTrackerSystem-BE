@@ -12,7 +12,7 @@ import java.time.Instant;
 import java.util.List;
 
 @Service
-public class GroupServiceImpl implements GroupService{
+public class GroupServiceImpl implements GroupService {
 
     @Autowired
     private GroupRepository groupRepository;
@@ -34,7 +34,7 @@ public class GroupServiceImpl implements GroupService{
 
     @Override
     public Page<Group> getAllGroupByName(String name, Pageable pageable) {
-        return groupRepository.findByGroupNameContaining(name,pageable);
+        return groupRepository.findByGroupNameContaining(name, pageable);
     }
 
 
@@ -47,10 +47,10 @@ public class GroupServiceImpl implements GroupService{
         groupRepository.save(existedGroup);
     }
 
-    /*@Override
+    @Override
     public Group findById(int id) {
-        return null;
-    }*/
+        return groupRepository.getById(id);
+    }
 
     @Override
     public void deleteGroup(int id) {

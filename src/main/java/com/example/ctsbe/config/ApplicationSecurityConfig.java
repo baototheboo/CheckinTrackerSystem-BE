@@ -52,7 +52,9 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                         , "/accounts/*"
                         , "/accounts/*/*"
                         , "/staffs/*"
+                        ,"/groups/*"
                         , "/groups/*/*"
+                        ,"/levels/*"
                         , "/levels/*/*").permitAll()
                 //.antMatchers("/products").hasAuthority("ROLE_EDITOR")
                 .anyRequest().authenticated();

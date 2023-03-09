@@ -15,7 +15,7 @@ public interface GroupService {
     Page<Group> getAllGroupByName(String name,Pageable pageable);
     void editGroup(GroupUpdateDTO dto);
 
-    //Group findById(int id);
+    Group findById(int id);
 
     void deleteGroup(int id);
 }
