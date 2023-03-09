@@ -14,7 +14,7 @@ public class StaffMapper {
         dto.setFullName(staff.getSurname() + " " + staff.getFirstName());
         dto.setDateOfBirth(dateUtil.convertLocalDateToString(staff.getDateOfBirth()));
         dto.setPhone(staff.getPhone());
-        dto.setPromotionLevel(staff.getPromotionLevel().getDescription());
+        dto.setPromotionLevel(staff.getPromotionLevel().getId());
         return dto;
     }
 }
