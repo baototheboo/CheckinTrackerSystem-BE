@@ -10,6 +10,7 @@ import com.example.ctsbe.mapper.GroupMapper;
 import com.example.ctsbe.mapper.StaffMapper;
 import com.example.ctsbe.service.GroupService;
 import com.example.ctsbe.service.PromotionLevelService;
+import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -73,12 +74,10 @@ public class GroupController {
 
     @DeleteMapping("/deleteGroup/{id}")
     public ResponseEntity<?> deleteGroup(@PathVariable("id") int id){
-        try{
-            groupService.deleteGroup(id);
-            return new ResponseEntity<>("Delete successfully",HttpStatus.OK);
-        }catch (Exception e){
-            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
-        }
+        Group existedGroup = groupService.findById(id);
+        //if (existedGroup == null) throw new NotFoundException("Cannot find group with id "+id);
+        groupService.deleteGroup(id);
+        return new ResponseEntity<>("Delete successfully",HttpStatus.OK);
 
     }
 }
