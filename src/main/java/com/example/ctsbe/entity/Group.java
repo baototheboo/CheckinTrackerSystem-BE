@@ -83,4 +83,15 @@ public class Group {
         this.projects = projects;
     }
 
+    @Override
+    public String toString() {
+        return "Group{" +
+                "id=" + id +
+                ", groupName='" + groupName + '\'' +
+                ", groupLeaderId=" + groupLeaderId +
+                ", createdDate=" + createdDate +
+                ", lastUpdated=" + lastUpdated +
+                ", projects=" + projects +
+                '}';
+    }
 }

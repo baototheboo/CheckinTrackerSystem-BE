@@ -49,13 +49,17 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers("/auth/login"
-                        , "/accounts/*"
-                        , "/accounts/*/*"
+                        , "/accounts/addAccount"
+                        , "/accounts/resetPassword"
+                        , "/accounts/getAllAccount"
+                        , "/accounts/changeEnableAccount/*"
                         , "/staffs/*"
                         ,"/groups/*"
                         , "/groups/*/*"
                         ,"/levels/*"
-                        , "/levels/*/*").permitAll()
+                        , "/levels/*/*"
+                        ,"/projects/*"
+                        ,"/projects/*/*").permitAll()
                 //.antMatchers("/products").hasAuthority("ROLE_EDITOR")
                 .anyRequest().authenticated();
 

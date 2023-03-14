@@ -64,9 +64,8 @@ public class AccountServiceImpl implements AccountService{
     }
 
     @Override
-    public AccountUpdateDTO updateAccount(AccountUpdateDTO accountUpdateDTO) {
+    public AccountUpdateDTO resetPassword(AccountUpdateDTO accountUpdateDTO) {
         Account existedAccount = getAccountById(accountUpdateDTO.getId());
-        existedAccount.setUsername(accountUpdateDTO.getUsername());
         existedAccount.setPassword(passwordEncoder.encode(accountUpdateDTO.getPassword()));
         existedAccount.setLastUpdated(Instant.now());
         Account updatedAccount = accountRepository.save(existedAccount);

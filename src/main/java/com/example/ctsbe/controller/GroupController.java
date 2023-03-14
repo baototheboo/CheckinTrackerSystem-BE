@@ -73,11 +73,13 @@ public class GroupController {
     }
 
     @DeleteMapping("/deleteGroup/{id}")
-    public ResponseEntity<?> deleteGroup(@PathVariable("id") int id){
-        Group existedGroup = groupService.findById(id);
-        //if (existedGroup == null) throw new NotFoundException("Cannot find group with id "+id);
-        groupService.deleteGroup(id);
-        return new ResponseEntity<>("Delete successfully",HttpStatus.OK);
+    public ResponseEntity<?> deleteGroup(@PathVariable("id") int id) throws NotFoundException {
+        try{
+            groupService.deleteGroup(id);
+            return new ResponseEntity<>("Delete successfully",HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
     }
 }

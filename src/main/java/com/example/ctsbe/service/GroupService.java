@@ -2,6 +2,7 @@ package com.example.ctsbe.service;
 
 import com.example.ctsbe.dto.group.GroupUpdateDTO;
 import com.example.ctsbe.entity.Group;
+import javassist.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -15,7 +16,7 @@ public interface GroupService {
     Page<Group> getAllGroupByName(String name,Pageable pageable);
     void editGroup(GroupUpdateDTO dto);
 
-    Group findById(int id);
+    Group findById(int id) throws NotFoundException;
 
-    void deleteGroup(int id);
+    void deleteGroup(int id) throws NotFoundException;
 }
