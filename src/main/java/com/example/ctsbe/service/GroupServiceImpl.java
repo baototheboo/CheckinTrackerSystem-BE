@@ -3,11 +3,14 @@ package com.example.ctsbe.service;
 import com.example.ctsbe.dto.group.GroupUpdateDTO;
 import com.example.ctsbe.entity.Group;
 import com.example.ctsbe.repository.GroupRepository;
+import javassist.NotFoundException;
+import org.springframework.beans.NotReadablePropertyException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.Instant;
 import java.util.List;
 
@@ -48,13 +51,17 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public Group findById(int id) {
-        return groupRepository.getById(id);
+    public Group findById(int id) throws NotFoundException {
+        Group existedGroup = groupRepository.getById(id);
+        if(existedGroup.getId() == null){
+            throw new NotFoundException("Cannot found this group.");
+        }
+        else return existedGroup ;
     }
 
     @Override
-    public void deleteGroup(int id) {
-        Group existedGroup = groupRepository.getById(id);
+    public void deleteGroup(int id) throws NotFoundException {
+        Group existedGroup = this.findById(id);
         groupRepository.delete(existedGroup);
     }
 }

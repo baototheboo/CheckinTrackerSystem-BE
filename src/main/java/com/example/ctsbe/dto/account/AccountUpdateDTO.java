@@ -11,8 +11,6 @@ import java.time.Instant;
 @AllArgsConstructor
 public class AccountUpdateDTO {
     private Integer id;
-    @NotBlank(message = "Username is required")
-    private String username;
     @NotBlank(message = "Password is required")
     private String password;
 }

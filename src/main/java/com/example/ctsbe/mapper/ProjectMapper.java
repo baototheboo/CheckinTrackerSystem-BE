@@ -1,0 +1,15 @@
+package com.example.ctsbe.mapper;
+
+import com.example.ctsbe.dto.project.ProjectDTO;
+import com.example.ctsbe.entity.Project;
+
+public class ProjectMapper {
+    public static ProjectDTO convertEntityToDto(Project project){
+        ProjectDTO dto = new ProjectDTO(
+                project.getProjectName(),
+                project.getProjectManagerId(),
+                project.getGroup().getGroupName()
+        );
+        return dto;
+    }
+}

@@ -4,7 +4,9 @@ import com.example.ctsbe.entity.Account;
 import com.example.ctsbe.entity.Role;
 import com.example.ctsbe.util.JwtTokenUtil;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,12 +20,16 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.function.Function;
+
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtTokenUtil jwtUtil;
 
+    @Value("${app.jwt.secret}")
+    private String secret;
     @Override
     protected void doFilterInternal(HttpServletRequest request
             , HttpServletResponse response
@@ -92,5 +98,19 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         account.setUsername(jwtSubject[1]);
 
         return account;
+    }
+
+    private Claims getAllClaimsFromToken(String token) {
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+    }
+    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = getAllClaimsFromToken(token);
+        return claimsResolver.apply(claims);
+    }
+    public int getIdFromToken(String token){
+        String subject = getClaimFromToken(token,Claims::getSubject);
+        String[] idAndUsername = subject.split(",");
+        int id = Integer.parseInt(idAndUsername[0]);
+        return id;
     }
 }
