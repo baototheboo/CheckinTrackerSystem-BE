@@ -20,7 +20,7 @@ public class ApplicationExceptionHandler {
                 fieldError -> {
                     errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
                     exceptionObject.setError(errorMap);
-                    exceptionObject.setCode(HttpStatus.OK.value());
+                    exceptionObject.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
                 }
         );
         return exceptionObject;

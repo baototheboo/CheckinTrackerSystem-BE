@@ -74,6 +74,41 @@ public class Staff {
     @OneToMany(mappedBy = "staff")
     private Set<Complaint> complaints = new LinkedHashSet<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id")
+    private Group group;
+
+    @OneToMany(mappedBy = "projectManager")
+    private Set<Project> projects = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "groupLeader")
+    private Set<Group> groups = new LinkedHashSet<>();
+
+    public Set<Group> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(Set<Group> groups) {
+        this.groups = groups;
+    }
+
+    public Set<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(Set<Project> projects) {
+        this.projects = projects;
+    }
+
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+
     public Integer getId() {
         return id;
     }

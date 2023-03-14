@@ -7,7 +7,8 @@ public class ProjectMapper {
     public static ProjectDTO convertEntityToDto(Project project){
         ProjectDTO dto = new ProjectDTO(
                 project.getProjectName(),
-                project.getProjectManagerId(),
+                project.getProjectManager().getSurname() + " "
+                        + project.getProjectManager().getFirstName(),
                 project.getGroup().getGroupName()
         );
         return dto;

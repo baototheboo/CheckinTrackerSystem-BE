@@ -64,9 +64,9 @@ public class AccountServiceImpl implements AccountService{
     }
 
     @Override
-    public AccountUpdateDTO resetPassword(AccountUpdateDTO accountUpdateDTO) {
-        Account existedAccount = getAccountById(accountUpdateDTO.getId());
-        existedAccount.setPassword(passwordEncoder.encode(accountUpdateDTO.getPassword()));
+    public AccountUpdateDTO resetPassword(int id) {
+        Account existedAccount = getAccountById(id);
+        existedAccount.setPassword(passwordEncoder.encode("Abc@123"));
         existedAccount.setLastUpdated(Instant.now());
         Account updatedAccount = accountRepository.save(existedAccount);
         return AccountMapper.convertEntityToUpdateDTO(updatedAccount);

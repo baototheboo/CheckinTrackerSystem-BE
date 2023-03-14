@@ -21,8 +21,9 @@ public class Group {
     private String groupName;
 
     @NotNull
-    @Column(name = "group_leader_id", nullable = false)
-    private Integer groupLeaderId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "group_leader_id", nullable = false)
+    private Staff groupLeader;
 
     @NotNull
     @Column(name = "created_date", nullable = false)
@@ -34,6 +35,9 @@ public class Group {
 
     @OneToMany(mappedBy = "group")
     private Set<Project> projects = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "group")
+    private Set<Staff> staff = new LinkedHashSet<>();
 
     public Integer getId() {
         return id;
@@ -51,12 +55,12 @@ public class Group {
         this.groupName = groupName;
     }
 
-    public Integer getGroupLeaderId() {
-        return groupLeaderId;
+    public Staff getGroupLeader() {
+        return groupLeader;
     }
 
-    public void setGroupLeaderId(Integer groupLeaderId) {
-        this.groupLeaderId = groupLeaderId;
+    public void setGroupLeader(Staff groupLeader) {
+        this.groupLeader = groupLeader;
     }
 
     public Instant getCreatedDate() {
@@ -83,15 +87,12 @@ public class Group {
         this.projects = projects;
     }
 
-    @Override
-    public String toString() {
-        return "Group{" +
-                "id=" + id +
-                ", groupName='" + groupName + '\'' +
-                ", groupLeaderId=" + groupLeaderId +
-                ", createdDate=" + createdDate +
-                ", lastUpdated=" + lastUpdated +
-                ", projects=" + projects +
-                '}';
+    public Set<Staff> getStaff() {
+        return staff;
     }
+
+    public void setStaff(Set<Staff> staff) {
+        this.staff = staff;
+    }
+
 }

@@ -4,7 +4,6 @@ import com.example.ctsbe.dto.staffProject.StaffProjectAddDTO;
 import com.example.ctsbe.dto.staffProject.StaffProjectDTO;
 import com.example.ctsbe.entity.Project;
 import com.example.ctsbe.entity.StaffProject;
-import com.example.ctsbe.entity.StaffProjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

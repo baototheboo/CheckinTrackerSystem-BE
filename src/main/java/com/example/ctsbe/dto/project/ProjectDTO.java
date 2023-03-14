@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ProjectDTO {
     private String projectName;
-    private int projectManager;
+    private String projectManagerName;
     private String group;
     //private List<StaffDTO> listStaff;
 }
