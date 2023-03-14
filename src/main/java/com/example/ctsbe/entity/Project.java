@@ -21,8 +21,9 @@ public class Project {
     private String projectName;
 
     @NotNull
-    @Column(name = "project_manager_id", nullable = false)
-    private Integer projectManagerId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "project_manager_id", nullable = false)
+    private Staff projectManager;
 
     @NotNull
     @Column(name = "created_date", nullable = false)
@@ -36,16 +37,12 @@ public class Project {
     @JoinColumn(name = "group_id")
     private Group group;
 
+    @Size(max = 45)
+    @Column(name = "status", length = 45)
+    private String status;
+
     @OneToMany(mappedBy = "project")
     private Set<StaffProject> staffProjects = new LinkedHashSet<>();
-
-    public Set<StaffProject> getStaffProjects() {
-        return staffProjects;
-    }
-
-    public void setStaffProjects(Set<StaffProject> staffProjects) {
-        this.staffProjects = staffProjects;
-    }
 
     public Integer getId() {
         return id;
@@ -63,12 +60,12 @@ public class Project {
         this.projectName = projectName;
     }
 
-    public Integer getProjectManagerId() {
-        return projectManagerId;
+    public Staff getProjectManager() {
+        return projectManager;
     }
 
-    public void setProjectManagerId(Integer projectManagerId) {
-        this.projectManagerId = projectManagerId;
+    public void setProjectManager(Staff projectManager) {
+        this.projectManager = projectManager;
     }
 
     public Instant getCreatedDate() {
@@ -93,6 +90,22 @@ public class Project {
 
     public void setGroup(Group group) {
         this.group = group;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Set<StaffProject> getStaffProjects() {
+        return staffProjects;
+    }
+
+    public void setStaffProjects(Set<StaffProject> staffProjects) {
+        this.staffProjects = staffProjects;
     }
 
 }

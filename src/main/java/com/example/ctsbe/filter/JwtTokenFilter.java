@@ -100,17 +100,5 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         return account;
     }
 
-    private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
-    }
-    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = getAllClaimsFromToken(token);
-        return claimsResolver.apply(claims);
-    }
-    public int getIdFromToken(String token){
-        String subject = getClaimFromToken(token,Claims::getSubject);
-        String[] idAndUsername = subject.split(",");
-        int id = Integer.parseInt(idAndUsername[0]);
-        return id;
-    }
+
 }

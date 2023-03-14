@@ -50,7 +50,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/auth/login"
                         , "/accounts/addAccount"
-                        , "/accounts/resetPassword"
+                        , "/accounts/resetPassword/*"
                         , "/accounts/getAllAccount"
                         , "/accounts/changeEnableAccount/*"
                         , "/staffs/*"

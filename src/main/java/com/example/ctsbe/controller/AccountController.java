@@ -40,7 +40,7 @@ public class AccountController {
     private HttpServletRequest request;
 
     @Autowired
-    private JwtTokenFilter jwtTokenFilter;
+    private JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/addAccount")
     public ResponseEntity<?> addAccount(@Valid @RequestBody AccountAddDTO dto){
@@ -52,11 +52,11 @@ public class AccountController {
         }
     }
 
-    @PutMapping("/resetPassword")
-    public ResponseEntity<?> updateAccount(@Valid @RequestBody AccountUpdateDTO dto){
+    @PutMapping("/resetPassword/{id}")
+    public ResponseEntity<?> updateAccount(@PathVariable("id") int id){
         try{
-            AccountUpdateDTO updateDTO =  accountService.resetPassword(dto);
-            return new ResponseEntity<>("Update account with id "+dto.getId()+" successfully!",HttpStatus.OK);
+            AccountUpdateDTO updateDTO =  accountService.resetPassword(id);
+            return new ResponseEntity<>("Reset password of the account with id "+id+" successfully!",HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
@@ -129,7 +129,7 @@ public class AccountController {
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
         }
-        int id = jwtTokenFilter.getIdFromToken(jwtToken);
+        int id = jwtTokenUtil.getIdFromToken(jwtToken);
         return id;
     }
 

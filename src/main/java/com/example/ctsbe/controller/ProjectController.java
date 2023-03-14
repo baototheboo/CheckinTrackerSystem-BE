@@ -1,5 +1,7 @@
 package com.example.ctsbe.controller;
 
+import com.example.ctsbe.dto.group.GroupUpdateDTO;
+import com.example.ctsbe.dto.project.ProjectAddDTO;
 import com.example.ctsbe.dto.project.ProjectDTO;
 import com.example.ctsbe.dto.staffProject.StaffInProjectDTO;
 import com.example.ctsbe.dto.staffProject.StaffProjectAddDTO;
@@ -19,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,6 +64,28 @@ public class ProjectController {
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PostMapping("/addProject")
+    public ResponseEntity<?> addGroup(@Valid @RequestBody ProjectAddDTO dto){
+        try{
+            projectService.addProject(dto);
+            return new ResponseEntity<>("Add project "+dto.getProjectName()+" successfully",HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    @PutMapping("/editProject/{id}")
+    public ResponseEntity<?> editProject(@PathVariable("id") int id,@RequestBody ProjectAddDTO dto){
+        try{
+            projectService.editProject(id,dto);
+            return new ResponseEntity<>("Update project successfully",HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     @PostMapping("/addStaffToProject")

@@ -2,14 +2,9 @@ package com.example.ctsbe.controller;
 
 import com.example.ctsbe.dto.group.GroupDTO;
 import com.example.ctsbe.dto.group.GroupUpdateDTO;
-import com.example.ctsbe.dto.staff.StaffDTO;
-import com.example.ctsbe.dto.staff.StaffUpdateDTO;
 import com.example.ctsbe.entity.Group;
-import com.example.ctsbe.entity.Staff;
 import com.example.ctsbe.mapper.GroupMapper;
-import com.example.ctsbe.mapper.StaffMapper;
 import com.example.ctsbe.service.GroupService;
-import com.example.ctsbe.service.PromotionLevelService;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,10 +56,21 @@ public class GroupController {
         }
     }
 
-    @PutMapping("/editGroup")
-    public ResponseEntity<?> editGroup(@RequestBody GroupUpdateDTO dto){
+    @PostMapping("/addGroup")
+    public ResponseEntity<?> addGroup(@RequestBody GroupUpdateDTO dto){
         try{
-            groupService.editGroup(dto);
+            groupService.addGroup(dto);
+            return new ResponseEntity<>("Add group"+dto.getGroupName()+" successfully",HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    @PutMapping("/editGroup/{id}")
+    public ResponseEntity<?> editGroup(@PathVariable("id") int id,@RequestBody GroupUpdateDTO dto){
+        try{
+            groupService.editGroup(id,dto);
             return new ResponseEntity<>("Update group successfully",HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
@@ -80,6 +86,6 @@ public class GroupController {
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
+
 }

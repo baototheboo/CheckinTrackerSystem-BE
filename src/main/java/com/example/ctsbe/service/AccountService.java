@@ -23,7 +23,7 @@ public interface AccountService {
 
     Account getAccountById(int id);
 
-    AccountUpdateDTO resetPassword(AccountUpdateDTO accountUpdateDTO);
+    AccountUpdateDTO resetPassword(int id);
 
     void changeEnableAccount(int id);
 

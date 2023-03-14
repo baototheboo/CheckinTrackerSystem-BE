@@ -1,18 +1,17 @@
 package com.example.ctsbe.service;
 
+import com.example.ctsbe.dto.group.GroupDTO;
 import com.example.ctsbe.dto.group.GroupUpdateDTO;
 import com.example.ctsbe.entity.Group;
 import com.example.ctsbe.repository.GroupRepository;
+import com.example.ctsbe.repository.StaffRepository;
 import javassist.NotFoundException;
-import org.springframework.beans.NotReadablePropertyException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import java.time.Instant;
-import java.util.List;
 
 @Service
 public class GroupServiceImpl implements GroupService {
@@ -20,11 +19,14 @@ public class GroupServiceImpl implements GroupService {
     @Autowired
     private GroupRepository groupRepository;
 
+    @Autowired
+    private StaffRepository staffRepository;
+
     @Override
-    public Group addGroup(Group group) {
+    public Group addGroup(GroupUpdateDTO dto) {
         Group addGroup = new Group();
-        addGroup.setGroupName(group.getGroupName());
-        addGroup.setGroupLeaderId(group.getGroupLeaderId());
+        addGroup.setGroupName(dto.getGroupName());
+        addGroup.setGroupLeader(staffRepository.getById(dto.getGroupLeaderId()));
         addGroup.setCreatedDate(Instant.now());
         addGroup.setLastUpdated(Instant.now());
         return groupRepository.save(addGroup);
@@ -42,10 +44,10 @@ public class GroupServiceImpl implements GroupService {
 
 
     @Override
-    public void editGroup(GroupUpdateDTO dto) {
-        Group existedGroup = groupRepository.getById(dto.getId());
+    public void editGroup(int id,GroupUpdateDTO dto) {
+        Group existedGroup = groupRepository.getById(id);
         existedGroup.setGroupName(dto.getGroupName());
-        existedGroup.setGroupLeaderId(dto.getGroupLeaderId());
+        existedGroup.setGroupLeader(staffRepository.getById(dto.getGroupLeaderId()));
         existedGroup.setLastUpdated(Instant.now());
         groupRepository.save(existedGroup);
     }

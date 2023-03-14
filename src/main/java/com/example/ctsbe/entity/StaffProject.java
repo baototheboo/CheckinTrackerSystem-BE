@@ -23,9 +23,6 @@ public class StaffProject {
     @Column(name = "created_date", length = 45)
     private String createdDate;
 
-    @Size(max = 45)
-    @Column(name = "status", length = 45)
-    private String status;
 
     public StaffProjectId getId() {
         return id;
@@ -59,12 +56,5 @@ public class StaffProject {
         this.createdDate = createdDate;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 
 }
