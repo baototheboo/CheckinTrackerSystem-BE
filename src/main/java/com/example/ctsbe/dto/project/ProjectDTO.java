@@ -11,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProjectDTO {
+    private Integer id;
     private String projectName;
     private String projectManagerName;
     private String group;
