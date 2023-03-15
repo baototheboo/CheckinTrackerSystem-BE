@@ -4,10 +4,14 @@ import com.example.ctsbe.dto.account.AccountDTO;
 import com.example.ctsbe.dto.staff.StaffAddDTO;
 import com.example.ctsbe.dto.staff.StaffDTO;
 import com.example.ctsbe.dto.staff.StaffUpdateDTO;
+import com.example.ctsbe.dto.staffProject.StaffInProjectDTO;
 import com.example.ctsbe.entity.Account;
 import com.example.ctsbe.entity.Staff;
+import com.example.ctsbe.entity.StaffProject;
 import com.example.ctsbe.mapper.AccountMapper;
 import com.example.ctsbe.mapper.StaffMapper;
+import com.example.ctsbe.repository.AccountRepository;
+import com.example.ctsbe.service.AccountService;
 import com.example.ctsbe.service.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,6 +35,8 @@ public class StaffController {
     @Autowired
     private StaffService staffService;
 
+    @Autowired
+    private AccountService accountService;
     @PostMapping("/addStaff")
     public String addStaff(@RequestBody StaffAddDTO dto) {
         try {
@@ -88,7 +94,9 @@ public class StaffController {
             response.put("allPages", staffPage.getTotalPages());
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            Map<String, Object> response = new HashMap<>();
+            response.put("exception",e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

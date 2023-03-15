@@ -6,6 +6,7 @@ import com.example.ctsbe.entity.Project;
 public class ProjectMapper {
     public static ProjectDTO convertEntityToDto(Project project){
         ProjectDTO dto = new ProjectDTO(
+                project.getId(),
                 project.getProjectName(),
                 project.getProjectManager().getSurname() + " "
                         + project.getProjectManager().getFirstName(),
