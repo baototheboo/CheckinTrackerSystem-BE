@@ -12,6 +12,7 @@ import com.example.ctsbe.mapper.ProjectMapper;
 import com.example.ctsbe.mapper.StaffProjectMapper;
 import com.example.ctsbe.service.ProjectService;
 import com.example.ctsbe.service.StaffProjectService;
+import com.example.ctsbe.util.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +41,12 @@ public class ProjectController {
 
     @Autowired
     private StaffProjectService staffProjectService;
+
+    @Autowired
+    private HttpServletRequest request;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     @GetMapping("/getAllProject")
     public ResponseEntity<Map<String, Object>> getAllProject(@RequestParam(defaultValue = "1") int page
@@ -98,6 +107,7 @@ public class ProjectController {
     }
 
     @PostMapping("/addStaffToProject")
+    @RolesAllowed("ROLE_PROJECT MANAGER")
     public ResponseEntity<?> addStaffToProject(@RequestBody StaffProjectAddDTO dto) {
         try {
             StaffProjectDTO staffProjectDTO = staffProjectService.addStaffToProject(dto);
@@ -139,5 +149,15 @@ public class ProjectController {
         }catch (Exception e){
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public int getIdFromToken(){
+        final String requestTokenHeader = request.getHeader("Authorization");
+        String jwtToken = null;
+        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+            jwtToken = requestTokenHeader.substring(7);
+        }
+        int id = jwtTokenUtil.getIdFromToken(jwtToken);
+        return id;
     }
 }

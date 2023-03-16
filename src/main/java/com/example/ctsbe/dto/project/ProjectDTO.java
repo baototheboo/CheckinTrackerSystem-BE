@@ -15,5 +15,6 @@ public class ProjectDTO {
     private String projectName;
     private String projectManagerName;
     private String group;
+    private String status;
     //private List<StaffDTO> listStaff;
 }
