@@ -52,6 +52,7 @@ public class JwtTokenUtil {
         String username = idAndUsername[1];
         return username;
     }
+
     public Date getExpirationDateFromToken(String token) {
         return getClaimFromToken(token, Claims::getExpiration);
     }

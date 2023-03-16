@@ -10,7 +10,8 @@ public class ProjectMapper {
                 project.getProjectName(),
                 project.getProjectManager().getSurname() + " "
                         + project.getProjectManager().getFirstName(),
-                project.getGroup().getGroupName()
+                project.getGroup().getGroupName(),
+                project.getStatus()
         );
         return dto;
     }
