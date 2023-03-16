@@ -17,5 +17,4 @@ public class ProjectAddDTO {
     private Integer projectManagerId;
     @NotNull(message = "Please choose the group!")
     private Integer groupId;
-    private String status;
 }

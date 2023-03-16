@@ -85,7 +85,16 @@ public class ProjectController {
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
+    }
 
+    @PutMapping("/changeProjectStatus/{id}/{status}")
+    public ResponseEntity<?> changeProjectStatus(@PathVariable("id") int id,@PathVariable("status") int status){
+        try{
+            projectService.changeProjectStatus(id,status);
+            return new ResponseEntity<>("Update project status successfully",HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("/addStaffToProject")

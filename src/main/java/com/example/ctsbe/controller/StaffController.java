@@ -2,6 +2,7 @@ package com.example.ctsbe.controller;
 
 import com.example.ctsbe.dto.account.AccountDTO;
 import com.example.ctsbe.dto.staff.StaffAddDTO;
+import com.example.ctsbe.dto.staff.StaffAvailableDTO;
 import com.example.ctsbe.dto.staff.StaffDTO;
 import com.example.ctsbe.dto.staff.StaffUpdateDTO;
 import com.example.ctsbe.dto.staffProject.StaffInProjectDTO;
@@ -48,17 +49,6 @@ public class StaffController {
 
     }
 
-    @PutMapping("/changeEnableStaff/{id}")
-    public ResponseEntity<?> changeEnableStaff(@PathVariable("id") int id){
-        try{
-            staffService.changeEnableStaff(id);
-            return new ResponseEntity<>("Update enable status successfully",HttpStatus.OK);
-        }catch (Exception e){
-            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
-        }
-
-    }
-
     @PutMapping("/changePromotionLevel")
     //@RolesAllowed("ROLE_HUMAN RESOURCE")
     public ResponseEntity<?> changePromotionLevel(@RequestBody StaffUpdateDTO dto){
@@ -68,7 +58,6 @@ public class StaffController {
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
-
     }
 
     @GetMapping("/getAllStaff")
@@ -97,6 +86,38 @@ public class StaffController {
             Map<String, Object> response = new HashMap<>();
             response.put("exception",e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/getAvailableStaff")
+    public ResponseEntity<Map<String, Object>> getAvailableStaff(){
+        try{
+            List<Staff> list= staffService.getListAvailableStaff();
+            List<StaffAvailableDTO> listDto = list.stream().
+                    map(StaffMapper::convertStaffToStaffAvailableDto).collect(Collectors.toList());
+            Map<String, Object> response = new HashMap<>();
+            response.put("list", listDto);
+            return new ResponseEntity<>(response,HttpStatus.OK);
+        }catch (Exception e){
+            Map<String, Object> response = new HashMap<>();
+            response.put("exception", e.getMessage());
+            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/getStaffByRole")
+    public ResponseEntity<Map<String, Object>> getStaffByRole(@RequestParam int role){
+        try{
+            List<Staff> list= staffService.getStaffsByRole(role);
+            List<StaffAvailableDTO> listDto = list.stream().
+                    map(StaffMapper::convertStaffToStaffAvailableDto).collect(Collectors.toList());
+            Map<String, Object> response = new HashMap<>();
+            response.put("list", listDto);
+            return new ResponseEntity<>(response,HttpStatus.OK);
+        }catch (Exception e){
+            Map<String, Object> response = new HashMap<>();
+            response.put("exception", e.getMessage());
+            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
         }
     }
 
