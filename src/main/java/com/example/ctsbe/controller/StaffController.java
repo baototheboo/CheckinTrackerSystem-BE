@@ -105,10 +105,10 @@ public class StaffController {
         }
     }
 
-    @GetMapping("/getStaffByRole")
-    public ResponseEntity<Map<String, Object>> getStaffByRole(@RequestParam int role){
+    @GetMapping("/getListPMAvailable")
+    public ResponseEntity<Map<String, Object>> getListPMAvailable(){
         try{
-            List<Staff> list= staffService.getStaffsByRole(role);
+            List<Staff> list= staffService.getListPMAvailable(3);
             List<StaffAvailableDTO> listDto = list.stream().
                     map(StaffMapper::convertStaffToStaffAvailableDto).collect(Collectors.toList());
             Map<String, Object> response = new HashMap<>();

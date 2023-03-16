@@ -26,5 +26,7 @@ public interface AccountRepository extends JpaRepository<Account,Integer>{
     @Query(value = "select a from Account a where a.role.id =:role")
     List<Account> getAccByRole(int role);
 
-
+    @Query(value = "SELECT a FROM Account a where a.role.id = :roleId and a.staff.id not in \n" +
+            "(select p.projectManager.id from Project p where p.status = 'processing')")
+    List<Account> getListPMAvailable(int roleId);
 }

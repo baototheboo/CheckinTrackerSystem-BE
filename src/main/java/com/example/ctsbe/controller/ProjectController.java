@@ -10,6 +10,7 @@ import com.example.ctsbe.entity.Project;
 import com.example.ctsbe.entity.StaffProject;
 import com.example.ctsbe.mapper.ProjectMapper;
 import com.example.ctsbe.mapper.StaffProjectMapper;
+import com.example.ctsbe.service.AccountService;
 import com.example.ctsbe.service.ProjectService;
 import com.example.ctsbe.service.StaffProjectService;
 import com.example.ctsbe.util.JwtTokenUtil;
@@ -41,6 +42,9 @@ public class ProjectController {
 
     @Autowired
     private StaffProjectService staffProjectService;
+
+    @Autowired
+    private AccountService accountService;
 
     @Autowired
     private HttpServletRequest request;
@@ -107,9 +111,11 @@ public class ProjectController {
     }
 
     @PostMapping("/addStaffToProject")
-    @RolesAllowed("ROLE_PROJECT MANAGER")
+    //@RolesAllowed("ROLE_PROJECT MANAGER")
     public ResponseEntity<?> addStaffToProject(@RequestBody StaffProjectAddDTO dto) {
         try {
+            int staffId = getIdFromToken();
+            int tokenRoleId = accountService.getAccountById(staffId).getRole().getId();
             StaffProjectDTO staffProjectDTO = staffProjectService.addStaffToProject(dto);
             return new ResponseEntity<>("Add staff "+staffProjectDTO.getStaffName()
                     +" to "+staffProjectDTO.getProjectName() +" successfully", HttpStatus.OK);
