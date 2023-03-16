@@ -24,4 +24,6 @@ public interface StaffService {
 
     Page<Staff> getListStaffByGroup(int groupId,Pageable pageable);
 
+    public List<Staff> getListPMAvailable(int role);
+
 }
