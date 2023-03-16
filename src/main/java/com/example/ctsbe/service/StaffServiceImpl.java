@@ -1,9 +1,11 @@
 package com.example.ctsbe.service;
 
 import com.example.ctsbe.dto.staff.StaffAddDTO;
+import com.example.ctsbe.dto.staff.StaffAvailableDTO;
 import com.example.ctsbe.entity.Account;
 import com.example.ctsbe.entity.PromotionLevel;
 import com.example.ctsbe.entity.Staff;
+import com.example.ctsbe.repository.AccountRepository;
 import com.example.ctsbe.repository.StaffRepository;
 import com.example.ctsbe.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +14,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class StaffServiceImpl implements StaffService{
     @Autowired
     private StaffRepository staffRepository;
+
+    @Autowired
+    private AccountRepository accountRepository;
 
     @Autowired
     private PromotionLevelService promotionLevelService;
@@ -38,22 +45,31 @@ public class StaffServiceImpl implements StaffService{
     }
 
     @Override
-    public void changeEnableStaff(int id) {
-        /*Staff staff = staffRepository.getById(id);
-        if(staff.getEnable() == 1){
-            staff.setEnable((byte)0);
-        } else {
-            staff.setEnable((byte)1);
-        }
-        staffRepository.save(staff);*/
-    }
-
-    @Override
     public void changePromotionLevel(int staffId,int levelId) {
         Staff staff = staffRepository.getById(staffId);
         staff.setPromotionLevel(promotionLevelService.getPromotionLevelById(levelId));
         staff.setLastUpdated(Instant.now());
         staffRepository.save(staff);
+    }
+
+    @Override
+    public List<Staff> getListAvailableStaff() {
+        return staffRepository.getAvailableStaff();
+    }
+
+    @Override
+    public List<Staff> getStaffsByRole(int role) {
+        List<Staff> staffList = new ArrayList<>();
+        List<Account> accountList = accountRepository.getAccByRole(role);
+        for (Account acc : accountList) {
+            staffList.add(acc.getStaff());
+        }
+        return staffList;
+    }
+
+    @Override
+    public Page<Staff> getListStaffByGroup(int groupId,Pageable pageable) {
+        return staffRepository.getListStaffByGroup(groupId,pageable);
     }
 
 

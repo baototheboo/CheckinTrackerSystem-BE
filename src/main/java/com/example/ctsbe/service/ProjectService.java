@@ -11,4 +11,5 @@ public interface ProjectService {
     Page<Project> getProjectByNameContain(String name, Pageable pageable);
     Project getProjectById(int id);
     void editProject(int id,ProjectAddDTO dto);
+    void changeProjectStatus(int id,int status);
 }

@@ -1,6 +1,7 @@
 package com.example.ctsbe.mapper;
 
 import com.example.ctsbe.dto.staff.StaffAddDTO;
+import com.example.ctsbe.dto.staff.StaffAvailableDTO;
 import com.example.ctsbe.dto.staff.StaffDTO;
 import com.example.ctsbe.entity.Staff;
 import com.example.ctsbe.service.AccountService;
@@ -30,6 +31,13 @@ public class StaffMapper {
         dto.setPromotionLevel(staff.getPromotionLevel().getId());
         dto.setRoleName(stringUtil.cutStringRole(
                 accountService.getAccountById(staff.getId()).getRole().getRoleName()));
+        return dto;
+    }
+
+    public static StaffAvailableDTO convertStaffToStaffAvailableDto(Staff staff){
+        StaffAvailableDTO dto = new StaffAvailableDTO();
+        dto.setId(staff.getId());
+        dto.setFullName(staff.getSurname() + " " + staff.getFirstName());
         return dto;
     }
 }

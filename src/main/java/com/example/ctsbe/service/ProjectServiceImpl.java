@@ -13,13 +13,14 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 
 @Service
-public class ProjectServiceImpl implements ProjectService{
+public class ProjectServiceImpl implements ProjectService {
     @Autowired
     private ProjectRepository projectRepository;
     @Autowired
     private GroupRepository groupRepository;
     @Autowired
     private StaffRepository staffRepository;
+
     @Override
     public Page<Project> getAllProject(Pageable pageable) {
         return projectRepository.findAll(pageable);
@@ -33,7 +34,7 @@ public class ProjectServiceImpl implements ProjectService{
         project.setGroup(groupRepository.getById(dto.getGroupId()));
         project.setCreatedDate(Instant.now());
         project.setLastUpdated(Instant.now());
-        project.setStatus(dto.getStatus());
+        project.setStatus("Processing");
         projectRepository.save(project);
         return project;
     }
@@ -55,7 +56,20 @@ public class ProjectServiceImpl implements ProjectService{
         project.setProjectManager(staffRepository.getById(dto.getProjectManagerId()));
         project.setGroup(groupRepository.getById(dto.getGroupId()));
         project.setLastUpdated(Instant.now());
-        project.setStatus(dto.getStatus());
+        projectRepository.save(project);
+    }
+
+    @Override
+    public void changeProjectStatus(int id, int status) {
+        Project project = projectRepository.getById(id);
+        if (status == 1) {
+            project.setStatus("Processing");
+        } else if (status == 2) {
+            project.setStatus("Done");
+        } else if (status == 3) {
+            project.setStatus("Cancel");
+        }
+        project.setLastUpdated(Instant.now());
         projectRepository.save(project);
     }
 
