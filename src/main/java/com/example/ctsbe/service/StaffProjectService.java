@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface StaffProjectService {
-    StaffProjectDTO addStaffToProject(StaffProjectAddDTO dto);
+    void addStaffToProject(StaffProjectAddDTO dto);
 
     void removeStaffFromProject(StaffProjectAddDTO dto);
 

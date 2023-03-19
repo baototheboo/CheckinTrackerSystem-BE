@@ -4,6 +4,7 @@ package com.example.ctsbe.service;
 
 import com.example.ctsbe.dto.account.AccountAddDTO;
 import com.example.ctsbe.dto.account.AccountUpdateDTO;
+import com.example.ctsbe.dto.account.ProfileUpdateDTO;
 import com.example.ctsbe.entity.Account;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,8 @@ public interface AccountService {
     void addAccount(AccountAddDTO accountAddDTO);
 
     Account getAccountById(int id);
+
+    void updateAccount(int id, ProfileUpdateDTO dto);
 
     AccountUpdateDTO resetPassword(int id);
 

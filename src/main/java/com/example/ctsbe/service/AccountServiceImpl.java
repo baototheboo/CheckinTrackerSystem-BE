@@ -3,9 +3,11 @@ package com.example.ctsbe.service;
 
 import com.example.ctsbe.dto.account.AccountAddDTO;
 import com.example.ctsbe.dto.account.AccountUpdateDTO;
+import com.example.ctsbe.dto.account.ProfileUpdateDTO;
 import com.example.ctsbe.entity.Account;
 import com.example.ctsbe.mapper.AccountMapper;
 import com.example.ctsbe.repository.AccountRepository;
+import com.example.ctsbe.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -61,6 +63,21 @@ public class AccountServiceImpl implements AccountService{
     public Account getAccountById(int id) {
         Account account = accountRepository.getById(id);
         return account;
+    }
+
+    @Override
+    public void updateAccount(int id, ProfileUpdateDTO dto) {
+        Account account = accountRepository.getById(id);
+        DateUtil util = new DateUtil();
+        account.setUsername(dto.getUsername());
+        account.getStaff().setSurname(dto.getSurname());
+        account.getStaff().setFirstName(dto.getFirstName());
+        account.getStaff().setEmail(dto.getEmail());
+        account.getStaff().setDateOfBirth(util.convertStringToLocalDate(dto.getDateOfBirth()));
+        account.getStaff().setPhone(dto.getPhone());
+        account.setLastUpdated(Instant.now());
+        account.getStaff().setLastUpdated(Instant.now());
+        accountRepository.save(account);
     }
 
     @Override
