@@ -13,37 +13,42 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-public class StaffProjectServiceImpl implements StaffProjectService{
+public class StaffProjectServiceImpl implements StaffProjectService {
     @Autowired
     private StaffProjectRepository repository;
     @Autowired
     private StaffRepository staffRepository;
     @Autowired
     private ProjectRepository projectRepository;
+
     @Override
-    public StaffProjectDTO addStaffToProject(StaffProjectAddDTO dto) {
+    public void addStaffToProject(StaffProjectAddDTO dto) {
         StaffProject staffProject = new StaffProject();
         StaffProjectId id = new StaffProjectId();
-        id.setProjectId(dto.getProjectId());
-        id.setStaffId(dto.getStaffId());
-        staffProject.setId(id);
-        staffProject.setStaff(staffRepository.getById(dto.getStaffId()));
-        staffProject.setProject(projectRepository.getById(dto.getProjectId()));
-        repository.save(staffProject);
-        StaffProjectDTO staffProjectDTO = new StaffProjectDTO();
-        staffProjectDTO.setStaffName(staffProject.getStaff().getFirstName());
-        staffProjectDTO.setProjectName(staffProject.getProject().getProjectName());
-        return staffProjectDTO;
+        List<Integer> listStaffId = dto.getStaffId();
+        for (int i = 0; i < listStaffId.size(); i++) {
+            id.setProjectId(dto.getProjectId());
+            id.setStaffId(listStaffId.get(i));
+            staffProject.setId(id);
+            staffProject.setStaff(staffRepository.getById(listStaffId.get(i)));
+            staffProject.setProject(projectRepository.getById(dto.getProjectId()));
+            repository.save(staffProject);
+        }
     }
 
     @Override
     public void removeStaffFromProject(StaffProjectAddDTO dto) {
         StaffProjectId id = new StaffProjectId();
-        id.setStaffId(dto.getStaffId());
-        id.setProjectId(dto.getProjectId());
-        StaffProject existedSP = repository.getById(id);
-        repository.delete(existedSP);
+        List<Integer> listStaffId = dto.getStaffId();
+        for (int i = 0; i < listStaffId.size(); i++) {
+            id.setStaffId(listStaffId.get(i));
+            id.setProjectId(dto.getProjectId());
+            StaffProject existedSP = repository.getById(id);
+            repository.delete(existedSP);
+        }
     }
 
     @Override

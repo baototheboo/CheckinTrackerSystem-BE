@@ -114,11 +114,10 @@ public class ProjectController {
     //@RolesAllowed("ROLE_PROJECT MANAGER")
     public ResponseEntity<?> addStaffToProject(@RequestBody StaffProjectAddDTO dto) {
         try {
-            int staffId = getIdFromToken();
-            int tokenRoleId = accountService.getAccountById(staffId).getRole().getId();
-            StaffProjectDTO staffProjectDTO = staffProjectService.addStaffToProject(dto);
-            return new ResponseEntity<>("Add staff "+staffProjectDTO.getStaffName()
-                    +" to "+staffProjectDTO.getProjectName() +" successfully", HttpStatus.OK);
+            //int staffId = getIdFromToken();
+            //int tokenRoleId = accountService.getAccountById(staffId).getRole().getId();
+            staffProjectService.addStaffToProject(dto);
+            return new ResponseEntity<>("Add staff to the project successfully", HttpStatus.OK);
         }catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
