@@ -1,5 +1,7 @@
 package com.example.ctsbe.entity;
 
+import org.springframework.util.StringUtils;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -246,4 +248,17 @@ public class Staff {
         this.complaints = complaints;
     }
 
+    public String getStaffName() {
+        String name = this.firstName;
+        if (!StringUtils.isEmpty(this.surname)) {
+            String[] lastNames = this.surname.split(" ");
+            for (int i = 0; i< lastNames.length; i ++) {
+                name += "_" + lastNames[i];
+            }
+        }
+        return name;
+    }
+    public String getFullName() {
+        return String.format("%s %s", getFirstName(), getSurname());
+    }
 }
