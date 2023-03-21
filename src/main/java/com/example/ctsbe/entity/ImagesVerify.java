@@ -33,8 +33,8 @@ public class ImagesVerify {
     @Column(name = "device_id")
     private Integer deviceId;
 
-    @Size(max = 255)
     @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private FaceStatus status;
 

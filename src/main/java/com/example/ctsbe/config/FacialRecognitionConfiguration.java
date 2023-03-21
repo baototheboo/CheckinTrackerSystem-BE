@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class FacialRecognitionConfiguration {
 
-    @Value("http://localhost:8080")
+    @Value("http://localhost:5001")
     private String facialRecognitionUri;
 
     public String getFacialRecognitionUri() {

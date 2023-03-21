@@ -51,7 +51,7 @@ public class FacialRecognitionClientImpl implements FacialRecognitionClient{
     @Autowired
     private ImageSetupRepository imageSetupRepository;
 
-    @Value("${threshold}")
+    @Value("75")
     private Float threshold;
 
     public FacialRecognitionClientImpl(FacialRecognitionConfiguration facialRecognitionConfiguration) {
@@ -81,7 +81,7 @@ public class FacialRecognitionClientImpl implements FacialRecognitionClient{
         Boolean showMessage = false;
         try {
             String result = restTemplate.postForObject(
-                    facialRecognitionConfiguration.getFacialRecognitionUri() + "/verify-employee",
+                    facialRecognitionConfiguration.getFacialRecognitionUri() + "/verify-staff",
                     imageSetupVggDTO,
                     String.class);
             recognizedStaffDTO = objectMapper.readValue(result, RecognizedStaffDTO.class);
@@ -126,7 +126,7 @@ public class FacialRecognitionClientImpl implements FacialRecognitionClient{
         imageSetupVggDTO.setTimeVerify(timeVerify);
         try {
             String result = restTemplate.postForObject(
-                    facialRecognitionConfiguration.getFacialRecognitionUri() + "/verify-employee",
+                    facialRecognitionConfiguration.getFacialRecognitionUri() + "/verify-staff",
                     imageSetupVggDTO,
                     String.class);
             recognizedStaffDTO = objectMapper.readValue(result, RecognizedStaffDTO.class);

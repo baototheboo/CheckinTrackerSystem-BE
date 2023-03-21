@@ -7,7 +7,6 @@ import com.example.ctsbe.entity.Staff;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 public interface ImageVerifyService {
     void saveImageForSetup(List<String> images, Staff staff);

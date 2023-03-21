@@ -34,7 +34,7 @@ public class DateUtil {
     }
     public static String convertTimeVerifyToString(LocalDate date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss");
-        String dateFormat = date.format(formatter);
+        String dateFormat = date.atStartOfDay().format(formatter);
         return dateFormat;
     }
 }
