@@ -43,8 +43,6 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
     @Value("80")
     private Float threshold;
 
-    @Value("${application.url.image}")
-    private String urlImage;
 
     @Autowired
     private StaffRepository staffRepository;
