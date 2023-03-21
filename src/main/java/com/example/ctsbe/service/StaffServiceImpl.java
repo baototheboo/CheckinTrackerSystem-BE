@@ -77,6 +77,11 @@ public class StaffServiceImpl implements StaffService{
     }
 
     @Override
+    public List<Staff> getListGLAvailable() {
+        return staffRepository.getListGroupLeaderAvailable();
+    }
+
+    @Override
     public Page<Staff> getListStaffByGroup(int groupId,Pageable pageable) {
         return staffRepository.getListStaffByGroup(groupId,pageable);
     }

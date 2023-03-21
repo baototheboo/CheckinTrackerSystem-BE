@@ -18,7 +18,7 @@ import java.time.Instant;
 import java.util.Optional;
 
 @Service
-public class AccountServiceImpl implements AccountService{
+public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private AccountRepository accountRepository;
@@ -39,7 +39,7 @@ public class AccountServiceImpl implements AccountService{
 
     @Override
     public Page<Account> getAccountByUsernameContain(String name, Pageable pageable) {
-        return accountRepository.findByUsernameContaining(name,pageable);
+        return accountRepository.findByUsernameContaining(name, pageable);
     }
 
     @Override
@@ -92,10 +92,10 @@ public class AccountServiceImpl implements AccountService{
     @Override
     public void changeEnableAccount(int id) {
         Account account = accountRepository.getById(id);
-        if(account.getEnable() == 1){
-            account.setEnable((byte)0);
+        if (account.getEnable() == 1) {
+            account.setEnable((byte) 0);
         } else {
-            account.setEnable((byte)1);
+            account.setEnable((byte) 1);
         }
         accountRepository.save(account);
     }
@@ -107,7 +107,6 @@ public class AccountServiceImpl implements AccountService{
 
     private Account convertAccountAddDTOToAccount(AccountAddDTO accountAddDTO) {
         Account account = new Account();
-        account.setStaff(staffService.addStaff(accountAddDTO.getStaffAddDTO()));
         account.setUsername(accountAddDTO.getUsername());
         account.setPassword(passwordEncoder.encode(accountAddDTO.getPassword()));
         account.setRole(roleService.findRoleById(accountAddDTO.getRoleId()));
@@ -115,8 +114,7 @@ public class AccountServiceImpl implements AccountService{
         account.setLastLogin(Instant.now());
         account.setLastUpdated(Instant.now());
         account.setCreatedDate(Instant.now());
-
+        account.setStaff(staffService.addStaff(accountAddDTO.getStaffAddDTO()));
         return account;
-
     }
 }
