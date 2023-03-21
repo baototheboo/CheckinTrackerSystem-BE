@@ -25,4 +25,9 @@ public interface StaffRepository extends JpaRepository<Staff,Integer> {
 
     @Query(value = "select s from Staff s where s.group.id =:groupId")
     Page<Staff> getListStaffByGroup(int groupId,Pageable pageable);
+
+    @Query(value = "select s from Staff s \n" +
+            "where s.id in (select a.staff.id from Account a where a.role.id = 4 and a.enable = 1) \n" +
+            "and s.id not in (select g.groupLeader.id from Group g)")
+    List<Staff> getListGroupLeaderAvailable();
 }
