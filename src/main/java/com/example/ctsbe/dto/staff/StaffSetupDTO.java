@@ -11,13 +11,13 @@ import java.util.UUID;
 @Data
 public class StaffSetupDTO {
     @JsonProperty
-    private int staffId;
+    private Integer staffId;
     @JsonProperty
     private String staffName;
     @JsonProperty
     private List<String> imgs;
 
-    public StaffSetupDTO(int staffId,
+    public StaffSetupDTO(Integer staffId,
                              String staffName,
                              List<String> imgs) {
         this.staffId = staffId;

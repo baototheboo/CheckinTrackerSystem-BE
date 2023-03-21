@@ -9,7 +9,10 @@ import com.example.ctsbe.entity.ImagesVerify;
 import com.example.ctsbe.entity.Staff;
 import com.example.ctsbe.exception.FacialRecognitionIdentifyException;
 import com.example.ctsbe.exception.ValidationException;
+import com.example.ctsbe.repository.ImageSetupRepository;
+import com.example.ctsbe.repository.StaffRepository;
 import com.example.ctsbe.service.ImageVerifyService;
+import com.example.ctsbe.util.DateUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -41,6 +45,14 @@ public class FacialRecognitionClientImpl implements FacialRecognitionClient{
     @Autowired
     private ImageVerifyService imageVerifyService;
 
+    @Autowired
+    private StaffRepository staffRepository;
+
+    @Autowired
+    private ImageSetupRepository imageSetupRepository;
+
+    @Value("${threshold}")
+    private Float threshold;
 
     public FacialRecognitionClientImpl(FacialRecognitionConfiguration facialRecognitionConfiguration) {
         this.facialRecognitionConfiguration = facialRecognitionConfiguration;
@@ -84,33 +96,48 @@ public class FacialRecognitionClientImpl implements FacialRecognitionClient{
         RecognizedStaffDTO recognizedStaffDTOs = this.getRecognisedEmployeeDTOFromFacialRecognition(imageSetupVggDTO);
         String partId = recognizedStaffDTOs.getPartId();
         if (StringUtils.isEmpty(partId)) {
-            logger.error("GG_ERROR_FACIAL_RECOGNITION employeeId was empty");
+            logger.error("GG_ERROR_FACIAL_RECOGNITION staffId was empty");
             throw new FacialRecognitionIdentifyException();
         }
-        UUID employeeId = UUID.fromString(partId);
-        Employee employee = employeeRepository.findByEmployeeId(employeeId);
-        Optional<AccountEmployee> accountEmployeeOptional =
-                accountEmployeeRepository.findByAccount_AccountIdAndEmployee_EmployeeId(accountId, employeeId);
-        if (!accountEmployeeOptional.isPresent()) {
-            logger.error("GG_ERROR_FACIAL_RECOGNITION employeeId does not belong to account {}", accountId);
-            throw new FacialRecognitionIdentifyException();
-        }
-        AccountEmployee accountEmployee = accountEmployeeOptional.get();
-        logger.info("GG_EMPLOYEE_RECOGNISED for account {} with probability {}", accountEmployee.getAccount().getAccountName(), recognizedStaffDTO.getProbability());
+        Integer staffId = Integer.parseInt(partId);
+        Staff staff = staffRepository.findStaffById(staffId);
 
-        if (Boolean.FALSE.equals(employeeService.isProbabilityHigherThanThreshold(recognizedStaffDTO.getProbability()))) {
+        if (Boolean.FALSE.equals(isProbabilityHigherThanThreshold(recognizedStaffDTO.getProbability()))) {
             logger.error("GG_ERROR_FACIAL_RECOGNITION threshold not met. The probability was {}", recognizedStaffDTO.getProbability());
-            showMessage = true;
         }
-        if(employee == null){
-            logger.error("GG_ERROR_FACIAL_RECOGNITION employeeId does not exist {}", employeeId);
+        if(staff == null){
+            logger.error("GG_ERROR_FACIAL_RECOGNITION staffId does not exist {}", staffId);
             throw new FacialRecognitionIdentifyException();
         }
-        StaffVerifyDTO staffVerifyDTO = employeeService.getPunchClockEmployeeDTO(accountEmployee.getAccount(),
-                accountEmployee, currentDateTime, true);
+        StaffVerifyDTO staffVerifyDTO = new StaffVerifyDTO();
+        staffVerifyDTO.setFirstName(staff.getFirstName());
+        staffVerifyDTO.setLastName(staff.getSurname());
         staffVerifyDTO.setProbability(recognizedStaffDTO.getProbability());
-        staffVerifyDTO.setImageVerifyId(verifiedImage != null ? verifiedImage.getImageVerifyId() : null);
-        staffVerifyDTO.setStaffId(employeeId);
+        staffVerifyDTO.setImageVerifyId(verifiedImage != null ? verifiedImage.getId() : null);
+        staffVerifyDTO.setStaffId(staffId);
         return staffVerifyDTO;
+    }
+
+    @Override
+    public RecognizedStaffDTO getRecognisedEmployeeDTOFromFacialRecognition(ImageSetupVggDTO imageSetupVggDTO){
+        RecognizedStaffDTO recognizedStaffDTO;
+        RestTemplate restTemplate = new RestTemplate();
+        String timeVerify = DateUtil.convertTimeVerifyToString(LocalDate.now());
+        imageSetupVggDTO.setTimeVerify(timeVerify);
+        try {
+            String result = restTemplate.postForObject(
+                    facialRecognitionConfiguration.getFacialRecognitionUri() + "/verify-employee",
+                    imageSetupVggDTO,
+                    String.class);
+            recognizedStaffDTO = objectMapper.readValue(result, RecognizedStaffDTO.class);
+        } catch (Exception e) {
+            logger.error("getRecognisedEmployeeDTOFromFacialRecognition(): {}", e.getMessage());
+            throw new FacialRecognitionIdentifyException();
+        }
+        return recognizedStaffDTO;
+    }
+
+    public Boolean isProbabilityHigherThanThreshold(Float probability) {
+        return (threshold <= probability*100);
     }
 }

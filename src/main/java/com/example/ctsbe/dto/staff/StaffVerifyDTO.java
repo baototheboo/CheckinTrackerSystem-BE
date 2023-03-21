@@ -19,7 +19,7 @@ public class StaffVerifyDTO {
     @JsonProperty("showMessage")
     private Boolean showMessage;
     @JsonProperty
-    private int imageVerifyId;
+    private Integer imageVerifyId;
     @JsonProperty
-    private int staffId;
+    private Integer staffId;
 }

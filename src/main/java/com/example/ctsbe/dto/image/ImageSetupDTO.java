@@ -1,27 +1,54 @@
 package com.example.ctsbe.dto.image;
 
+import com.example.ctsbe.entity.ImagesSetup;
+import com.example.ctsbe.entity.Staff;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 @Data
 public class ImageSetupDTO {
     @JsonProperty
-    private UUID imagesSetupId;
+    private Integer imagesSetupId;
     @JsonProperty
     private String image;
     @JsonProperty
     private LocalDateTime timeSetup;
     @JsonProperty
-    private UUID employeeId;
+    private Integer staffId;
     @JsonProperty
-    private String employeeName;
+    private String staffName;
     @JsonProperty
-    private Boolean active;
+    private String status;
     @JsonProperty
     private LocalDateTime createDate;
     @JsonProperty
     private LocalDateTime updatedDate;
+
+    public ImageSetupDTO(String image, LocalDateTime timeSetup, Integer staffId, String staffName, String status,
+                          LocalDateTime createDate, LocalDateTime updatedDate) {
+        this.image = image;
+        this.timeSetup = timeSetup;
+        this.staffId = staffId;
+        this.staffName = staffName;
+        this.status = status;
+        this.createDate = createDate;
+        this.updatedDate = updatedDate;
+    }
+    public ImagesSetup toEntity() {
+        ImagesSetup imagesSetup = new ImagesSetup();
+        imagesSetup.setId(this.getImagesSetupId());
+        imagesSetup.setImage(this.getImage());
+        imagesSetup.setTimeSetup(this.getTimeSetup().toInstant(ZoneOffset.UTC));
+        imagesSetup.setStatus(this.getStatus());
+        Staff staff = new Staff();
+        staff.setId(this.getStaffId());
+        imagesSetup.setStaff(staff);
+        imagesSetup.setCreatedDate(this.getCreateDate().toInstant(ZoneOffset.UTC));
+        imagesSetup.setLastUpdated(this.getUpdatedDate().toInstant(ZoneOffset.UTC));
+        return imagesSetup;
+    }
 }

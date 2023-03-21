@@ -1,10 +1,17 @@
 package com.example.ctsbe.service;
 
+import com.example.ctsbe.dto.image.ImageSetupDTO;
+import com.example.ctsbe.dto.image.ImageVerifyDTO;
 import com.example.ctsbe.dto.staff.RecognizedStaffDTO;
 import com.example.ctsbe.dto.staff.StaffSetupDTO;
 import com.example.ctsbe.dto.vgg.ImageSetupVggDTO;
+import com.example.ctsbe.entity.ImagesSetup;
 import com.example.ctsbe.entity.ImagesVerify;
 import com.example.ctsbe.entity.Staff;
+import com.example.ctsbe.enums.FaceStatus;
+import com.example.ctsbe.repository.ImageSetupRepository;
+import com.example.ctsbe.repository.ImageVerifyRepository;
+import com.example.ctsbe.repository.StaffRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,6 +25,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -37,6 +46,14 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
     @Value("${application.url.image}")
     private String urlImage;
 
+    @Autowired
+    private StaffRepository staffRepository;
+
+    @Autowired
+    private ImageSetupRepository imageSetupRepository;
+
+    @Autowired
+    private ImageVerifyRepository imageVerifyRepository;
 
     private static String errorPath = "/error-by-date/";
 
@@ -54,11 +71,28 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
 
     @Override
     public ImagesVerify saveImageForVerify(ImageSetupVggDTO imageSetupVggDTO, LocalDateTime localDateTime, RecognizedStaffDTO recognizedStaffDTO) {
-        return null;
+        String fullName = "";
+        Float probability = 0F;
+        Integer staffId = null;
+        if (recognizedStaffDTO != null
+                && !StringUtils.isEmpty(recognizedStaffDTO.getPartId())) {
+            staffId = Integer.parseInt(recognizedStaffDTO.getPartId());
+            Staff staff = staffRepository.findStaffById(staffId);
+            fullName = staff != null ? staff.getFullName().trim().replace(" ", "_") : "";
+            probability = recognizedStaffDTO.getProbability();
+        }
+
+        String today = LocalDate.now().toString();
+        String relativePath = (probability != 0F ? successPath : errorPath) + today + "/";
+        if (CollectionUtils.isEmpty(imageSetupVggDTO.getImgs())) {
+            return null;
+        }
+        return saveImageToFolder(imageSetupVggDTO.getImgs(), relativePath,
+                localDateTime, fullName, probability, staffId, false);
     }
 
     @Override
-    public ImagesVerify saveImageToFolder(List<String> images, String relativePath, LocalDateTime localDateTime, String fullName, Float probability, Integer staffId, Boolean setupEmployeeImage) {
+    public ImagesVerify saveImageToFolder(List<String> images, String relativePath, LocalDateTime localDateTime, String fullName, Float probability, Integer staffId, Boolean setupStaffImage) {
         String absolutePath = imagePath + relativePath;
         try {
             if (!Files.exists(Paths.get(absolutePath))) {
@@ -67,11 +101,11 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        List<ImagesSetupDTO> imagesSetupDTOS = new ArrayList<>();
+        List<ImageSetupDTO> imageSetupDTOs = new ArrayList<>();
         List<ImageVerifyDTO> imageVerifyDTOList = new ArrayList<>();
         for (String image : images) {
             byte[] data = Base64.getMimeDecoder().decode(image);
-            //localDateTime = localDateTime.plusSeconds(10);
+            localDateTime = localDateTime.plusSeconds(10);
             String strDate = localDateTime.toString().replace(":", "_");
             String fileName = fullName + "_" + strDate + "_" + (probability != null ? probability.toString() : "") + ".jpg";
             try {
@@ -79,53 +113,40 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
                 fos.write(data);
                 Path pathImages = Paths.get(relativePath + fileName);
                 if (probability != null) {
-                    ClockDevice clockDevice = commonService.getCurrentClockDevice();
-                    UUID clockDeviceId = null;
-                    if (clockDevice != null) {
-                        clockDeviceId = clockDevice.getId();
-                    }
-                    ClockStatus status = (probability * 100) == 0 ? ClockStatus.FAIL : (probability * 100) >= threshold ? ClockStatus.APPROVED : ClockStatus.PENDING;
-                    FacialRecognitionStatus setupStatus = FacialRecognitionStatus.PENDING;
-                    UUID actualEmployeeId = (!StringUtils.isEmpty(fullName) && status == ClockStatus.APPROVED) ? employeeId : null;
-                    ImageVerifyDTO imageVerifyDTO = new ImageVerifyDTO.Builder()
-                            .withName(fullName.replace("_", " "))
-                            .withImage(pathImages.toString())
-                            .withTimeVerify(localDateTime)
-                            .withProbability(probability.doubleValue())
-                            .withRecognizeEmployeeId(employeeId)
-                            .withActualEmployeeId(actualEmployeeId)
-                            .withClockStatus(status)
-                            .withSetupStatus(setupStatus)
-                            .widthRecognizeEmotion(emotion)
-                            .withClockDeviceId(clockDeviceId)
-                            .withImageDisplayed(true)
-                            .build();
+                    FaceStatus status = (probability * 100) == 0 ? FaceStatus.FAIL : (probability * 100) >= threshold ? FaceStatus.APPROVED : FaceStatus.PENDING;
+                    ImageVerifyDTO imageVerifyDTO = new ImageVerifyDTO();
+                    imageVerifyDTO.setName(fullName.replace("_", " "));
+                    imageVerifyDTO.setImage(pathImages.toString());
+                    imageVerifyDTO.setTimeVerify(localDateTime);
+                    imageVerifyDTO.setProbability(probability.doubleValue());
+                    imageVerifyDTO.setRecognizeStaffId(staffId);
+                    imageVerifyDTO.setStatus(status);
                     imageVerifyDTOList.add(imageVerifyDTO);
                 }
                 String path = pathImages.toString().replace("\\", "/");
-                ImagesSetupDTO imagesSetupDTO = new ImagesSetupDTO(path, localDateTime, employeeId, fullName, true, LocalDateTime.now(), LocalDateTime.now());
-                imagesSetupDTOS.add(imagesSetupDTO);
+                ImageSetupDTO imageSetupDTO = new ImageSetupDTO(path, localDateTime, staffId, fullName, "OK", LocalDateTime.now(), LocalDateTime.now());
+                imageSetupDTOs.add(imageSetupDTO);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        if (setupEmployeeImage) {
-            Employee employee = employeeRepository.findByEmployeeId(employeeId);
-            List<ImagesSetup> imagesSetups = imagesSetupDTOS.stream().map(ImagesSetupDTO::toEntity).collect(Collectors.toList());
+        if (setupStaffImage) {
+            Staff staff = staffRepository.findStaffById(staffId);
+            List<ImagesSetup> imagesSetups = imageSetupDTOs.stream().map(ImageSetupDTO::toEntity).collect(Collectors.toList());
             for (ImagesSetup imagesSetup : imagesSetups) {
-                imagesSetupRepository.save(imagesSetup);
+                imageSetupRepository.save(imagesSetup);
             }
-            employee.setLastTrainedTime(LocalDateTime.now());
-            employeeRepository.save(employee);
+            staff.setLastTrainedTime(Instant.now());
+            staffRepository.save(staff);
         }
         if (CollectionUtils.isEmpty(imageVerifyDTOList)) {
             return null;
         }
-        List<ImageVerify> imageVerifies = imageVerifyDTOList.stream()
+        List<ImagesVerify> imageVerifies = imageVerifyDTOList.stream()
                 .map(ImageVerifyDTO::toEntity).collect(Collectors.toList());
-        imageVerifyRepository.saveAll(imageVerifies);
+                imageVerifyRepository.saveAll(imageVerifies);
         return imageVerifies.get(0);
     }
 }
