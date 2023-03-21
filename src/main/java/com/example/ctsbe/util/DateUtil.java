@@ -5,8 +5,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class DateUtil {
+
     public LocalDate convertStringToLocalDate(String date){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(date,formatter);
@@ -29,5 +31,10 @@ public class DateUtil {
         DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT;
         String dateFormat = formatter.format(date);
         return dateFormat.substring(0,10);
+    }
+    public static String convertTimeVerifyToString(LocalDate date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss");
+        String dateFormat = date.format(formatter);
+        return dateFormat;
     }
 }

@@ -1,5 +1,7 @@
 package com.example.ctsbe.entity;
 
+import com.example.ctsbe.enums.FaceStatus;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -23,7 +25,7 @@ public class ImagesVerify {
     private Instant timeVerify;
 
     @Column(name = "probability", precision = 2, scale = 2)
-    private BigDecimal probability;
+    private Double probability;
 
     @Column(name = "recognize_staff_id")
     private Integer recognizeStaffId;
@@ -34,7 +36,7 @@ public class ImagesVerify {
     @Size(max = 255)
     @NotNull
     @Column(name = "status", nullable = false)
-    private String status;
+    private FaceStatus status;
 
     public Integer getId() {
         return id;
@@ -60,11 +62,11 @@ public class ImagesVerify {
         this.timeVerify = timeVerify;
     }
 
-    public BigDecimal getProbability() {
+    public Double getProbability() {
         return probability;
     }
 
-    public void setProbability(BigDecimal probability) {
+    public void setProbability(Double probability) {
         this.probability = probability;
     }
 
@@ -84,11 +86,11 @@ public class ImagesVerify {
         this.deviceId = deviceId;
     }
 
-    public String getStatus() {
+    public FaceStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(FaceStatus status) {
         this.status = status;
     }
 
