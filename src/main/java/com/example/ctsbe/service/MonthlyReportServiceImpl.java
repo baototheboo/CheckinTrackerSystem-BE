@@ -18,4 +18,9 @@ public class MonthlyReportServiceImpl implements MonthlyReportService{
     public Page<MonthlyReport> getListByIdAndMonthYear(int staffId, String monthYear, Pageable pageable) {
         return monthlyReportRepository.getListReportByIdAndMonthYear(staffId, monthYear,pageable);
     }
+
+    @Override
+    public Page<MonthlyReport> getListByMonthYear(String monthYear, Pageable pageable) {
+        return monthlyReportRepository.getListReportByMonthYear(monthYear, pageable);
+    }
 }

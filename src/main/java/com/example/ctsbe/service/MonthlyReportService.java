@@ -10,4 +10,6 @@ import java.util.List;
 
 public interface MonthlyReportService {
     Page<MonthlyReport> getListByIdAndMonthYear(int staffId, String monthYear, Pageable pageable);
+
+    Page<MonthlyReport> getListByMonthYear(String monthYear, Pageable pageable);
 }

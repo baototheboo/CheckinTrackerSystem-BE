@@ -5,15 +5,16 @@ import com.example.ctsbe.entity.MonthlyReport;
 import com.example.ctsbe.util.DateUtil;
 
 public class MonthlyReportMapper {
-    public MonthlyReportDTO convertEntityToDto(MonthlyReport monthlyReport){
+    public static MonthlyReportDTO convertEntityToDto(MonthlyReport monthlyReport){
         MonthlyReportDTO dto = new MonthlyReportDTO();
         DateUtil util = new DateUtil();
         dto.setStaffName(monthlyReport.getStaff().getSurname()
                 +" "+ monthlyReport.getStaff().getFirstName());
         dto.setMonthAndYear(util.convertLocalDateToMonthAndYear(monthlyReport.getMonth()));
-        dto.setActiveDay(dto.getActiveDay());
-        dto.setLateDay(dto.getLateDay());
-        dto.setOffDay(dto.getOffDay());
+        dto.setActiveDay(monthlyReport.getActiveDay());
+        dto.setLateDay(monthlyReport.getLateDay());
+        dto.setOffDay(monthlyReport.getOffDay());
+        dto.setWorkingHour(monthlyReport.getWorkingHour());
         return dto;
     }
 }
