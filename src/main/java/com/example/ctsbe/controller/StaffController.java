@@ -105,6 +105,22 @@ public class StaffController {
         }
     }
 
+    @GetMapping("/getListStaffAvailableAddToGroup")
+    public ResponseEntity<Map<String, Object>> getListStaffAvailableAddToGroup(){
+        try{
+            List<Staff> list= staffService.getListStaffAddToGroup();
+            List<StaffAvailableDTO> listDto = list.stream().
+                    map(StaffMapper::convertStaffToStaffAvailableDto).collect(Collectors.toList());
+            Map<String, Object> response = new HashMap<>();
+            response.put("list", listDto);
+            return new ResponseEntity<>(response,HttpStatus.OK);
+        }catch (Exception e){
+            Map<String, Object> response = new HashMap<>();
+            response.put("exception", e.getMessage());
+            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping("/getListPMAvailable")
     public ResponseEntity<Map<String, Object>> getListPMAvailable(){
         try{

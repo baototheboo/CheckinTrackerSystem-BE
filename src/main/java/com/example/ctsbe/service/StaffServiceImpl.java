@@ -66,6 +66,12 @@ public class StaffServiceImpl implements StaffService{
         }
         return staffList;
     }
+
+    @Override
+    public List<Staff> getListStaffAddToGroup() {
+        return staffRepository.getListStaffAvailableAddToGroup();
+    }
+
     @Override
     public List<Staff> getListPMAvailable(int role) {
         List<Staff> staffList = new ArrayList<>();
