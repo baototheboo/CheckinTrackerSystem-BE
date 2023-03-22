@@ -16,8 +16,8 @@ public class CtsBeApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(CtsBeApplication.class, args);
-        /*StringUtil util = new StringUtil();
-        System.out.println(util.cutStringRole("ROLE_HUMAN RESOURCE"));*/
+        /*DateUtil util = new DateUtil();
+        System.out.println(util.convertLocalDateToMonthAndYear(util.convertStringToLocalDate("2023-03-01")));*/
     }
 
 }
