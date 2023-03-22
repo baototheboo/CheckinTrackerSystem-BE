@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 
 @Slf4j
 @RestController
@@ -34,9 +35,9 @@ public class CheckInController {
     public ResponseEntity<StaffVerifyDTO> verifyEmployeeByFacialRecognition(@Valid @RequestBody ImageVerifyVggDTO imageVerifyVggDTO) {
 
         logger.info("verifyEmployeeByFacialRecognition()");
-
+        LocalDateTime currentDateTime = LocalDateTime.now();
         StaffVerifyDTO staffVerifyDTO =
-                facialRecognition.verifyStaffByFacialRecognition(imageVerifyVggDTO.getCurrentDateTime(), imageVerifyVggDTO.getImageSetupDTO());
+                facialRecognition.verifyStaffByFacialRecognition(currentDateTime, imageVerifyVggDTO.getImageSetupDTO());
 
         return new ResponseEntity<>(staffVerifyDTO, HttpStatus.OK);
     }
