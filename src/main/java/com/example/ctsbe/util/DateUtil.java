@@ -18,4 +18,10 @@ public class DateUtil {
         String dateFormat = date.format(formatter);
         return dateFormat;
     }
+
+    public String convertLocalDateToMonthAndYear(LocalDate date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+        String dateFormat = date.format(formatter);
+        return dateFormat;
+    }
 }
