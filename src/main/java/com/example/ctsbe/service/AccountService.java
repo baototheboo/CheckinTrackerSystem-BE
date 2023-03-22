@@ -24,6 +24,8 @@ public interface AccountService {
 
     Account getAccountById(int id);
 
+    Account getAccountByUsername(String username);
+
     void updateAccount(int id, ProfileUpdateDTO dto);
 
     AccountUpdateDTO resetPassword(int id);

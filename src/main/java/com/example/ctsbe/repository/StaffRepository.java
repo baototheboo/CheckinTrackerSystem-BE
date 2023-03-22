@@ -14,6 +14,12 @@ import java.util.List;
 public interface StaffRepository extends JpaRepository<Staff,Integer> {
     Page<Staff> findBySurnameContainingOrFirstNameContaining(String surname,String firstname, Pageable pageable);
 
+    @Query(value = "select s from Staff s where s.group.id is null")
+    List<Staff> get();
+
+    @Query(value = "select a.staff from Account a where a.role.id = 5 and a.staff.group.id is null")
+    List<Staff> getListStaffAvailableAddToGroup();
+
     @Query(value = "SELECT s \n" +
             "FROM Staff s \n" +
             "WHERE s.id NOT IN \n" +

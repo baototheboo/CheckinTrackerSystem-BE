@@ -2,6 +2,7 @@ package com.example.ctsbe.entity;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "monthly_report")
@@ -16,7 +17,7 @@ public class MonthlyReport {
     private Staff staff;
 
     @Column(name = "month")
-    private Instant month;
+    private LocalDate month;
 
     @Column(name = "active_day")
     private Integer activeDay;
@@ -49,11 +50,11 @@ public class MonthlyReport {
         this.staff = staff;
     }
 
-    public Instant getMonth() {
+    public LocalDate getMonth() {
         return month;
     }
 
-    public void setMonth(Instant month) {
+    public void setMonth(LocalDate month) {
         this.month = month;
     }
 

@@ -1,8 +1,10 @@
 package com.example.ctsbe.controller;
 
 import com.example.ctsbe.dto.group.GroupDTO;
+import com.example.ctsbe.dto.group.GroupRemoveStaffDTO;
 import com.example.ctsbe.dto.group.GroupUpdateDTO;
 import com.example.ctsbe.dto.staff.StaffDTO;
+import com.example.ctsbe.dto.staffProject.StaffProjectAddDTO;
 import com.example.ctsbe.entity.Group;
 import com.example.ctsbe.entity.Staff;
 import com.example.ctsbe.mapper.GroupMapper;
@@ -115,6 +117,27 @@ public class GroupController {
             groupService.deleteGroup(id);
             return new ResponseEntity<>("Delete successfully", HttpStatus.OK);
         } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/addStaffToGroup")
+    //@RolesAllowed("ROLE_PROJECT MANAGER")
+    public ResponseEntity<?> addStaffToGroup(@RequestBody StaffProjectAddDTO dto) {
+        try {
+            groupService.addStaffToGroup(dto);
+            return new ResponseEntity<>("Add staff to the group successfully", HttpStatus.OK);
+        }catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/removeStaffFromGroup")
+    public ResponseEntity<?> removeStaffFromGroup(@RequestBody GroupRemoveStaffDTO dto) {
+        try {
+            groupService.removeStaffFromGroup(dto);
+            return new ResponseEntity<>("Remove successfully", HttpStatus.OK);
+        }catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

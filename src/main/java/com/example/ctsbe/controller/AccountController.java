@@ -122,11 +122,11 @@ public class AccountController {
         }
     }
 
-    @GetMapping("/getProfile")
-    public ResponseEntity<?> getProfile() {
+    @GetMapping("/getProfile/{username}")
+    public ResponseEntity<?> getProfile(@PathVariable("username") String username) {
         try {
-            int id = getIdFromToken();
-            Account account = accountService.getAccountById(id);
+            //int id = getIdFromToken();
+            Account account = accountService.getAccountByUsername(username);
             ProfileDTO dto = AccountMapper.convertAccountToProfile(account);
             return new ResponseEntity<>(dto, HttpStatus.OK);
         } catch (Exception e) {
