@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 
 @Data
@@ -35,7 +36,7 @@ public class ImageVerifyDTO {
         ImagesVerify imagesVerify = new ImagesVerify();
         imagesVerify.setImage(this.getImage());
         imagesVerify.setProbability(this.getProbability());
-        imagesVerify.setTimeVerify(this.getTimeVerify().toInstant(ZoneOffset.UTC));
+        imagesVerify.setTimeVerify(this.getTimeVerify().atZone(ZoneId.of("Asia/Ho_Chi_Minh")).toInstant());
         imagesVerify.setRecognizeStaffId(this.getRecognizeStaffId());
         imagesVerify.setStatus(this.getStatus());
         return imagesVerify;

@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 public class ImageVerifyVggDTO {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @JsonProperty
-    @NotNull
     private LocalDateTime currentDateTime;
 
     @JsonProperty
