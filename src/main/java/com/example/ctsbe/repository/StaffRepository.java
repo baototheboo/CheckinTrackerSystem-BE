@@ -11,11 +11,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface StaffRepository extends JpaRepository<Staff,Integer> {
-    Page<Staff> findBySurnameContainingOrFirstNameContaining(String surname,String firstname, Pageable pageable);
+public interface StaffRepository extends JpaRepository<Staff, Integer> {
+    Page<Staff> findBySurnameContainingOrFirstNameContaining(String surname, String firstname, Pageable pageable);
 
-    @Query(value = "select s from Staff s where s.group.id is null")
-    List<Staff> get();
+    Staff findByEmail(String email);
 
     @Query(value = "select a.staff from Account a where a.role.id = 5 and a.staff.group.id is null")
     List<Staff> getListStaffAvailableAddToGroup();
@@ -26,11 +25,12 @@ public interface StaffRepository extends JpaRepository<Staff,Integer> {
             "    (SELECT sp.staff.id \n" +
             "     FROM StaffProject sp JOIN Project p ON sp.project.id = p.id \n" +
             "     WHERE p.status = 'processing') \n " +
-            "AND s.id IN (SELECT a.staff.id FROM Account a WHERE a.enable = 1)")
-    List<Staff> getAvailableStaff();
+            "AND s.id IN (SELECT a.staff.id FROM Account a WHERE a.enable = 1) \n" +
+            "AND s.group.id =:groupId")
+    List<Staff> getAvailableStaffAddToProject(int groupId);
 
     @Query(value = "select s from Staff s where s.group.id =:groupId")
-    Page<Staff> getListStaffByGroup(int groupId,Pageable pageable);
+    Page<Staff> getListStaffByGroup(int groupId, Pageable pageable);
 
     @Query(value = "select s from Staff s \n" +
             "where s.id in (select a.staff.id from Account a where a.role.id = 4 and a.enable = 1) \n" +

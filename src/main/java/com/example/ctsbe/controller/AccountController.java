@@ -2,10 +2,15 @@ package com.example.ctsbe.controller;
 
 
 import com.example.ctsbe.dto.account.*;
+import com.example.ctsbe.dto.project.ProjectInProfileDTO;
 import com.example.ctsbe.entity.Account;
+import com.example.ctsbe.entity.Project;
 import com.example.ctsbe.filter.JwtTokenFilter;
 import com.example.ctsbe.mapper.AccountMapper;
+import com.example.ctsbe.mapper.ProjectMapper;
 import com.example.ctsbe.service.AccountService;
+import com.example.ctsbe.service.StaffProjectService;
+import com.example.ctsbe.service.StaffService;
 import com.example.ctsbe.util.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,20 +36,28 @@ import java.util.stream.Collectors;
 @RequestMapping("/accounts")
 @CrossOrigin(origins = "*")
 public class AccountController {
-
     @Autowired
     private AccountService accountService;
-
+    @Autowired
+    private StaffService staffService;
+    @Autowired
+    private StaffProjectService staffProjectService;
     @Autowired
     private HttpServletRequest request;
-
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/addAccount")
     public ResponseEntity<?> addAccount(@Valid @RequestBody AccountAddDTO dto) {
         try {
-            accountService.addAccount(dto);
+            if (accountService.getAccountByUsername(dto.getUsername()) != null){
+                throw new Exception("Tên đăng nhập này đã tồn tại!");
+            }
+            else if (staffService.findStaffByEmail(dto.getStaffAddDTO().getEmail()) != null){
+                throw new Exception("Email này đã được đăng kí!");
+            }else {
+                accountService.addAccount(dto);
+            }
             return new ResponseEntity<>("Add account " + dto.getUsername() + " successfully", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -128,6 +141,10 @@ public class AccountController {
             //int id = getIdFromToken();
             Account account = accountService.getAccountByUsername(username);
             ProfileDTO dto = AccountMapper.convertAccountToProfile(account);
+            List<Project> list = staffProjectService.getListProjectInProfile(account.getStaff().getId());
+            List<ProjectInProfileDTO> listDto = list.stream().
+                    map(ProjectMapper::convertProjectToProjectProfileDto).collect(Collectors.toList());
+            dto.setListProject(listDto);
             return new ResponseEntity<>(dto, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

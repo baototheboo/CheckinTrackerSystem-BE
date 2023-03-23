@@ -24,4 +24,10 @@ public class DateUtil {
         String dateFormat = date.format(formatter);
         return dateFormat;
     }
+
+    public String convertInstantToStringYearMonthDay(Instant date){
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT;
+        String dateFormat = formatter.format(date);
+        return dateFormat.substring(0,10);
+    }
 }

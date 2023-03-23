@@ -7,10 +7,14 @@ import com.example.ctsbe.entity.StaffProject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface StaffProjectService {
     void addStaffToProject(StaffProjectAddDTO dto);
 
     void removeStaffFromProject(StaffProjectAddDTO dto);
 
     Page<StaffProject> getAllStaffInProject(Project project, Pageable pageable);
+
+    List<Project> getListProjectInProfile(int staffId);
 }

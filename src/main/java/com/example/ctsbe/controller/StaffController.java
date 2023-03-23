@@ -89,10 +89,10 @@ public class StaffController {
         }
     }
 
-    @GetMapping("/getAvailableStaff")
-    public ResponseEntity<Map<String, Object>> getAvailableStaff(){
+    @GetMapping("/getAvailableStaff/{groupId}")
+    public ResponseEntity<Map<String, Object>> getAvailableStaff(@PathVariable("groupId") int groupId){
         try{
-            List<Staff> list= staffService.getListAvailableStaff();
+            List<Staff> list= staffService.getListAvailableStaff(groupId);
             List<StaffAvailableDTO> listDto = list.stream().
                     map(StaffMapper::convertStaffToStaffAvailableDto).collect(Collectors.toList());
             Map<String, Object> response = new HashMap<>();

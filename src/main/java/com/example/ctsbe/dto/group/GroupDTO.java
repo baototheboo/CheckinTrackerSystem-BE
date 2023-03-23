@@ -11,4 +11,5 @@ public class GroupDTO {
     private Integer id;
     private String groupName;
     private String groupLeaderName;
+    private Integer groupLeaderId;
 }
