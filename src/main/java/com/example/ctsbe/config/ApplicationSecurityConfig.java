@@ -53,7 +53,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                         , "/accounts/resetPassword/*"
                         , "/accounts/getAllAccount"
                         , "/accounts/changeEnableAccount/*"
-                        , "/accounts/updateAccount/*"
+                        //, "/accounts/updateAccount/*"
                         , "/accounts/getProfile/*"
                         , "/staffs/*"
                         , "/staffs/*/*"

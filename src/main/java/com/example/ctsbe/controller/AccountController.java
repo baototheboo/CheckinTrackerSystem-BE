@@ -67,10 +67,9 @@ public class AccountController {
     @PutMapping("/updateAccount/{id}")
     public ResponseEntity<?> updateAccount(@PathVariable("id") int id, @RequestBody ProfileUpdateDTO dto) {
         try {
-            //int tokenId = getIdFromToken();
-            //if(tokenId != id) throw new AccessDeniedException("You are not authorized to access this resource");
-            //else
-                accountService.updateAccount(id, dto);
+            int tokenId = getIdFromToken();
+            if(tokenId != id) throw new AccessDeniedException("You are not authorized to access this resource");
+            else accountService.updateAccount(id, dto);
             return new ResponseEntity<>("Update account successfully!", HttpStatus.OK);
         } catch (AccessDeniedException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
