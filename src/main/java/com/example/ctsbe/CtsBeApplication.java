@@ -9,6 +9,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
+import java.time.Instant;
+
 
 @SpringBootApplication()
 public class CtsBeApplication {
@@ -16,8 +18,8 @@ public class CtsBeApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(CtsBeApplication.class, args);
-        /*DateUtil util = new DateUtil();
-        System.out.println(util.convertLocalDateToMonthAndYear(util.convertStringToLocalDate("2023-03-01")));*/
+        //DateUtil util = new DateUtil();
+        //System.out.println(util.convertInstantToString(Instant.now()));
     }
 
 }

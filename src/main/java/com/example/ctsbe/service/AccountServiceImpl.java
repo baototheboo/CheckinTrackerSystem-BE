@@ -80,10 +80,10 @@ public class AccountServiceImpl implements AccountService {
     public void updateAccount(int id, ProfileUpdateDTO dto) {
         Account account = accountRepository.getById(id);
         DateUtil util = new DateUtil();
-        account.setUsername(dto.getUsername());
+        //account.setUsername(dto.getUsername());
         account.getStaff().setSurname(dto.getSurname());
         account.getStaff().setFirstName(dto.getFirstName());
-        account.getStaff().setEmail(dto.getEmail());
+        //account.getStaff().setEmail(dto.getEmail());
         account.getStaff().setDateOfBirth(util.convertStringToLocalDate(dto.getDateOfBirth()));
         account.getStaff().setPhone(dto.getPhone());
         account.setLastUpdated(Instant.now());

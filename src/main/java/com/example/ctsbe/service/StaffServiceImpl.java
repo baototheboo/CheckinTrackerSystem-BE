@@ -45,6 +45,11 @@ public class StaffServiceImpl implements StaffService{
     }
 
     @Override
+    public Staff findStaffByEmail(String email) {
+        return staffRepository.findByEmail(email);
+    }
+
+    @Override
     public void changePromotionLevel(int staffId,int levelId) {
         Staff staff = staffRepository.getById(staffId);
         staff.setPromotionLevel(promotionLevelService.getPromotionLevelById(levelId));
@@ -53,8 +58,8 @@ public class StaffServiceImpl implements StaffService{
     }
 
     @Override
-    public List<Staff> getListAvailableStaff() {
-        return staffRepository.getAvailableStaff();
+    public List<Staff> getListAvailableStaff(int groupId) {
+        return staffRepository.getAvailableStaffAddToProject(groupId);
     }
 
     @Override

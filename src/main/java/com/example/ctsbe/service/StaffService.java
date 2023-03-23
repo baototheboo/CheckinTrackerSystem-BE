@@ -15,10 +15,11 @@ public interface StaffService {
 
     Page<Staff> getStaffByName(String surname,String firstname, Pageable pageable);
 
+    Staff findStaffByEmail(String email);
 
     void changePromotionLevel(int staffId,int levelId);
 
-    List<Staff> getListAvailableStaff();
+    List<Staff> getListAvailableStaff(int groupId);
 
     List<Staff> getStaffsByRole(int role);
 

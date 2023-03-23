@@ -55,4 +55,9 @@ public class StaffProjectServiceImpl implements StaffProjectService {
     public Page<StaffProject> getAllStaffInProject(Project project, Pageable pageable) {
         return repository.findByProject(project, pageable);
     }
+
+    @Override
+    public List<Project> getListProjectInProfile(int staffId) {
+        return repository.getListProjectByStaffId(staffId);
+    }
 }
