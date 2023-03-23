@@ -51,7 +51,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/auth/login"
                         , "/accounts/addAccount"
                         , "/accounts/resetPassword/*"
-                        , "/accounts/getAllAccount"
+                        //, "/accounts/getAllAccount"
                         , "/accounts/changeEnableAccount/*"
                         //, "/accounts/updateAccount/*"
                         , "/accounts/getProfile/*"
