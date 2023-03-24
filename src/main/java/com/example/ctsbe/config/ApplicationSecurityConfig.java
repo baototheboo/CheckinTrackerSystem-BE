@@ -16,8 +16,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 
 @EnableWebSecurity(debug = true)
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
@@ -51,7 +54,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/auth/login"
                         , "/accounts/addAccount"
                         , "/accounts/resetPassword/*"
-                        , "/accounts/getAllAccount"
+                        //, "/accounts/getAllAccount"
                         , "/accounts/changeEnableAccount/*"
                         //, "/accounts/updateAccount/*"
                         , "/accounts/getProfile/*"
@@ -77,6 +80,13 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                             );
                         }
                 );
+
+        http.cors().configurationSource(request -> {
+            final CorsConfiguration cors = new CorsConfiguration();
+            cors.setAllowedOrigins(Arrays.asList("http://localhost:3000","https://cts-backend.azurewebsites.net"));
+            cors.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
+            return cors;
+        });
 
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
