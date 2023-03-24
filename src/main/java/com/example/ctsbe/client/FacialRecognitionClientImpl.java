@@ -61,7 +61,6 @@ public class FacialRecognitionClientImpl implements FacialRecognitionClient{
     @Override
     public String setupStaffForFacialRecognition(Staff staff, List<String> imgs) {
         RestTemplate restTemplate = new RestTemplate();
-        Long secondsTime = (new Date().getTime())/1000;
         try {
             return restTemplate.postForObject(
                     facialRecognitionConfiguration.getFacialRecognitionUri() + "/setup-staff",

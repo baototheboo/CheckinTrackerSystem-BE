@@ -2,9 +2,15 @@ package com.example.ctsbe.controller;
 
 
 import com.example.ctsbe.client.FacialRecognitionClient;
+import com.example.ctsbe.dto.vgg.ImageSetupVggDTO;
 import com.example.ctsbe.dto.vgg.ImageVerifyVggDTO;
 import com.example.ctsbe.dto.staff.StaffVerifyDTO;
+import com.example.ctsbe.entity.Staff;
+import com.example.ctsbe.enums.FacialRecognitionStatus;
+import com.example.ctsbe.exception.SetupEmployeeFacialRecognitionException;
+import com.example.ctsbe.repository.StaffRepository;
 import com.example.ctsbe.service.AccountService;
+import com.example.ctsbe.service.ImageVerifyService;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +21,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -25,10 +34,13 @@ public class CheckInController {
     private static final Logger logger = LoggerFactory.getLogger(CheckInController.class);
 
     @Autowired
-    private AccountService accountService;
+    private StaffRepository staffRepository;
 
     @Autowired
     private FacialRecognitionClient facialRecognition;
+
+    @Autowired
+    private ImageVerifyService imageVerifyService;
 
 
     @PostMapping("/facial-recognition/verify")
@@ -40,6 +52,26 @@ public class CheckInController {
                 facialRecognition.verifyStaffByFacialRecognition(currentDateTime, imageVerifyVggDTO.getImageSetupDTO());
 
         return new ResponseEntity<>(staffVerifyDTO, HttpStatus.OK);
+    }
+
+    @PostMapping("/{staffId}/facial-recognition/setup")
+    public ResponseEntity<String> setupEmployeeForFacialRecognition(@PathVariable String staffId,
+                                                                    @Valid @RequestBody ImageSetupVggDTO imageSetupVggDTO) {
+
+        Staff staff = staffRepository.findStaffById(Integer.parseInt(staffId));
+
+//        List<FacialRecognitionStatus> facialRecognitionStatuses =
+//                Arrays.asList(FacialRecognitionStatus.PENDING, FacialRecognitionStatus.TRAINED);
+//
+//        if (facialRecognitionStatuses.contains(staff.getFacialRecognitionStatus())) {
+//            throw new SetupEmployeeFacialRecognitionException(staffId);
+//        }
+        String result = facialRecognition.setupStaffForFacialRecognition(staff, imageSetupVggDTO.getImgs());
+        if (result.equals("OK")) {
+            imageVerifyService.saveImageForSetup(imageSetupVggDTO.getImgs(), staff);
+        }
+//        employeeService.updateFacialRecognitionStatus(accountEmployee.getEmployee(), FacialRecognitionStatus.PENDING);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 
