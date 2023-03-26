@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -71,6 +72,11 @@ public class ProjectServiceImpl implements ProjectService {
         }
         project.setLastUpdated(Instant.now());
         projectRepository.save(project);
+    }
+
+    @Override
+    public List<Project> getListProjectByGroupId(int groupId) {
+        return projectRepository.getListProjectByGroupId(groupId);
     }
 
 }

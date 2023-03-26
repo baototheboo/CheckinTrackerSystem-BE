@@ -1,15 +1,20 @@
 package com.example.ctsbe.controller;
 
 import com.example.ctsbe.dto.group.GroupDTO;
+import com.example.ctsbe.dto.group.GroupDetailDTO;
 import com.example.ctsbe.dto.group.GroupRemoveStaffDTO;
 import com.example.ctsbe.dto.group.GroupUpdateDTO;
+import com.example.ctsbe.dto.project.ProjectInProfileDTO;
 import com.example.ctsbe.dto.staff.StaffDTO;
 import com.example.ctsbe.dto.staffProject.StaffProjectAddDTO;
 import com.example.ctsbe.entity.Group;
+import com.example.ctsbe.entity.Project;
 import com.example.ctsbe.entity.Staff;
 import com.example.ctsbe.mapper.GroupMapper;
+import com.example.ctsbe.mapper.ProjectMapper;
 import com.example.ctsbe.mapper.StaffMapper;
 import com.example.ctsbe.service.GroupService;
+import com.example.ctsbe.service.ProjectService;
 import com.example.ctsbe.service.StaffService;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +41,8 @@ public class GroupController {
     private GroupService groupService;
     @Autowired
     private StaffService staffService;
+    @Autowired
+    private ProjectService projectService;
 
     @GetMapping("/getAllGroups")
     public ResponseEntity<Map<String, Object>> getAllGroups(@RequestParam(defaultValue = "1") int page
@@ -86,6 +93,21 @@ public class GroupController {
             Map<String, Object> response = new HashMap<>();
             response.put("exception", e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/getGroupDetails/{id}")
+    public ResponseEntity<?> getGroupDetail(@PathVariable("id") int id) {
+        try{
+            Group group = groupService.findById(id);
+            GroupDetailDTO dto = GroupMapper.convertGroupToGroupDetailDTO(group);
+            List<Project> projectList = projectService.getListProjectByGroupId(group.getId());
+            List<ProjectInProfileDTO> listDto = projectList.stream().
+                    map(ProjectMapper::convertProjectToProjectProfileDto).collect(Collectors.toList());
+            dto.setListProject(listDto);
+            return new ResponseEntity<>(dto,HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
