@@ -34,6 +34,29 @@ public class Timesheet {
     @Column(name = "date_status", nullable = false)
     private String dateStatus;
 
+    @Size(max = 1000)
+    @Column(name = "note", length = 1000)
+    private String note;
+
+    @Column(name = "workingHours")
+    private Double workingHours;
+
+    public Double getWorkingHours() {
+        return workingHours;
+    }
+
+    public void setWorkingHours(Double workingHours) {
+        this.workingHours = workingHours;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
     public Integer getId() {
         return id;
     }
