@@ -26,9 +26,11 @@ public interface AccountService {
 
     Account getAccountByUsername(String username);
 
+    Account getAccountByEmail(String email);
+
     void updateAccount(int id, ProfileUpdateDTO dto);
 
-    AccountUpdateDTO resetPassword(int id);
+    void resetPassword(Account account,String newPassword);
 
     void changeEnableAccount(int id);
 

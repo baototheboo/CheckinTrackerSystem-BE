@@ -1,9 +1,6 @@
 package com.example.ctsbe.util;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
@@ -36,5 +33,14 @@ public class DateUtil {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss");
         String dateFormat = date.atStartOfDay().format(formatter);
         return dateFormat;
+    }
+
+    public int getLengthOfMonth(LocalDate YearMonthDay){
+        String convert = convertLocalDateToMonthAndYear(YearMonthDay);
+        String []monthAndYear = convert.split("-");
+        int year = Integer.parseInt(monthAndYear[0]);
+        int month = Integer.parseInt(monthAndYear[1]);
+        YearMonth res = YearMonth.of(year,month);
+        return res.lengthOfMonth();
     }
 }

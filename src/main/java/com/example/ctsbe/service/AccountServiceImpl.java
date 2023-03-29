@@ -8,6 +8,7 @@ import com.example.ctsbe.entity.Account;
 import com.example.ctsbe.mapper.AccountMapper;
 import com.example.ctsbe.repository.AccountRepository;
 import com.example.ctsbe.util.DateUtil;
+import com.example.ctsbe.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +29,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private StaffService staffService;
-
+    @Autowired
+    private EmailService emailService;
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
@@ -77,6 +79,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public Account getAccountByEmail(String email) {
+        return accountRepository.getAccByEmail(email);
+    }
+
+    @Override
     public void updateAccount(int id, ProfileUpdateDTO dto) {
         Account account = accountRepository.getById(id);
         DateUtil util = new DateUtil();
@@ -92,12 +99,10 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountUpdateDTO resetPassword(int id) {
-        Account existedAccount = getAccountById(id);
-        existedAccount.setPassword(passwordEncoder.encode("Abc@123"));
-        existedAccount.setLastUpdated(Instant.now());
-        Account updatedAccount = accountRepository.save(existedAccount);
-        return AccountMapper.convertEntityToUpdateDTO(updatedAccount);
+    public void resetPassword(Account account,String newPassword) {
+        account.setPassword(passwordEncoder.encode(newPassword));
+        account.setLastUpdated(Instant.now());
+        accountRepository.save(account);
     }
 
     @Override

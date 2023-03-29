@@ -5,6 +5,8 @@ import com.example.ctsbe.entity.Project;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface ProjectService {
     Page<Project> getAllProject(Pageable pageable);
     Project addProject(ProjectAddDTO dto);
@@ -12,4 +14,5 @@ public interface ProjectService {
     Project getProjectById(int id);
     void editProject(int id,ProjectAddDTO dto);
     void changeProjectStatus(int id,int status);
+    List<Project> getListProjectByGroupId(int groupId);
 }
