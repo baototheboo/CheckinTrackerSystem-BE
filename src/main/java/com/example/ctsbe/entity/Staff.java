@@ -86,6 +86,17 @@ public class Staff {
     @OneToMany(mappedBy = "groupLeader")
     private Set<Group> groups = new LinkedHashSet<>();
 
+    @OneToMany(mappedBy = "approver")
+    private Set<Complaint> complaints_approver = new LinkedHashSet<>();
+
+    public Set<Complaint> getComplaints_approver() {
+        return complaints_approver;
+    }
+
+    public void setComplaints_approver(Set<Complaint> complaints_approver) {
+        this.complaints_approver = complaints_approver;
+    }
+
     public Set<Group> getGroups() {
         return groups;
     }

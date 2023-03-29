@@ -31,8 +31,9 @@ public class Complaint {
     @Column(name = "content", nullable = false, length = 1000)
     private String content;
 
-    @Column(name = "approver_id")
-    private Integer approverId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "approver_id")
+    private Staff approver;
 
     @Size(max = 255)
     @NotNull
@@ -83,12 +84,12 @@ public class Complaint {
         this.content = content;
     }
 
-    public Integer getApproverId() {
-        return approverId;
+    public Staff getApprover() {
+        return approver;
     }
 
-    public void setApproverId(Integer approverId) {
-        this.approverId = approverId;
+    public void setApprover(Staff approver) {
+        this.approver = approver;
     }
 
     public String getStatus() {
