@@ -1,5 +1,6 @@
 package com.example.ctsbe.service;
 
+import com.example.ctsbe.constant.ApplicationConstant;
 import com.example.ctsbe.dto.image.ImageSetupDTO;
 import com.example.ctsbe.dto.image.ImageVerifyDTO;
 import com.example.ctsbe.dto.staff.RecognizedStaffDTO;
@@ -39,7 +40,6 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
     @Value("80")
     private Float threshold;
 
-    private LocalTime morningStart = LocalTime.of(8, 30, 0);
     @Autowired
     private StaffRepository staffRepository;
 
@@ -192,7 +192,7 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
 
     public boolean isLateOrNot(){
         LocalTime currentTime = LocalTime.now().minusSeconds(10);
-        if (currentTime.isBefore(morningStart)) return false;
+        if (currentTime.isBefore(ApplicationConstant.MORNING_START)) return false;
         else return true;
     }
 
