@@ -1,16 +1,23 @@
 package com.example.ctsbe.dto.account;
 
+import com.example.ctsbe.exception.PasswordMatches;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
-import java.time.Instant;
+
 @Data
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class AccountUpdateDTO {
-    private Integer id;
     @NotBlank(message = "Password is required")
     private String password;
+
+    @NotBlank(message = "Password is required")
+    private String newPassword;
+
+    @NotBlank(message = "Password is required")
+    private String confirmNewPassword;
 }

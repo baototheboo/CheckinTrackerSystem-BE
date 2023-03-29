@@ -9,6 +9,7 @@ import com.example.ctsbe.filter.JwtTokenFilter;
 import com.example.ctsbe.mapper.AccountMapper;
 import com.example.ctsbe.mapper.ProjectMapper;
 import com.example.ctsbe.service.AccountService;
+import com.example.ctsbe.service.EmailService;
 import com.example.ctsbe.service.StaffProjectService;
 import com.example.ctsbe.service.StaffService;
 import com.example.ctsbe.util.JwtTokenUtil;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -45,16 +47,18 @@ public class AccountController {
     private HttpServletRequest request;
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private EmailService emailService;
+    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @PostMapping("/addAccount")
     public ResponseEntity<?> addAccount(@Valid @RequestBody AccountAddDTO dto) {
         try {
-            if (accountService.getAccountByUsername(dto.getUsername()) != null){
+            if (accountService.getAccountByUsername(dto.getUsername()) != null) {
                 throw new Exception("Tên đăng nhập này đã tồn tại!");
-            }
-            else if (staffService.findStaffByEmail(dto.getStaffAddDTO().getEmail()) != null){
+            } else if (staffService.findStaffByEmail(dto.getStaffAddDTO().getEmail()) != null) {
                 throw new Exception("Email này đã được đăng kí!");
-            }else {
+            } else {
                 accountService.addAccount(dto);
             }
             return new ResponseEntity<>("Add account " + dto.getUsername() + " successfully", HttpStatus.OK);
@@ -67,7 +71,7 @@ public class AccountController {
     public ResponseEntity<?> updateAccount(@PathVariable("id") int id, @RequestBody ProfileUpdateDTO dto) {
         try {
             int tokenId = getIdFromToken();
-            if(tokenId != id) throw new AccessDeniedException("You are not authorized to access this resource");
+            if (tokenId != id) throw new AccessDeniedException("You are not authorized to access this resource");
             else accountService.updateAccount(id, dto);
             return new ResponseEntity<>("Update account successfully!", HttpStatus.OK);
         } catch (AccessDeniedException e) {
@@ -77,11 +81,30 @@ public class AccountController {
         }
     }
 
-    @PutMapping("/resetPassword/{id}")
-    public ResponseEntity<?> resetPassword(@PathVariable("id") int id) {
+    @PutMapping("/changePassword/{id}")
+    public ResponseEntity<?> changePassword(@PathVariable int id,@RequestBody @Valid AccountUpdateDTO dto) {
         try {
-            AccountUpdateDTO updateDTO = accountService.resetPassword(id);
-            return new ResponseEntity<>("Reset password of the account with id " + id + " successfully!", HttpStatus.OK);
+            Account existedAccount = accountService.getAccountById(id);
+            if(!passwordEncoder.matches(dto.getPassword(),existedAccount.getPassword())){
+                throw new Exception("Mật khẩu không đúng!");
+            }else {
+                accountService.resetPassword(existedAccount,dto.getNewPassword());
+                return new ResponseEntity<>("Đổi mật khẩu thành công", HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/sendForgotPassword")
+    public ResponseEntity<?> sendForgotPassword(@RequestParam String email) {
+        try {
+            if (accountService.getAccountByEmail(email) == null) {
+                throw new Exception("Email này chưa được đăng kí. Vui lòng thử lại!");
+            } else {
+                emailService.sendEmail(email);
+                return new ResponseEntity<>("Email đổi mật khẩu đã được gửi đến mail của bạn. Vui lòng kiểm tra mail.", HttpStatus.OK);
+            }
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

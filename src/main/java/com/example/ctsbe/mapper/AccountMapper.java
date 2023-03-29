@@ -19,14 +19,13 @@ import java.util.stream.Collectors;
 @Component
 public class AccountMapper {
 
-
-    public static AccountUpdateDTO convertEntityToUpdateDTO(Account account) {
+    /*public static AccountUpdateDTO convertEntityToUpdateDTO(Account account) {
         AccountUpdateDTO dto = new AccountUpdateDTO(
                 account.getId(),
                 account.getPassword()
         );
         return dto;
-    }
+    }*/
 
 
     public static AccountDTO convertEntityToDTO(Account account) {
