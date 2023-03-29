@@ -5,15 +5,16 @@ import com.example.ctsbe.dto.image.ImageVerifyDTO;
 import com.example.ctsbe.dto.staff.RecognizedStaffDTO;
 import com.example.ctsbe.dto.staff.StaffSetupDTO;
 import com.example.ctsbe.dto.vgg.ImageSetupVggDTO;
-import com.example.ctsbe.entity.ImagesSetup;
-import com.example.ctsbe.entity.ImagesVerify;
-import com.example.ctsbe.entity.Staff;
+import com.example.ctsbe.entity.*;
 import com.example.ctsbe.enums.FaceStatus;
-import com.example.ctsbe.repository.ImageSetupRepository;
-import com.example.ctsbe.repository.ImageVerifyRepository;
-import com.example.ctsbe.repository.StaffRepository;
+import com.example.ctsbe.exception.ImageNotFoundException;
+import com.example.ctsbe.exception.StaffDoesNotExistException;
+import com.example.ctsbe.repository.*;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -25,13 +26,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.UUID;
+import java.time.*;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,7 +39,7 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
     @Value("80")
     private Float threshold;
 
-
+    private LocalTime morningStart = LocalTime.of(8, 30, 0);
     @Autowired
     private StaffRepository staffRepository;
 
@@ -52,6 +48,13 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
 
     @Autowired
     private ImageVerifyRepository imageVerifyRepository;
+
+    @Autowired
+    private TimesheetRepository timesheetRepository;
+
+    @Autowired
+    private AccountRepository accountRepository;
+
 
     private static String errorPath = "/error-by-date/";
 
@@ -78,6 +81,14 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
             Staff staff = staffRepository.findStaffById(staffId);
             fullName = staff != null ? staff.getFullName().trim().replace(" ", "_") : "";
             probability = recognizedStaffDTO.getProbability();
+            if ((probability != 0F)&(!isCheckedInOrNot(staffId))) { //check-in
+                Timesheet timesheet = new Timesheet();
+                timesheet.setStaff(staff);
+                timesheet.setDate(LocalDate.now());
+                timesheet.setTimeCheckIn(LocalDateTime.now().atZone(ZoneId.of("Asia/Ho_Chi_Minh")).toInstant());
+                timesheet.setDateStatus(!isLateOrNot()? "Ok" : "Late");
+                timesheetRepository.save(timesheet);
+            }
         }
 
         String today = LocalDate.now().toString();
@@ -115,7 +126,7 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
                     ImageVerifyDTO imageVerifyDTO = new ImageVerifyDTO();
                     imageVerifyDTO.setName(fullName.replace("_", " "));
                     imageVerifyDTO.setImage(pathImages.toString());
-                    imageVerifyDTO.setTimeVerify(localDateTime);
+                    imageVerifyDTO.setTimeVerify(LocalDateTime.from(localDateTime.atZone(ZoneId.of("Asia/Ho_Chi_Minh"))));
                     imageVerifyDTO.setProbability(probability.doubleValue());
                     imageVerifyDTO.setRecognizeStaffId(staffId);
                     imageVerifyDTO.setStatus(status);
@@ -146,5 +157,50 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
                 .map(ImageVerifyDTO::toEntity).collect(Collectors.toList());
                 imageVerifyRepository.saveAll(imageVerifies);
         return imageVerifies.get(0);
+    }
+
+    @Override
+    public Page<ImageVerifyDTO> findImageVerify(Integer staffId, String name, boolean onlyMe, LocalDate startDate, LocalDate endDate, boolean isError, Pageable pageable) {
+        Page<ImageVerifyDTO> listImageVerify = null;
+
+        if (startDate != null && endDate != null
+                && startDate.isAfter(endDate)) {
+            throw new ImageNotFoundException("Start date must less or equal than end date");
+        }
+        Optional<Staff> staff = staffRepository.findById(staffId);
+        if (!staff.isPresent()) {
+            throw new StaffDoesNotExistException(staffId);
+        }
+        Instant startTime = startDate != null ? startDate.atStartOfDay().atZone(ZoneId.of("Asia/Ho_Chi_Minh")).toInstant() : LocalDateTime.now().atZone(ZoneId.of("Asia/Ho_Chi_Minh")).toInstant();
+        Instant endTime = endDate != null ? endDate.plusDays(1).atStartOfDay().atZone(ZoneId.of("Asia/Ho_Chi_Minh")).toInstant() : LocalDateTime.now().plusDays(1).atZone(ZoneId.of("Asia/Ho_Chi_Minh")).toInstant();
+        if (name == null) {
+            name = "";
+        }
+        String role = accountRepository.getById(staffId).getRole().getRoleName();
+        if (isError) {
+            listImageVerify = imageVerifyRepository.findErrorByTimeVerify(startTime, endTime, FaceStatus.FAIL, pageable);
+            }
+        else if (onlyMe) {
+            listImageVerify = imageVerifyRepository.findApprovedAndPendingByStaffIdAndTimeVerify(name, staffId, startTime, endTime, pageable);
+        } else if (role.equals("ROLE_HUMAN RESOURCE")) {
+                listImageVerify = imageVerifyRepository.findAllApprovedAndPendingByTimeVerify(name, startTime,
+                        endTime, pageable);
+        }
+
+        return listImageVerify;
+    }
+
+    public boolean isLateOrNot(){
+        LocalTime currentTime = LocalTime.now().minusSeconds(10);
+        if (currentTime.isBefore(morningStart)) return false;
+        else return true;
+    }
+
+    public boolean isCheckedInOrNot(Integer staffId){
+        LocalDate today = LocalDate.now();
+        List<Timesheet> timesheetList = timesheetRepository.findCheckedInStaff(staffId,today, "OK", "Late");
+        if (!timesheetList.isEmpty()) return true;
+        else return false;
+
     }
 }

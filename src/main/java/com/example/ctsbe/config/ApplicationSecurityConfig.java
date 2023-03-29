@@ -69,7 +69,8 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                         ,"/projects/*/*"
                         ,"/projects/*/*"
                         ,"/check-in/facial-recognition/verify"
-                        ,"/check-in/*/facial-recognition/setup").permitAll()
+                        ,"/check-in/*/facial-recognition/setup"
+                        ,"/image/image-verify").permitAll()
                 //.antMatchers("/products").hasAuthority("ROLE_EDITOR")
                 .anyRequest().authenticated();
 

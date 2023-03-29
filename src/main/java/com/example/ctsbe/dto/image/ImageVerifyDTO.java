@@ -5,6 +5,7 @@ import com.example.ctsbe.enums.FaceStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -18,6 +19,10 @@ public class ImageVerifyDTO {
     @JsonProperty
     private String recognizeName;
     @JsonProperty
+    private String firstName;
+    @JsonProperty
+    private String lastName;
+    @JsonProperty
     private String image;
     @JsonProperty
     private LocalDateTime timeVerify;
@@ -27,10 +32,31 @@ public class ImageVerifyDTO {
     private Integer recognizeStaffId;
     @JsonProperty
     private FaceStatus status;
-    @JsonProperty
-    private String firstName;
-    @JsonProperty
-    private String lastName;
+
+
+    public ImageVerifyDTO() {
+
+    }
+
+    public ImageVerifyDTO(Integer imageVerifyId, String image, Instant timeVerify, Double probability, Integer recognizeStaffId, FaceStatus status) {
+        this.imageVerifyId = imageVerifyId;
+        this.image = image;
+        this.timeVerify = LocalDateTime.from(timeVerify.atZone(ZoneId.of("Asia/Ho_Chi_Minh")));
+        this.probability = probability;
+        this.recognizeStaffId = recognizeStaffId;
+        this.status = status;
+    }
+
+    public ImageVerifyDTO(Integer imageVerifyId, String firstName, String lastName, String image, Instant timeVerify, Double probability, Integer recognizeStaffId, FaceStatus status) {
+        this.imageVerifyId = imageVerifyId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.image = image;
+        this.timeVerify = LocalDateTime.from(timeVerify.atZone(ZoneId.of("Asia/Ho_Chi_Minh")));
+        this.probability = probability;
+        this.recognizeStaffId = recognizeStaffId;
+        this.status = status;
+    }
 
     public ImagesVerify toEntity() {
         ImagesVerify imagesVerify = new ImagesVerify();

@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "timesheet")
@@ -20,7 +21,7 @@ public class Timesheet {
 
     @NotNull
     @Column(name = "date", nullable = false)
-    private Instant date;
+    private LocalDate date;
 
     @Column(name = "time_check_in")
     private Instant timeCheckIn;
@@ -49,11 +50,11 @@ public class Timesheet {
         this.staff = staff;
     }
 
-    public Instant getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Instant date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
