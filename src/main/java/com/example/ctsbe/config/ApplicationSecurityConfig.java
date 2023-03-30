@@ -87,12 +87,12 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                         }
                 );
 
-        http.cors().configurationSource(request -> {
-            final CorsConfiguration cors = new CorsConfiguration();
-            cors.setAllowedOrigins(Arrays.asList("http://localhost:3000","https://cts-backend.azurewebsites.net"));
-            cors.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
-            return cors;
-        });
+//        http.cors().configurationSource(request -> {
+//            final CorsConfiguration cors = new CorsConfiguration();
+//            cors.setAllowedOrigins(Arrays.asList("http://localhost:3000","https://cts-backend.azurewebsites.net"));
+//            cors.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
+//            return cors;
+//        });
 
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
