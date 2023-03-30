@@ -1,6 +1,7 @@
 package com.example.ctsbe.service;
 
 
+import com.example.ctsbe.constant.ApplicationConstant;
 import com.example.ctsbe.dto.account.AccountAddDTO;
 import com.example.ctsbe.dto.account.AccountUpdateDTO;
 import com.example.ctsbe.dto.account.ProfileUpdateDTO;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @Service
@@ -103,8 +106,8 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void resetPassword(Account account,String newPassword) {
         account.setPassword(passwordEncoder.encode(newPassword));
-        Instant instant = dateUtil.convertLocalDateToInstant(LocalDateTime.now());
-        account.setLastUpdated(instant);
+        Instant instant = Instant.from(Instant.now().atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE)));
+        account.setLastUpdated(Instant.now().plus(8, ChronoUnit.HOURS));
         accountRepository.save(account);
     }
 
@@ -116,6 +119,7 @@ public class AccountServiceImpl implements AccountService {
         } else {
             account.setEnable((byte) 1);
         }
+        account.setLastUpdated(Instant.from(Instant.now().atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE))));
         accountRepository.save(account);
     }
 
