@@ -119,7 +119,7 @@ public class AccountServiceImpl implements AccountService {
         } else {
             account.setEnable((byte) 1);
         }
-        account.setLastUpdated(Instant.from(Instant.now().atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE))));
+        account.setLastUpdated(dateUtil.plusInstant(Instant.now()));
         accountRepository.save(account);
     }
 

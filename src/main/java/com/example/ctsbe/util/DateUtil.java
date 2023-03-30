@@ -4,6 +4,7 @@ import com.example.ctsbe.constant.ApplicationConstant;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -78,7 +79,7 @@ public class DateUtil {
         return localDateTime.atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE)).toInstant();
      }
 
-    public Instant convertLocalDateToInstant(LocalDateTime localDateTime){
-        return localDateTime.atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE)).toInstant();
+    public Instant plusInstant(Instant instant){
+        return instant.plus(7,ChronoUnit.HOURS);
     }
 }
