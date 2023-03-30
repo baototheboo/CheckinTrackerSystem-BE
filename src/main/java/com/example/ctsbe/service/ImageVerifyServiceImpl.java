@@ -173,8 +173,8 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
         if (!staff.isPresent()) {
             throw new StaffDoesNotExistException(staffId);
         }
-        Instant startTime = startDate != null ? DateUtil.convertLocalDateTimeToInstant(startDate.atStartOfDay()) : DateUtil.convertLocalDateTimeToInstant(LocalDateTime.now());
-        Instant endTime = endDate != null ? DateUtil.convertLocalDateTimeToInstant(endDate.plusDays(1).atStartOfDay()) : DateUtil.convertLocalDateTimeToInstant(LocalDateTime.now().plusDays(1));
+        Instant startTime = startDate != null ? DateUtil.convertLocalDateTimeToInstant(startDate.atStartOfDay()) : DateUtil.convertLocalDateTimeToInstant(LocalDate.now().atStartOfDay());
+        Instant endTime = endDate != null ? DateUtil.convertLocalDateTimeToInstant(endDate.plusDays(1).atStartOfDay()) : DateUtil.convertLocalDateTimeToInstant(LocalDate.now().atStartOfDay().plusDays(1));
         if (name == null) {
             name = "";
         }
