@@ -87,7 +87,10 @@ public class AccountController {
             Account existedAccount = accountService.getAccountById(id);
             if(!passwordEncoder.matches(dto.getPassword(),existedAccount.getPassword())){
                 throw new Exception("Mật khẩu không đúng!");
-            }else {
+            }else if(!dto.getNewPassword().equals(dto.getConfirmNewPassword())){
+                throw new Exception("Mật khẩu không khớp.Vui lòng nhập lại!");
+            }
+            else {
                 accountService.resetPassword(existedAccount,dto.getNewPassword());
                 return new ResponseEntity<>("Đổi mật khẩu thành công", HttpStatus.OK);
             }
