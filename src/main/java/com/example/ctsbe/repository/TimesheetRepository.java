@@ -20,6 +20,6 @@ public interface TimesheetRepository extends JpaRepository<Timesheet,Integer> {
             " and function('date_format',ts.date,'%Y-%m') =:yearMonth order by ts.date asc")
     List<Timesheet> getListTimesheetByStaffIdAndMonth(int staffId,String yearMonth);
 
-
+    List<Timesheet> getTimesheetByStaffAndAndDate(Staff staff, LocalDate date);
 
 }

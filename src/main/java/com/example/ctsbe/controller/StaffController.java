@@ -1,18 +1,14 @@
 package com.example.ctsbe.controller;
 
-import com.example.ctsbe.dto.account.AccountDTO;
+import com.example.ctsbe.dto.image.ImageSetupDTO;
 import com.example.ctsbe.dto.staff.StaffAddDTO;
 import com.example.ctsbe.dto.staff.StaffAvailableDTO;
 import com.example.ctsbe.dto.staff.StaffDTO;
 import com.example.ctsbe.dto.staff.StaffUpdateDTO;
-import com.example.ctsbe.dto.staffProject.StaffInProjectDTO;
-import com.example.ctsbe.entity.Account;
 import com.example.ctsbe.entity.Staff;
-import com.example.ctsbe.entity.StaffProject;
-import com.example.ctsbe.mapper.AccountMapper;
 import com.example.ctsbe.mapper.StaffMapper;
-import com.example.ctsbe.repository.AccountRepository;
 import com.example.ctsbe.service.AccountService;
+import com.example.ctsbe.service.ImageSetupService;
 import com.example.ctsbe.service.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.security.RolesAllowed;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +33,9 @@ public class StaffController {
 
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private ImageSetupService imageSetupService;
     @PostMapping("/addStaff")
     public String addStaff(@RequestBody StaffAddDTO dto) {
         try {
@@ -151,6 +149,20 @@ public class StaffController {
             response.put("exception", e.getMessage());
             return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping("/{staffId}/get-image-setup")
+    public ResponseEntity<Page<ImageSetupDTO>> getImageSetup(@PathVariable Integer staffId,
+                                                             @RequestParam(defaultValue = "1") int page,
+                                                             @RequestParam(defaultValue = "3") int size) {
+            Pageable pageable = PageRequest.of(page - 1, size);
+            Page<ImageSetupDTO> result = imageSetupService.findImageSetup(staffId, pageable);
+            Map<String, Object> response = new HashMap<>();
+            response.put("listImage", result);
+            response.put("currentPage", result.getNumber());
+            response.put("allProducts", result.getTotalElements());
+            response.put("allPages", result.getTotalPages());
+            return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 }

@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = FieldMatchValidator.class)
 public @interface PasswordMatches {
-    String message() default "Passwords don't match";
+    String message() default "Mật khẩu không khớp";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
     String field();

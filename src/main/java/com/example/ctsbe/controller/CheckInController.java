@@ -5,11 +5,13 @@ import com.example.ctsbe.client.FacialRecognitionClient;
 import com.example.ctsbe.dto.vgg.ImageSetupVggDTO;
 import com.example.ctsbe.dto.vgg.ImageVerifyVggDTO;
 import com.example.ctsbe.dto.staff.StaffVerifyDTO;
+import com.example.ctsbe.entity.ImagesSetup;
 import com.example.ctsbe.entity.Staff;
 import com.example.ctsbe.enums.FacialRecognitionStatus;
 import com.example.ctsbe.exception.SetupEmployeeFacialRecognitionException;
 import com.example.ctsbe.repository.StaffRepository;
 import com.example.ctsbe.service.AccountService;
+import com.example.ctsbe.service.ImageSetupService;
 import com.example.ctsbe.service.ImageVerifyService;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -42,6 +44,9 @@ public class CheckInController {
     @Autowired
     private ImageVerifyService imageVerifyService;
 
+    @Autowired
+    private ImageSetupService imageSetupService;
+
 
     @PostMapping("/facial-recognition/verify")
     public ResponseEntity<StaffVerifyDTO> verifyEmployeeByFacialRecognition(@Valid @RequestBody ImageVerifyVggDTO imageVerifyVggDTO) {
@@ -68,7 +73,7 @@ public class CheckInController {
 //        }
         String result = facialRecognition.setupStaffForFacialRecognition(staff, imageSetupVggDTO.getImgs());
         if (result.equals("OK")) {
-            imageVerifyService.saveImageForSetup(imageSetupVggDTO.getImgs(), staff);
+            imageSetupService.saveImageForSetup(imageSetupVggDTO.getImgs(), staff);
         }
 //        employeeService.updateFacialRecognitionStatus(accountEmployee.getEmployee(), FacialRecognitionStatus.PENDING);
         return new ResponseEntity<>(result, HttpStatus.OK);
