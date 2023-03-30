@@ -1,5 +1,7 @@
 package com.example.ctsbe.util;
 
+import com.example.ctsbe.constant.ApplicationConstant;
+
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -34,6 +36,16 @@ public class DateUtil {
         String dateFormat = date.atStartOfDay().format(formatter);
         return dateFormat;
     }
+    public static String convertTimeVerifyToStringDate(LocalDateTime dateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String dateFormat = dateTime.format(formatter);
+        return dateFormat;
+    }
+    public static String convertTimeVerifyToStringTime(LocalDateTime dateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        String dateFormat = dateTime.format(formatter);
+        return dateFormat;
+    }
 
     public int getLengthOfMonth(LocalDate YearMonthDay){
         String convert = convertLocalDateToMonthAndYear(YearMonthDay);
@@ -43,4 +55,7 @@ public class DateUtil {
         YearMonth res = YearMonth.of(year,month);
         return res.lengthOfMonth();
     }
+     public static Instant convertLocalDateTimeToInstant(LocalDateTime localDateTime){
+        return localDateTime.atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE)).toInstant();
+     }
 }

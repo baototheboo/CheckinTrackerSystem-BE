@@ -11,6 +11,7 @@ import com.example.ctsbe.enums.FaceStatus;
 import com.example.ctsbe.exception.ImageNotFoundException;
 import com.example.ctsbe.exception.StaffDoesNotExistException;
 import com.example.ctsbe.repository.*;
+import com.example.ctsbe.util.DateUtil;
 import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -85,8 +86,9 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
                 Timesheet timesheet = new Timesheet();
                 timesheet.setStaff(staff);
                 timesheet.setDate(LocalDate.now());
-                timesheet.setTimeCheckIn(LocalDateTime.now().atZone(ZoneId.of("Asia/Ho_Chi_Minh")).toInstant());
-                timesheet.setDateStatus(!isLateOrNot()? "Ok" : "Late");
+                timesheet.setTimeCheckIn(DateUtil.convertLocalDateTimeToInstant(LocalDateTime.now()));
+                timesheet.setDateStatus(!isLateOrNot()? "OK" : "LATE");
+                timesheet.setWorkingHours(ApplicationConstant.WORKING_HOURS_DEFAULT);
                 timesheetRepository.save(timesheet);
             }
         }
@@ -126,7 +128,7 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
                     ImageVerifyDTO imageVerifyDTO = new ImageVerifyDTO();
                     imageVerifyDTO.setName(fullName.replace("_", " "));
                     imageVerifyDTO.setImage(pathImages.toString());
-                    imageVerifyDTO.setTimeVerify(LocalDateTime.from(localDateTime.atZone(ZoneId.of("Asia/Ho_Chi_Minh"))));
+                    imageVerifyDTO.setTimeVerify(LocalDateTime.from(localDateTime.atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE))));
                     imageVerifyDTO.setProbability(probability.doubleValue());
                     imageVerifyDTO.setRecognizeStaffId(staffId);
                     imageVerifyDTO.setStatus(status);
@@ -171,8 +173,8 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
         if (!staff.isPresent()) {
             throw new StaffDoesNotExistException(staffId);
         }
-        Instant startTime = startDate != null ? startDate.atStartOfDay().atZone(ZoneId.of("Asia/Ho_Chi_Minh")).toInstant() : LocalDateTime.now().atZone(ZoneId.of("Asia/Ho_Chi_Minh")).toInstant();
-        Instant endTime = endDate != null ? endDate.plusDays(1).atStartOfDay().atZone(ZoneId.of("Asia/Ho_Chi_Minh")).toInstant() : LocalDateTime.now().plusDays(1).atZone(ZoneId.of("Asia/Ho_Chi_Minh")).toInstant();
+        Instant startTime = startDate != null ? DateUtil.convertLocalDateTimeToInstant(startDate.atStartOfDay()) : DateUtil.convertLocalDateTimeToInstant(LocalDateTime.now());
+        Instant endTime = endDate != null ? DateUtil.convertLocalDateTimeToInstant(endDate.plusDays(1).atStartOfDay()) : DateUtil.convertLocalDateTimeToInstant(LocalDateTime.now().plusDays(1));
         if (name == null) {
             name = "";
         }

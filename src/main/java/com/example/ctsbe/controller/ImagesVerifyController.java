@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -50,12 +51,19 @@ public class ImagesVerifyController {
                                                                 @RequestParam(required = false) boolean isError,
                                                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startTime,
                                                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endTime,
-                                                                Pageable pageable) {
-
-        Page<ImageVerifyDTO> result = imageVerifyService.findImageVerify(staffId, name, Boolean.TRUE.equals(onlyMe), startTime, endTime, isError, pageable);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+                                                                @RequestParam(defaultValue = "1") int page,
+                                                                @RequestParam(defaultValue = "3") int size) {
+        try {
+            Pageable pageable = PageRequest.of(page - 1, size);
+            Page<ImageVerifyDTO> result = imageVerifyService.findImageVerify(staffId, name, Boolean.TRUE.equals(onlyMe), startTime, endTime, isError, pageable);
+            Map<String, Object> response = new HashMap<>();
+            response.put("listImage", result);
+            response.put("currentPage", result.getNumber());
+            response.put("allProducts", result.getTotalElements());
+            response.put("allPages", result.getTotalPages());
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
-
-
-
 }

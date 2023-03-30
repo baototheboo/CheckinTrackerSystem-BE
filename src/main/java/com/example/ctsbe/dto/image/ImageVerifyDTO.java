@@ -1,7 +1,9 @@
 package com.example.ctsbe.dto.image;
 
+import com.example.ctsbe.constant.ApplicationConstant;
 import com.example.ctsbe.entity.ImagesVerify;
 import com.example.ctsbe.enums.FaceStatus;
+import com.example.ctsbe.util.DateUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -25,6 +27,8 @@ public class ImageVerifyDTO {
     @JsonProperty
     private String image;
     @JsonProperty
+    private String imagePath;
+    @JsonProperty
     private LocalDateTime timeVerify;
     @JsonProperty
     private Double probability;
@@ -32,6 +36,10 @@ public class ImageVerifyDTO {
     private Integer recognizeStaffId;
     @JsonProperty
     private FaceStatus status;
+    @JsonProperty
+    private String verifyDate;
+    @JsonProperty
+    private String verifyTime;
 
 
     public ImageVerifyDTO() {
@@ -41,10 +49,13 @@ public class ImageVerifyDTO {
     public ImageVerifyDTO(Integer imageVerifyId, String image, Instant timeVerify, Double probability, Integer recognizeStaffId, FaceStatus status) {
         this.imageVerifyId = imageVerifyId;
         this.image = image;
-        this.timeVerify = LocalDateTime.from(timeVerify.atZone(ZoneId.of("Asia/Ho_Chi_Minh")));
+        this.imagePath = image.replace("\\","/");
+        this.timeVerify = LocalDateTime.from(timeVerify.atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE)));
         this.probability = probability;
         this.recognizeStaffId = recognizeStaffId;
         this.status = status;
+        this.verifyDate = DateUtil.convertTimeVerifyToStringDate(LocalDateTime.from(timeVerify.atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE))));
+        this.verifyTime = DateUtil.convertTimeVerifyToStringTime(LocalDateTime.from(timeVerify.atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE))));
     }
 
     public ImageVerifyDTO(Integer imageVerifyId, String firstName, String lastName, String image, Instant timeVerify, Double probability, Integer recognizeStaffId, FaceStatus status) {
@@ -52,17 +63,20 @@ public class ImageVerifyDTO {
         this.firstName = firstName;
         this.lastName = lastName;
         this.image = image;
-        this.timeVerify = LocalDateTime.from(timeVerify.atZone(ZoneId.of("Asia/Ho_Chi_Minh")));
+        this.imagePath = image.replace("\\","/");
+        this.timeVerify = LocalDateTime.from(timeVerify.atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE)));
         this.probability = probability;
         this.recognizeStaffId = recognizeStaffId;
         this.status = status;
+        this.verifyDate = DateUtil.convertTimeVerifyToStringDate(LocalDateTime.from(timeVerify.atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE))));
+        this.verifyTime = DateUtil.convertTimeVerifyToStringTime(LocalDateTime.from(timeVerify.atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE))));
     }
 
     public ImagesVerify toEntity() {
         ImagesVerify imagesVerify = new ImagesVerify();
         imagesVerify.setImage(this.getImage());
         imagesVerify.setProbability(this.getProbability());
-        imagesVerify.setTimeVerify(this.getTimeVerify().atZone(ZoneId.of("Asia/Ho_Chi_Minh")).toInstant());
+        imagesVerify.setTimeVerify(DateUtil.convertLocalDateTimeToInstant(this.getTimeVerify()));
         imagesVerify.setRecognizeStaffId(this.getRecognizeStaffId());
         imagesVerify.setStatus(this.getStatus());
         return imagesVerify;
