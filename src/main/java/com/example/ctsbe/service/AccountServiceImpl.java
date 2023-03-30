@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -32,6 +33,7 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private EmailService emailService;
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    DateUtil dateUtil = new DateUtil();
 
 
     @Override
@@ -101,6 +103,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void resetPassword(Account account,String newPassword) {
         account.setPassword(passwordEncoder.encode(newPassword));
+        Instant instant = dateUtil.convertLocalDateToInstant(LocalDateTime.now());
         account.setLastUpdated(Instant.now());
         accountRepository.save(account);
     }
