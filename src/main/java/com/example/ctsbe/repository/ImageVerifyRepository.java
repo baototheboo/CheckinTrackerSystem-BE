@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -67,5 +68,15 @@ public interface ImageVerifyRepository extends JpaRepository<ImagesVerify,Intege
                                                                @Param("startTime") Instant startTime,
                                                                @Param("endTime") Instant endTime,
                                                                Pageable pageable);
+
+    @Query(value = "SELECT iv FROM ImagesVerify AS iv " +
+            "INNER JOIN Staff AS s ON s.id = iv.recognizeStaffId " +
+            "WHERE (:startTime <= iv.timeVerify) " +
+            "AND (iv.timeVerify <= :endTime) " +
+            "AND ((iv.status = 'APPROVED') " +
+            "OR (iv.status = 'PENDING')) " +
+            "ORDER BY iv.timeVerify ASC")
+    List<ImagesVerify> findImagesVerifiesApprovedAndPending(@Param("startTime") Instant startTime,
+                                                            @Param("endTime") Instant endTime);
 
 }
