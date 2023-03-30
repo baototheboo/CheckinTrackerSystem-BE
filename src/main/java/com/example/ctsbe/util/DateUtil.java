@@ -4,7 +4,9 @@ import com.example.ctsbe.constant.ApplicationConstant;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class DateUtil {
 
@@ -47,14 +49,31 @@ public class DateUtil {
         return dateFormat;
     }
 
-    public int getLengthOfMonth(LocalDate YearMonthDay){
-        String convert = convertLocalDateToMonthAndYear(YearMonthDay);
-        String []monthAndYear = convert.split("-");
+    public int getLengthOfMonth(String YearMonth){
+        //String convert = convertLocalDateToMonthAndYear(YearMonthDay);
+        String []monthAndYear = YearMonth.split("-");
         int year = Integer.parseInt(monthAndYear[0]);
         int month = Integer.parseInt(monthAndYear[1]);
-        YearMonth res = YearMonth.of(year,month);
+        YearMonth res = java.time.YearMonth.of(year,month);
         return res.lengthOfMonth();
     }
+
+    public String convertLocalDateToStringDay(LocalDate date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd");
+        String dateFormat = date.format(formatter);
+        return dateFormat;
+    }
+
+    public List<Integer> getListDayCheck(List<String> list){
+        List<Integer> res = new ArrayList<>();
+        for (String s: list) {
+            if(s.equalsIgnoreCase("ok")) res.add(1); //1 la ok
+            else if(s.equalsIgnoreCase("late")) res.add(2); // 2 la late
+        }
+        return res;
+    }
+
+
      public static Instant convertLocalDateTimeToInstant(LocalDateTime localDateTime){
         return localDateTime.atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE)).toInstant();
      }
