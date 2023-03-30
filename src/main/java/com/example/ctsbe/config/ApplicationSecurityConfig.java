@@ -69,6 +69,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                         ,"/projects/*"
                         ,"/reports/*"
                         ,"/complaints/*"
+                        ,"/timesheets/*"
                         ,"/projects/*/*"
                         ,"/projects/*/*"
                         ,"/check-in/facial-recognition/verify"
