@@ -104,7 +104,7 @@ public class AccountServiceImpl implements AccountService {
     public void resetPassword(Account account,String newPassword) {
         account.setPassword(passwordEncoder.encode(newPassword));
         Instant instant = dateUtil.convertLocalDateToInstant(LocalDateTime.now());
-        account.setLastUpdated(Instant.now());
+        account.setLastUpdated(instant);
         accountRepository.save(account);
     }
 
