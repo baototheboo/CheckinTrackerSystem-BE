@@ -20,9 +20,9 @@ public interface ImageVerifyRepository extends JpaRepository<ImagesVerify,Intege
     String sharedSearchClause = "(:name = '' " +
             "OR lower(s.firstName) LIKE lower(concat('%',:name ,'%')) " +
             "OR lower(s.surname) LIKE lower(concat('%',:name ,'%')) " +
-            "OR lower(s.email) LIKE lower(concat('%',:name ,'%')) " +
+            "OR lower(s.email) LIKE lower(concat('%',:name ,'%'))) " +
             "AND (:startTime <= iv.timeVerify) " +
-            "AND (iv.timeVerify <= :endTime))" +
+            "AND (iv.timeVerify <= :endTime)" +
             "ORDER BY iv.timeVerify desc";
 
     String filterByTimeVerify = "AND (:startTime <= iv.timeVerify) " +
