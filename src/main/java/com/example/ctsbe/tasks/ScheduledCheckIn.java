@@ -22,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -48,14 +49,16 @@ public class ScheduledCheckIn {
         } else {
             try {
                 for (Staff staff : staffAbsent) {
-                    Timesheet timesheet = new Timesheet();
-                    timesheet.setStaff(staff);
-                    timesheet.setDate(LocalDate.now().minusDays(1));
-                    timesheet.setDateStatus("ABSENT");
-                    timesheet.setNote("Vắng");
-                    timesheet.setWorkingHours(ApplicationConstant.WORKING_HOURS_ABSENT);
-                    timesheetRepository.save(timesheet);
-                    logger.info("%",staff.getId());
+                    List<Timesheet> check = timesheetRepository.getTimesheetByStaffAndAndDate(staff, startTime.atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE)).toLocalDate());
+                    if (check.isEmpty()){
+                        Timesheet timesheet = new Timesheet();
+                        timesheet.setStaff(staff);
+                        timesheet.setDate(LocalDate.now().minusDays(1));
+                        timesheet.setDateStatus("ABSENT");
+                        timesheet.setNote("Vắng");
+                        timesheet.setWorkingHours(ApplicationConstant.WORKING_HOURS_ABSENT);
+                        timesheetRepository.save(timesheet);
+                    }
                 }
              }catch (Exception e){
                 logger.error("Không thể đánh vắng cho nhân viên");

@@ -62,14 +62,6 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
     private static String successPath = "/success-by-date/";
 
     private static String setupPath = "/setup/";
-    @Override
-    public void saveImageForSetup(List<String> images, Staff staff) {
-        String fullName = staff != null ? staff.getFullName().trim().replace(" ", "_") : "";
-        LocalDateTime timeSetup = LocalDateTime.now();
-        if (!CollectionUtils.isEmpty(images)) {
-            saveImageToFolder(images, setupPath, timeSetup, fullName, null, staff.getId(), true);
-        }
-    }
 
     @Override
     public ImagesVerify saveImageForVerify(ImageSetupVggDTO imageSetupVggDTO, LocalDateTime localDateTime, RecognizedStaffDTO recognizedStaffDTO) {
@@ -167,7 +159,7 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
 
         if (startDate != null && endDate != null
                 && startDate.isAfter(endDate)) {
-            throw new ImageNotFoundException("Start date must less or equal than end date");
+            throw new ImageNotFoundException("Ngày bắt đầu không được sau ngày kết thúc. Hãy thử lại!");
         }
         Optional<Staff> staff = staffRepository.findById(staffId);
         if (!staff.isPresent()) {
@@ -188,7 +180,7 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
                 listImageVerify = imageVerifyRepository.findAllApprovedAndPendingByTimeVerify(name, startTime,
                         endTime, pageable);
         }
-
+        if (listImageVerify.isEmpty()) throw new ImageNotFoundException("Không tìm thấy ảnh theo yêu cầu.");
         return listImageVerify;
     }
 

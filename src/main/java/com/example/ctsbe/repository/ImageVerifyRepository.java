@@ -31,7 +31,7 @@ public interface ImageVerifyRepository extends JpaRepository<ImagesVerify,Intege
 
     @Query(value = "SELECT new com.example.ctsbe.dto.image.ImageVerifyDTO(iv.id, " +
             "iv.image, iv.timeVerify, iv.probability, " +
-            " iv.recognizeStaffId, iv.status) " +
+            "iv.recognizeStaffId, iv.status) " +
             "FROM ImagesVerify AS iv " +
             "WHERE iv.status = :status " + filterByTimeVerify)
     Page<ImageVerifyDTO> findErrorByTimeVerify(@Param("startTime") Instant startTime,

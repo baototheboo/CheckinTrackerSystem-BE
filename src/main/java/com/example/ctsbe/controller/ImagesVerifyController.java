@@ -53,7 +53,6 @@ public class ImagesVerifyController {
                                                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endTime,
                                                                 @RequestParam(defaultValue = "1") int page,
                                                                 @RequestParam(defaultValue = "3") int size) {
-        try {
             Pageable pageable = PageRequest.of(page - 1, size);
             Page<ImageVerifyDTO> result = imageVerifyService.findImageVerify(staffId, name, Boolean.TRUE.equals(onlyMe), startTime, endTime, isError, pageable);
             Map<String, Object> response = new HashMap<>();
@@ -62,8 +61,5 @@ public class ImagesVerifyController {
             response.put("allProducts", result.getTotalElements());
             response.put("allPages", result.getTotalPages());
             return new ResponseEntity<>(result, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 }
