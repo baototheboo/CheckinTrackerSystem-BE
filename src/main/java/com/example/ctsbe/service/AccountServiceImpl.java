@@ -99,15 +99,14 @@ public class AccountServiceImpl implements AccountService {
         account.getStaff().setDateOfBirth(util.convertStringToLocalDate(dto.getDateOfBirth()));
         account.getStaff().setPhone(dto.getPhone());
         account.setLastUpdated(Instant.now());
-        account.getStaff().setLastUpdated(Instant.now());
+        account.getStaff().setLastUpdated(dateUtil.plusInstant(Instant.now()));
         accountRepository.save(account);
     }
 
     @Override
     public void resetPassword(Account account,String newPassword) {
         account.setPassword(passwordEncoder.encode(newPassword));
-        Instant instant = Instant.from(Instant.now().atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE)));
-        account.setLastUpdated(Instant.now().plus(8, ChronoUnit.HOURS));
+        account.setLastUpdated(dateUtil.plusInstant(Instant.now()));
         accountRepository.save(account);
     }
 

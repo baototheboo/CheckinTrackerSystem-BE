@@ -22,8 +22,9 @@ public class CtsBeApplication {
     public static void main(String[] args) {
         SpringApplication.run(CtsBeApplication.class, args);
         //System.out.println(Instant.from(Instant.now().atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE))));
-        //DateUtil util = new DateUtil();
-        //System.out.println(Integer.parseInt(util.convertLocalDateToStringDay(LocalDate.of(2023,03,1))));
+        //StringUtil util = new StringUtil();
+        //DateUtil dateUtil = new DateUtil();
+       //System.out.println(dateUtil.convertLocalDateToStringDay(LocalDate.now()));
     }
 
 }

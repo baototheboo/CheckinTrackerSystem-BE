@@ -5,6 +5,7 @@ import com.example.ctsbe.entity.Complaint;
 import com.example.ctsbe.repository.ComplaintRepository;
 import com.example.ctsbe.repository.ComplaintTypeRepository;
 import com.example.ctsbe.repository.StaffRepository;
+import com.example.ctsbe.util.DateUtil;
 import com.example.ctsbe.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,7 @@ public class ComplaintServiceImpl implements ComplaintService{
     private HttpServletRequest request;
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+    DateUtil dateUtil = new DateUtil();
     @Override
     public void addComplaint(ComplaintAddDTO dto) {
         Complaint complaint = new Complaint();
@@ -49,7 +51,7 @@ public class ComplaintServiceImpl implements ComplaintService{
         complaint.setApprover(staffRepository.getById(getIdFromToken()));
         if(status == 1) complaint.setStatus("Accept");
         else if (status == 0) complaint.setStatus("Reject");
-        complaint.setLastUpdated(Instant.now());
+        complaint.setLastUpdated(dateUtil.plusInstant(Instant.now()));
         complaintRepository.save(complaint);
     }
 
