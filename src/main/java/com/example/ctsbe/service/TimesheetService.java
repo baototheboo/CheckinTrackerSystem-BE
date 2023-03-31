@@ -9,7 +9,7 @@ import java.util.List;
 public interface TimesheetService {
     List<Timesheet> getTimesheetByStaffIdAndMonth(int staffId,String month);
 
-    TimesheetDTO checkDayStatus(List<Timesheet> list,int staffId);
+    TimesheetDTO checkDayStatus(List<Timesheet> list,int staffId,String month);
 
     List<Integer> getListDayOfLocalDate(List<Timesheet> list);
 }

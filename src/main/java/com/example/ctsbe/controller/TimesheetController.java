@@ -23,13 +23,13 @@ public class TimesheetController {
     @Autowired
     private TimesheetService timesheetService;
 
-    @GetMapping("/getTimesheet")
+    @GetMapping("/getTimesheet/{staffId}")
     public ResponseEntity<Map<String, Object>> getTimesheet(
-            @RequestParam int staffId, @RequestParam String yearMonth
+            @PathVariable("staffId") int  staffId, @RequestParam String yearMonth
     ){
         try{
             List<Timesheet> list = timesheetService.getTimesheetByStaffIdAndMonth(staffId, yearMonth);
-            TimesheetDTO dto = timesheetService.checkDayStatus(list,staffId);
+            TimesheetDTO dto = timesheetService.checkDayStatus(list,staffId,yearMonth);
             Map<String, Object> response = new HashMap<>();
             response.put("dto", dto);
             return new ResponseEntity<>(response, HttpStatus.OK);
