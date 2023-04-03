@@ -2,9 +2,13 @@ package com.example.ctsbe.controller;
 
 import com.example.ctsbe.dto.complaint.ComplaintAddDTO;
 import com.example.ctsbe.dto.complaint.ComplaintDTO;
+import com.example.ctsbe.dto.complaintType.ComplaintTypeDTO;
 import com.example.ctsbe.entity.Complaint;
+import com.example.ctsbe.entity.ComplaintType;
 import com.example.ctsbe.mapper.ComplaintMapper;
+import com.example.ctsbe.mapper.ComplaintTypeMapper;
 import com.example.ctsbe.service.ComplaintService;
+import com.example.ctsbe.service.ComplaintTypeService;
 import com.example.ctsbe.util.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +35,8 @@ public class ComplaintController {
     @Autowired
     private ComplaintService complaintService;
     @Autowired
+    private ComplaintTypeService complaintTypeService;
+    @Autowired
     private HttpServletRequest request;
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -54,7 +60,7 @@ public class ComplaintController {
             List<Complaint> list = new ArrayList<>();
             Pageable pageable = PageRequest.of(page - 1, size);
             Page<Complaint> complaintPage;
-            if(status == null) complaintPage = complaintService.getListComplaint(pageable);
+            if(status == ""||status==null) complaintPage = complaintService.getListComplaint(pageable);
             else complaintPage = complaintService.getListComplaintByStatus(status,pageable);
             list = complaintPage.getContent();
             List<ComplaintDTO> listDto = list.stream().
@@ -80,6 +86,22 @@ public class ComplaintController {
             return new ResponseEntity<>("Cập nhật đơn thành công!", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/getAllComplaintTypes")
+    public ResponseEntity<?> getAllComplaintTypes() {
+        try {
+            List<ComplaintType> list = complaintTypeService.getAllComplaintType();
+            List<ComplaintTypeDTO> listDto = list.stream().
+                    map(ComplaintTypeMapper::convertEntityToDTO).collect(Collectors.toList());
+            Map<String, Object> response = new HashMap<>();
+            response.put("list", listDto);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("exception", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

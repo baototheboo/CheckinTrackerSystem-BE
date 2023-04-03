@@ -134,7 +134,7 @@ public class ProjectController {
     }
 
     @GetMapping("/getAllStaffInProject")
-    public ResponseEntity<Map<String, Object>> getAllProject(@RequestParam(defaultValue = "1") int page
+    public ResponseEntity<Map<String, Object>> getAllStaffInProject(@RequestParam(defaultValue = "1") int page
             , @RequestParam(defaultValue = "3") int size
             , @RequestParam int projectId) {
         try{

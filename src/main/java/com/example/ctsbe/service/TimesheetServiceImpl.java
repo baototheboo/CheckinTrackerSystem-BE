@@ -28,35 +28,28 @@ public class TimesheetServiceImpl implements TimesheetService {
     @Override
     public TimesheetDTO checkDayStatus(List<Timesheet> list, int staffId, String month) {
         int daysOfMonth = dateUtil.getLengthOfMonth(month);
-        //List<Integer> res = new ArrayList<>();
-        //List<Integer> listDate = getListDayOfLocalDate(list);
         TimesheetDTO dto = new TimesheetDTO();
         List<String> listStatus = new ArrayList<>();
-
-        if(list.size()<daysOfMonth){
-            
+        boolean check = false;
+        if (list.size() < daysOfMonth) {
+            for (int i = 1; i <= daysOfMonth; i++) {
+                for (int j = 0; j < list.size(); j++) {
+                    if (Integer.parseInt(dateUtil.convertLocalDateToStringDay(list.get(j).getDate())) == i) {
+                        listStatus.add(list.get(j).getDateStatus());
+                        check = true;
+                    }
+                }
+                if(check == false){
+                    listStatus.add(null);
+                }else {
+                    check = false;
+                }
+            }
         } else if (list.size() == daysOfMonth) {
-            for (int i= 0;i< list.size();i++){
+            for (int i = 0; i < list.size(); i++) {
                 listStatus.add(list.get(i).getDateStatus());
             }
         }
-
-        for (int i = 1; i <= daysOfMonth; i++) {
-            for (int j = 1; j <= list.size(); j++) {
-                if (list.get(i).getDate() != null
-                        && Integer.parseInt(dateUtil.convertLocalDateToStringDay(list.get(i).getDate())) == j) {
-                    listStatus.add(list.get(i).getDateStatus());
-                }else if(list.get(i).getDate() == null){
-                    listStatus.add(null);
-                }
-            }
-        }
-
-        /*if (list.size() < daysOfMonth) {
-            for (int i = 0; i < daysOfMonth - list.size(); i++) {
-                listStatus.add(null);
-            }
-        }*/
         List<Integer> listDayCheck = dateUtil.getListDayCheck(listStatus);
         dto.setStaffId(staffId);
         dto.setDayCheck(listDayCheck);

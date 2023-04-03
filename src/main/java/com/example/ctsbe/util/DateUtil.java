@@ -73,6 +73,7 @@ public class DateUtil {
         for (String s : list) {
             if (s != null && s.equalsIgnoreCase("ok")) res.add(1); //1 la ok
             else if (s != null && s.equalsIgnoreCase("late")) res.add(2); // 2 la late
+            else if (s != null && s.equalsIgnoreCase("absent")) res.add(3); // 3 la ko di lam
             else if (s == null) res.add(5); // 5 la not yet
         }
         return res;

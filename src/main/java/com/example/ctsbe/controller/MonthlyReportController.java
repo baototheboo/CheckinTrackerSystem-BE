@@ -1,6 +1,7 @@
 package com.example.ctsbe.controller;
 
 import com.example.ctsbe.dto.monthlyReport.MonthlyReportDTO;
+import com.example.ctsbe.dto.monthlyReport.MonthlyReportExport;
 import com.example.ctsbe.dto.staffProject.StaffInProjectDTO;
 import com.example.ctsbe.entity.MonthlyReport;
 import com.example.ctsbe.entity.Project;
@@ -18,11 +19,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.ParseException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -58,5 +59,18 @@ public class MonthlyReportController {
         }catch (Exception e){
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/export")
+    public void exportFile(@RequestParam String monthYear, HttpServletResponse response) throws IOException, ParseException {
+        response.setContentType("application/octet-stream");
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment;filename=Tong_hop_"+monthYear+".xlsx";
+        response.setHeader(headerKey, headerValue);
+        List<MonthlyReport> list = monthlyReportService.getListReportExportByMonth(monthYear);
+        List<MonthlyReportDTO> listDto = list.stream()
+                .map(MonthlyReportMapper::convertEntityToDto).collect(Collectors.toList());
+        MonthlyReportExport exporter = monthlyReportService.export(listDto);
+        exporter.export(response);
     }
 }

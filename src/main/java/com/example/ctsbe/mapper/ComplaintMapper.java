@@ -10,9 +10,13 @@ public class ComplaintMapper {
         ComplaintDTO dto = new ComplaintDTO();
         dto.setId(complaint.getId());
         dto.setStaffName(complaint.getStaff().getSurname() + " " + complaint.getStaff().getFirstName());
+        dto.setStaffId(complaint.getStaff().getId());
         dto.setCreateDay(dateUtil.convertInstantToStringYearMonthDay(complaint.getCreatedDate()));
         dto.setContent(complaint.getContent());
         dto.setStatus(complaint.getStatus());
+        dto.setApproveName((complaint.getApprover() == null) ? null :
+                complaint.getApprover().getSurname() + " " + complaint.getApprover().getFirstName());
+        dto.setApproveId((complaint.getApprover() == null) ? null : complaint.getApprover().getId());
         dto.setComplaintType(complaint.getComplaintType().getName());
         return dto;
     }
