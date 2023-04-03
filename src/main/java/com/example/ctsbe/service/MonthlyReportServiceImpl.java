@@ -1,5 +1,7 @@
 package com.example.ctsbe.service;
 
+import com.example.ctsbe.dto.monthlyReport.MonthlyReportDTO;
+import com.example.ctsbe.dto.monthlyReport.MonthlyReportExport;
 import com.example.ctsbe.entity.MonthlyReport;
 import com.example.ctsbe.repository.MonthlyReportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,5 +24,15 @@ public class MonthlyReportServiceImpl implements MonthlyReportService{
     @Override
     public Page<MonthlyReport> getListByMonthYear(String monthYear, Pageable pageable) {
         return monthlyReportRepository.getListReportByMonthYear(monthYear, pageable);
+    }
+
+    @Override
+    public List<MonthlyReport> getListReportExportByMonth(String monthYear) {
+        return monthlyReportRepository.getReportByMonthYear(monthYear);
+    }
+
+    @Override
+    public MonthlyReportExport export(List<MonthlyReportDTO> list) {
+        return new MonthlyReportExport(list);
     }
 }
