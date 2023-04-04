@@ -55,15 +55,24 @@ public class ProjectController {
     @GetMapping("/getAllProject")
     public ResponseEntity<Map<String, Object>> getAllProject(@RequestParam(defaultValue = "1") int page
             , @RequestParam(defaultValue = "3") int size
+            , @RequestParam(defaultValue = "0") int staffId
             , @RequestParam(required = false) String name) {
         try {
             List<Project> list = new ArrayList<>();
             Pageable pageable = PageRequest.of(page - 1, size);
             Page<Project> projectPage;
             if (name == null) {
-                projectPage = projectService.getAllProject(pageable);
+                if(staffId == 0){
+                    projectPage = projectService.getAllProject(pageable);
+                }else {
+                    projectPage = projectService.getListProjectByPMId(staffId,pageable);
+                }
             } else {
-                projectPage = projectService.getProjectByNameContain(name,pageable);
+                if(staffId == 0){
+                    projectPage = projectService.getProjectByNameContain(name,pageable);
+                }else {
+                    projectPage = projectService.getListProjectByPMIdAndProjectName(staffId,name,pageable);
+                }
             }
             list = projectPage.getContent();
             List<ProjectDTO> listDto = list.stream().

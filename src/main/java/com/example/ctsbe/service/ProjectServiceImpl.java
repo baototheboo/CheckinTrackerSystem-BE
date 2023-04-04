@@ -2,8 +2,11 @@ package com.example.ctsbe.service;
 
 import com.example.ctsbe.dto.project.ProjectAddDTO;
 import com.example.ctsbe.entity.Project;
+import com.example.ctsbe.entity.StaffProject;
+import com.example.ctsbe.entity.StaffProjectId;
 import com.example.ctsbe.repository.GroupRepository;
 import com.example.ctsbe.repository.ProjectRepository;
+import com.example.ctsbe.repository.StaffProjectRepository;
 import com.example.ctsbe.repository.StaffRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,6 +24,8 @@ public class ProjectServiceImpl implements ProjectService {
     private GroupRepository groupRepository;
     @Autowired
     private StaffRepository staffRepository;
+    @Autowired
+    private StaffProjectRepository staffProjectRepository;
 
     @Override
     public Page<Project> getAllProject(Pageable pageable) {
@@ -38,6 +43,16 @@ public class ProjectServiceImpl implements ProjectService {
         project.setStatus("Processing");
         projectRepository.save(project);
         return project;
+    }
+
+    @Override
+    public Page<Project> getListProjectByPMId(int staffId, Pageable pageable) {
+        return projectRepository.getListProjectByPMId(staffId, pageable);
+    }
+
+    @Override
+    public Page<Project> getListProjectByPMIdAndProjectName(int staffId, String name, Pageable pageable) {
+        return projectRepository.getListProjectByPMIdAndProjectName(staffId, name, pageable);
     }
 
     @Override

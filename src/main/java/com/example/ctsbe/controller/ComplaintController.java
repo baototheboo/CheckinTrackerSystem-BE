@@ -55,13 +55,25 @@ public class ComplaintController {
     @GetMapping("/getAllComplaints")
     public ResponseEntity<Map<String, Object>> getAllComplaints(@RequestParam(defaultValue = "1") int page
             , @RequestParam(defaultValue = "3") int size
+            , @RequestParam(defaultValue = "0") int staffId
             , @RequestParam(required = false) String status) {
         try {
             List<Complaint> list = new ArrayList<>();
             Pageable pageable = PageRequest.of(page - 1, size);
             Page<Complaint> complaintPage;
-            if(status == ""||status==null) complaintPage = complaintService.getListComplaint(pageable);
-            else complaintPage = complaintService.getListComplaintByStatus(status,pageable);
+            if (status == "" || status == null) {
+                if(staffId == 0){
+                    complaintPage = complaintService.getListComplaint(pageable);
+                }else {
+                    complaintPage = complaintService.getListComplaintById(staffId,pageable);
+                }
+            } else {
+                if(staffId == 0){
+                    complaintPage = complaintService.getListComplaintByStatus(status, pageable);
+                }else {
+                    complaintPage = complaintService.getListComplaintByIdAndStatus(staffId,status,pageable);
+                }
+            }
             list = complaintPage.getContent();
             List<ComplaintDTO> listDto = list.stream().
                     map(ComplaintMapper::convertEntityToDto).collect(Collectors.toList());
