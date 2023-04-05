@@ -38,7 +38,9 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
             "where s.id in (select a.staff.id from Account a where a.role.id = 4 and a.enable = 1) \n" +
             "and s.id not in (select g.groupLeader.id from Group g)")
     List<Staff> getListGroupLeaderAvailable();
+
     Staff findStaffById(Integer staffId);
+
     @Query(value = "select s from Staff as s " +
             "where s.id IN (SELECT a.staff.id FROM Account a WHERE a.enable = 1)")
     List<Staff> findAllEnableTrue();
@@ -53,4 +55,7 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
             "group by iv.recognizeStaffId)")
     List<Staff> findStaffAbsent(@Param("startTime") Instant startTime,
                                 @Param("endTime") Instant endTime);
+
+    @Query(value = "select a.staff.id from Account a where a.enable=1")
+    List<Integer> getListStaffIdEnable();
 }

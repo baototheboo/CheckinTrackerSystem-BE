@@ -14,5 +14,7 @@ public class AccountDTO {
     private String email;
     private String staffName;
     private String roleName;
+    private String groupName;
+    private Integer groupId;
     private boolean enable;
 }

@@ -79,7 +79,6 @@ public class DateUtil {
         return res;
     }
 
-
     public static Instant convertLocalDateTimeToInstant(LocalDateTime localDateTime) {
         return localDateTime.atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE)).toInstant();
     }

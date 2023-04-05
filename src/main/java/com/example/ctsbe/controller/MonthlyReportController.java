@@ -3,12 +3,15 @@ package com.example.ctsbe.controller;
 import com.example.ctsbe.dto.monthlyReport.MonthlyReportDTO;
 import com.example.ctsbe.dto.monthlyReport.MonthlyReportExport;
 import com.example.ctsbe.dto.staffProject.StaffInProjectDTO;
+import com.example.ctsbe.dto.timesheet.TimesheetDTO;
 import com.example.ctsbe.entity.MonthlyReport;
 import com.example.ctsbe.entity.Project;
 import com.example.ctsbe.entity.StaffProject;
+import com.example.ctsbe.entity.Timesheet;
 import com.example.ctsbe.mapper.MonthlyReportMapper;
 import com.example.ctsbe.mapper.StaffProjectMapper;
 import com.example.ctsbe.service.MonthlyReportService;
+import com.example.ctsbe.service.TimesheetService;
 import com.example.ctsbe.util.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +36,8 @@ import java.util.stream.Collectors;
 public class MonthlyReportController {
     @Autowired
     private MonthlyReportService monthlyReportService;
+    @Autowired
+    private TimesheetService timesheetService;
 
     @GetMapping("/getMonthlyReport")
     public ResponseEntity<Map<String, Object>> getMonthlyReport(@RequestParam(defaultValue = "1") int page
@@ -61,16 +66,29 @@ public class MonthlyReportController {
         }
     }
 
+    @GetMapping("/showListMonthlyReport")
+    public ResponseEntity<?> showListMonthlyReport(@RequestParam(required = false) String monthYear){
+        try{
+            List<TimesheetDTO> list =  timesheetService.getListTimeSheetByMonth(monthYear);
+            monthlyReportService.addToMonthlyReport(list);
+            return new ResponseEntity<>(list, HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping("/export")
     public void exportFile(@RequestParam String monthYear, HttpServletResponse response) throws IOException, ParseException {
         response.setContentType("application/octet-stream");
         String headerKey = "Content-Disposition";
         String headerValue = "attachment;filename=Tong_hop_"+monthYear+".xlsx";
         response.setHeader(headerKey, headerValue);
+
+        List<TimesheetDTO> listTimeSheet =  timesheetService.getListTimeSheetByMonth(monthYear);
         List<MonthlyReport> list = monthlyReportService.getListReportExportByMonth(monthYear);
         List<MonthlyReportDTO> listDto = list.stream()
                 .map(MonthlyReportMapper::convertEntityToDto).collect(Collectors.toList());
-        MonthlyReportExport exporter = monthlyReportService.export(listDto);
+        MonthlyReportExport exporter = monthlyReportService.export(listDto,listTimeSheet);
         exporter.export(response);
     }
 }

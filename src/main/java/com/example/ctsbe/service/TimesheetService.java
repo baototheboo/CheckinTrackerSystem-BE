@@ -12,4 +12,6 @@ public interface TimesheetService {
     TimesheetDTO checkDayStatus(List<Timesheet> list,int staffId,String month);
 
     List<Integer> getListDayOfLocalDate(List<Timesheet> list);
+
+    List<TimesheetDTO> getListTimeSheetByMonth(String monthYear);
 }

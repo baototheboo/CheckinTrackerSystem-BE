@@ -8,12 +8,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ComplaintRepository extends JpaRepository<Complaint,Integer> {
+public interface ComplaintRepository extends JpaRepository<Complaint, Integer> {
     Page<Complaint> findByStatusOrderByCreatedDateAsc(String status, Pageable pageable);
 
-    @Query(value = "SELECT c FROM Complaint c where c.staff.id =:id order by c.createdDate asc")
+    @Query(value = "SELECT c FROM Complaint c where c.staff.id =:id order by c.lastUpdated desc,c.createdDate asc ")
     Page<Complaint> getListById(int id, Pageable pageable);
 
-    @Query(value = "SELECT c FROM Complaint c where c.staff.id =:id and c.status =:status order by c.createdDate asc")
-    Page<Complaint> getListByIdAndStatus(int id,String status, Pageable pageable);
+    @Query(value = "SELECT c FROM Complaint c where c.staff.id =:id and c.status =:status order by c.lastUpdated desc,c.createdDate asc ")
+    Page<Complaint> getListByIdAndStatus(int id, String status, Pageable pageable);
 }

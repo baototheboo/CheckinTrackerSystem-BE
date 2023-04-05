@@ -2,11 +2,13 @@ package com.example.ctsbe.service;
 
 import com.example.ctsbe.dto.timesheet.TimesheetDTO;
 import com.example.ctsbe.entity.Timesheet;
+import com.example.ctsbe.repository.StaffRepository;
 import com.example.ctsbe.repository.TimesheetRepository;
 import com.example.ctsbe.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Time;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,12 +19,16 @@ import java.util.stream.Collectors;
 public class TimesheetServiceImpl implements TimesheetService {
     @Autowired
     private TimesheetRepository timesheetRepository;
+    @Autowired
+    private StaffRepository staffRepository;
 
     DateUtil dateUtil = new DateUtil();
 
     @Override
     public List<Timesheet> getTimesheetByStaffIdAndMonth(int staffId, String month) {
-        return timesheetRepository.getListTimesheetByStaffIdAndMonth(staffId, month);
+        List<Timesheet> list = timesheetRepository.getListTimesheetByStaffIdAndMonth(staffId, month);
+        if (!list.isEmpty()) return list;
+        else return null;
     }
 
     @Override
@@ -39,9 +45,9 @@ public class TimesheetServiceImpl implements TimesheetService {
                         check = true;
                     }
                 }
-                if(check == false){
+                if (check == false) {
                     listStatus.add(null);
-                }else {
+                } else {
                     check = false;
                 }
             }
@@ -52,6 +58,8 @@ public class TimesheetServiceImpl implements TimesheetService {
         }
         List<Integer> listDayCheck = dateUtil.getListDayCheck(listStatus);
         dto.setStaffId(staffId);
+        dto.setStaffName(staffRepository.findStaffById(staffId).getSurname() + " " + staffRepository.findStaffById(staffId).getFirstName());
+        dto.setMonthYear(month);
         dto.setDayCheck(listDayCheck);
         return dto;
     }
@@ -68,5 +76,24 @@ public class TimesheetServiceImpl implements TimesheetService {
             );
         }
         return dayList;
+    }
+
+    @Override
+    public List<TimesheetDTO> getListTimeSheetByMonth(String monthYear) {
+        List<TimesheetDTO> listDto = new ArrayList<>();
+        List<Integer> listStaffId = staffRepository.getListStaffIdEnable();
+        for (Integer staffId : listStaffId) {
+            List<Timesheet> listTimesheetByMonth = getTimesheetByStaffIdAndMonth(staffId, monthYear);
+            if(listTimesheetByMonth == null){
+                listDto.add(new TimesheetDTO(staffId,
+                        staffRepository.findStaffById(staffId).getSurname() + " " + staffRepository.findStaffById(staffId).getFirstName(),
+                        monthYear,
+                        null));
+            }else {
+                TimesheetDTO timesheetDTO = checkDayStatus(listTimesheetByMonth, staffId, monthYear);
+                listDto.add(timesheetDTO);
+            }
+        }
+        return listDto;
     }
 }
