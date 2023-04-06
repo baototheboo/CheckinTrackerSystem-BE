@@ -34,6 +34,11 @@ public class DateUtil {
         String dateFormat = formatter.format(date);
         return dateFormat.substring(0, 10);
     }
+    public static String convertInstantToTimeVerifyString(Instant date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        return date.atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE)).format(formatter);
+    }
+
 
     public static String convertTimeVerifyToString(LocalDate date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss");

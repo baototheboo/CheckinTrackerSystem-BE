@@ -16,6 +16,8 @@ import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -71,7 +73,7 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
         if (recognizedStaffDTO != null
                 && !StringUtils.isEmpty(recognizedStaffDTO.getPartId())) {
             staffId = Integer.parseInt(recognizedStaffDTO.getPartId());
-            Staff staff = staffRepository.findStaffById(staffId);
+            Staff staff = staffRepository.findAvailableStaffByStaffId(staffId);
             fullName = staff != null ? staff.getFullName().trim().replace(" ", "_") : "";
             probability = recognizedStaffDTO.getProbability();
             if ((probability != 0F)&(!isCheckedInOrNot(staffId))) { //check-in
@@ -136,7 +138,7 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
             }
         }
         if (setupStaffImage) {
-            Staff staff = staffRepository.findStaffById(staffId);
+            Staff staff = staffRepository.findAvailableStaffByStaffId(staffId);
             List<ImagesSetup> imagesSetups = imageSetupDTOs.stream().map(ImageSetupDTO::toEntity).collect(Collectors.toList());
             for (ImagesSetup imagesSetup : imagesSetups) {
                 imageSetupRepository.save(imagesSetup);
@@ -155,7 +157,7 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
 
     @Override
     public Page<ImageVerifyDTO> findImageVerify(Integer staffId, String name, boolean onlyMe, LocalDate startDate, LocalDate endDate, boolean isError, Pageable pageable) {
-        Page<ImageVerifyDTO> listImageVerify = null;
+        Page<ImageVerifyDTO> listImageVerify = new PageImpl<>(Collections.emptyList(), PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()), 0);
 
         if (startDate != null && endDate != null
                 && startDate.isAfter(endDate)) {
@@ -180,7 +182,6 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
                 listImageVerify = imageVerifyRepository.findAllApprovedAndPendingByTimeVerify(name, startTime,
                         endTime, pageable);
         }
-        if (listImageVerify.isEmpty()) throw new ImageNotFoundException("Không tìm thấy ảnh theo yêu cầu.");
         return listImageVerify;
     }
 

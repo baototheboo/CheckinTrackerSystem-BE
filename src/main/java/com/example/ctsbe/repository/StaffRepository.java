@@ -2,6 +2,7 @@ package com.example.ctsbe.repository;
 
 import com.example.ctsbe.dto.staff.StaffAvailableDTO;
 import com.example.ctsbe.entity.Staff;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,8 +10,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.swing.text.html.Option;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface StaffRepository extends JpaRepository<Staff, Integer> {
@@ -38,7 +41,17 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
             "where s.id in (select a.staff.id from Account a where a.role.id = 4 and a.enable = 1) \n" +
             "and s.id not in (select g.groupLeader.id from Group g)")
     List<Staff> getListGroupLeaderAvailable();
+
     Staff findStaffById(Integer staffId);
+
+    @Query(value = "select s from Staff as s " +
+            "where s.id=:id and s.id IN (SELECT a.staff.id FROM Account a WHERE a.enable = 1)")
+    Staff findAvailableStaffByStaffId(@Param("id") int id);
+
+    @Query(value = "select s from Staff as s " +
+            "where s.id=:id and s.id IN (SELECT a.staff.id FROM Account a WHERE a.enable = 1)")
+    Optional<Staff> findAvailableStaffById(@Param("id") int id);
+
     @Query(value = "select s from Staff as s " +
             "where s.id IN (SELECT a.staff.id FROM Account a WHERE a.enable = 1)")
     List<Staff> findAllEnableTrue();
