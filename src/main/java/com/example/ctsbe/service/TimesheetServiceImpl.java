@@ -32,8 +32,6 @@ public class TimesheetServiceImpl implements TimesheetService {
     @Autowired
     private StaffRepository staffRepository;
 
-    @Autowired
-    private StaffRepository staffRepository;
 
     DateUtil dateUtil = new DateUtil();
 
