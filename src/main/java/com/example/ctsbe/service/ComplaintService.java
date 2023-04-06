@@ -14,4 +14,7 @@ public interface ComplaintService {
 
     Page<Complaint> getListComplaintByStatus(String status,Pageable pageable);
 
+    Page<Complaint> getListComplaintById(int id,Pageable pageable);
+    Page<Complaint> getListComplaintByIdAndStatus(int id,String status,Pageable pageable);
+
 }

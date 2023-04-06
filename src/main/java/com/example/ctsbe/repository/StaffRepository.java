@@ -66,4 +66,7 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
             "group by iv.recognizeStaffId)")
     List<Staff> findStaffAbsent(@Param("startTime") Instant startTime,
                                 @Param("endTime") Instant endTime);
+
+    @Query(value = "select a.staff.id from Account a where a.enable=1")
+    List<Integer> getListStaffIdEnable();
 }

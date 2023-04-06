@@ -18,6 +18,8 @@ public class ComplaintMapper {
                 complaint.getApprover().getSurname() + " " + complaint.getApprover().getFirstName());
         dto.setApproveId((complaint.getApprover() == null) ? null : complaint.getApprover().getId());
         dto.setComplaintType(complaint.getComplaintType().getName());
+        dto.setLastUpdate((complaint.getLastUpdated() == null) ? null :
+                dateUtil.convertInstantToStringYearMonthDay(complaint.getLastUpdated()));
         return dto;
     }
 }

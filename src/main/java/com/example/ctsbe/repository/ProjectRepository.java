@@ -15,4 +15,10 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
 
     @Query(value = "select p from Project p where p.group.id=:groupId")
     List<Project> getListProjectByGroupId(int groupId);
+
+    @Query(value = "select p from Project p where p.projectManager.id=:staffId")
+    Page<Project> getListProjectByPMId(int staffId, Pageable pageable);
+
+    @Query(value = "select p from Project p where p.projectManager.id=:staffId and p.projectName like %:name%")
+    Page<Project> getListProjectByPMIdAndProjectName(int staffId,String name, Pageable pageable);
 }

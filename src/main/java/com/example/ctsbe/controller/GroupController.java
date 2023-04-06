@@ -47,15 +47,24 @@ public class GroupController {
     @GetMapping("/getAllGroups")
     public ResponseEntity<Map<String, Object>> getAllGroups(@RequestParam(defaultValue = "1") int page
             , @RequestParam(defaultValue = "3") int size
+            , @RequestParam(defaultValue = "0") int staffId
             , @RequestParam(required = false) String groupName) {
         try {
             List<Group> list = new ArrayList<>();
             Pageable pageable = PageRequest.of(page - 1, size);
             Page<Group> groupPage;
             if (groupName == null) {
-                groupPage = groupService.getAllGroup(pageable);
+                if(staffId == 0){
+                    groupPage = groupService.getAllGroup(pageable);
+                }else {
+                    groupPage = groupService.getListGroupByStaffId(staffId,pageable);
+                }
             } else {
-                groupPage = groupService.getAllGroupByName(groupName, pageable);
+                if(staffId == 0){
+                    groupPage = groupService.getAllGroupByName(groupName, pageable);
+                }else {
+                    groupPage = groupService.getListGroupByStaffIdAndGroupName(staffId,groupName,pageable);
+                }
             }
             list = groupPage.getContent();
             List<GroupDTO> listDto = list.stream().

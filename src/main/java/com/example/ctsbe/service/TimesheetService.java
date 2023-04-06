@@ -18,4 +18,6 @@ public interface TimesheetService {
 
     TimesheetResponseDTO getTimesheetByStaffAndDate(int staffId, LocalDate date);
     void updateTimesheetStatus(int staffId, TimesheetUpdateDTO timesheetUpdateDTO);
+
+    List<TimesheetDTO> getListTimeSheetByMonth(String monthYear);
 }

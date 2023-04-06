@@ -16,6 +16,8 @@ public interface GroupService {
     Page<Group> getAllGroup(Pageable pageable);
 
     Page<Group> getAllGroupByName(String name,Pageable pageable);
+    Page<Group> getListGroupByStaffId(int staffId, Pageable pageable);
+    Page<Group> getListGroupByStaffIdAndGroupName(int staffId, String name, Pageable pageable);
     void editGroup(int id,GroupUpdateDTO dto);
 
     void addStaffToGroup(StaffProjectAddDTO dto);

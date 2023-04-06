@@ -46,6 +46,16 @@ public class GroupServiceImpl implements GroupService {
         return groupRepository.findByGroupNameContaining(name, pageable);
     }
 
+    @Override
+    public Page<Group> getListGroupByStaffId(int staffId, Pageable pageable) {
+        return groupRepository.getListGroupByStaffId(staffId, pageable);
+    }
+
+    @Override
+    public Page<Group> getListGroupByStaffIdAndGroupName(int staffId, String name, Pageable pageable) {
+        return groupRepository.getListGroupByStaffIdAndGroupName(staffId, name, pageable);
+    }
+
 
     @Override
     public void editGroup(int id,GroupUpdateDTO dto) {
