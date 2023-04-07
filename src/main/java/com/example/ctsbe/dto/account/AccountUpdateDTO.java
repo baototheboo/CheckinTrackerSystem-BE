@@ -12,12 +12,12 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 
 public class AccountUpdateDTO {
-    @NotBlank(message = "Password is required")
+    @NotBlank(message = "Vui lòng nhập mật khẩu")
     private String password;
 
-    @NotBlank(message = "Password is required")
+    @NotBlank(message = "Vui lòng nhập mật khẩu mới")
     private String newPassword;
 
-    @NotBlank(message = "Password is required")
+    @NotBlank(message = "Vui lòng nhập lại mật khẩu mới")
     private String confirmNewPassword;
 }

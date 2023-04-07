@@ -87,12 +87,9 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public Group findById(int id) throws NotFoundException {
+    public Group findById(int id)  {
         Group existedGroup = groupRepository.getById(id);
-        if(existedGroup.getId() == null){
-            throw new NotFoundException("Cannot found this group.");
-        }
-        else return existedGroup ;
+         return existedGroup ;
     }
 
     @Override

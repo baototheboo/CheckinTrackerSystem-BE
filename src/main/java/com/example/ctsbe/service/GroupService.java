@@ -24,7 +24,7 @@ public interface GroupService {
 
     void removeStaffFromGroup(GroupRemoveStaffDTO dto);
 
-    Group findById(int id) throws NotFoundException;
+    Group findById(int id) ;
 
     void deleteGroup(int id) throws NotFoundException;
 }
