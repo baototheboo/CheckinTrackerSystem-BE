@@ -3,6 +3,7 @@ package com.example.ctsbe.dto.image;
 import com.example.ctsbe.constant.ApplicationConstant;
 import com.example.ctsbe.entity.ImagesSetup;
 import com.example.ctsbe.entity.Staff;
+import com.example.ctsbe.util.DateUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -64,13 +65,13 @@ public class ImageSetupDTO {
         ImagesSetup imagesSetup = new ImagesSetup();
         imagesSetup.setId(this.getImagesSetupId());
         imagesSetup.setImage(this.getImage());
-        imagesSetup.setTimeSetup(this.getTimeSetup().toInstant(ZoneOffset.UTC));
+        imagesSetup.setTimeSetup(DateUtil.convertLocalDateTimeToInstant(this.getTimeSetup()));
         imagesSetup.setStatus(this.getStatus());
         Staff staff = new Staff();
         staff.setId(this.getStaffId());
         imagesSetup.setStaff(staff);
-        imagesSetup.setCreatedDate(this.getCreateDate().toInstant(ZoneOffset.UTC));
-        imagesSetup.setLastUpdated(this.getUpdatedDate().toInstant(ZoneOffset.UTC));
+        imagesSetup.setCreatedDate(DateUtil.convertLocalDateTimeToInstant(this.getCreateDate()));
+        imagesSetup.setLastUpdated(DateUtil.convertLocalDateTimeToInstant(this.getUpdatedDate()));
         return imagesSetup;
     }
 }

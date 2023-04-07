@@ -52,10 +52,7 @@ public class ImageSetupServiceImpl implements ImageSetupService{
     @Override
     public Page<ImageSetupDTO> findImageSetup(Integer staffId, Pageable pageable) {
         Page<ImageSetupDTO> imageSetupDTOS = imageSetupRepository.findImageSetupByStaffId(staffId, pageable);
-        if (imageSetupDTOS.isEmpty()){
-            throw new ImageNotFoundException("Không tìm thấy ảnh đã được setup nào");
-        }
-        else return imageSetupDTOS;
+        return imageSetupDTOS;
     }
 
     @Transactional
