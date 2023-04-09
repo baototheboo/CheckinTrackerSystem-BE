@@ -20,7 +20,7 @@ public class GroupMapper {
         GroupDetailDTO dto = new GroupDetailDTO();
         dto.setId(group.getId());
         dto.setGroupName(group.getGroupName());
-        dto.setGroupLeaderName(group.getGroupLeader().getSurname() + " " + group.getGroupLeader().getFirstName());
+        dto.setGroupLeaderName(group.getGroupLeader().getFullName());
         return dto;
     }
 

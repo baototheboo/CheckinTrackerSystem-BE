@@ -1,6 +1,9 @@
 package com.example.ctsbe.util;
 
 import com.example.ctsbe.constant.ApplicationConstant;
+import org.apache.tomcat.jni.Local;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -58,13 +61,28 @@ public class DateUtil {
         return dateFormat;
     }
 
-    public int getLengthOfMonth(String YearMonth) {
-        //String convert = convertLocalDateToMonthAndYear(YearMonthDay);
-        String[] monthAndYear = YearMonth.split("-");
+    public int getLengthOfMonth(String yearMonth) {
+        YearMonth res = convertStringToYearMonth(yearMonth);
+        return res.lengthOfMonth();
+    }
+
+    public YearMonth convertStringToYearMonth(String yearMonth){
+        String[] monthAndYear = yearMonth.split("-");
         int year = Integer.parseInt(monthAndYear[0]);
         int month = Integer.parseInt(monthAndYear[1]);
         YearMonth res = java.time.YearMonth.of(year, month);
-        return res.lengthOfMonth();
+        return res;
+    }
+
+    public boolean compareYearMonth(String yearMonth,YearMonth now){
+        YearMonth compare = convertStringToYearMonth(yearMonth);
+        return compare.isAfter(now);
+    }
+
+    public boolean checkWeekend(LocalDate date){
+        DayOfWeek day = date.getDayOfWeek();
+        if(day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY) return true;
+        else return false;
     }
 
     public String convertLocalDateToStringDay(LocalDate date) {

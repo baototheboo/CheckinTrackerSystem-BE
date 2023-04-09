@@ -67,6 +67,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                         ,"/levels/*"
                         , "/levels/*/*"
                         ,"/projects/*"
+                        ,"/holidays/*"
                         ,"/reports/*"
                         ,"/complaints/*"
                         ,"/timesheets/getTimesheet/*"

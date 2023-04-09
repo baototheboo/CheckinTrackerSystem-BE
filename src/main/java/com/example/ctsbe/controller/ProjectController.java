@@ -89,14 +89,24 @@ public class ProjectController {
     }
 
     @PostMapping("/addProject")
-    public ResponseEntity<?> addGroup(@Valid @RequestBody ProjectAddDTO dto){
+    public ResponseEntity<?> addProject(@Valid @RequestBody ProjectAddDTO dto){
         try{
-            projectService.addProject(dto);
-            return new ResponseEntity<>("Add project "+dto.getProjectName()+" successfully",HttpStatus.OK);
+            Project p = projectService.addProject(dto);
+            staffProjectService.addPMToProject(dto.getProjectManagerId(),p.getId());
+            return new ResponseEntity<>("Tạo dự án "+dto.getProjectName()+" thành công.",HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
+    }
 
+    @PostMapping("/addPMToProject")
+    public ResponseEntity<?> addPMToProject(@RequestParam int pmId,@RequestParam int projectId){
+        try{
+            staffProjectService.addPMToProject(pmId, projectId);
+            return new ResponseEntity<>("Add project PM successfully",HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/editProject/{id}")

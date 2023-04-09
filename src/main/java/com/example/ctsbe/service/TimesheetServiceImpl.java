@@ -8,6 +8,7 @@ import com.example.ctsbe.entity.Timesheet;
 import com.example.ctsbe.exception.ConnectionErrorException;
 import com.example.ctsbe.exception.StaffNotAvailableException;
 import com.example.ctsbe.exception.TimesheetNotExist;
+import com.example.ctsbe.mapper.TimesheetMapper;
 import com.example.ctsbe.repository.StaffRepository;
 import com.example.ctsbe.repository.StaffRepository;
 import com.example.ctsbe.repository.TimesheetRepository;
@@ -19,9 +20,12 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TimesheetServiceImpl implements TimesheetService {
@@ -31,7 +35,6 @@ public class TimesheetServiceImpl implements TimesheetService {
     private TimesheetRepository timesheetRepository;
     @Autowired
     private StaffRepository staffRepository;
-
 
     DateUtil dateUtil = new DateUtil();
 
@@ -48,18 +51,22 @@ public class TimesheetServiceImpl implements TimesheetService {
         TimesheetDTO dto = new TimesheetDTO();
         List<String> listStatus = new ArrayList<>();
         boolean check = false;
-        if (list.size() < daysOfMonth) {
+        if (list == null || list.size() < daysOfMonth) {
             for (int i = 1; i <= daysOfMonth; i++) {
-                for (int j = 0; j < list.size(); j++) {
-                    if (Integer.parseInt(dateUtil.convertLocalDateToStringDay(list.get(j).getDate())) == i) {
-                        listStatus.add(list.get(j).getDateStatus());
-                        check = true;
-                    }
-                }
-                if (check == false) {
+                if (list == null && dateUtil.compareYearMonth(month, YearMonth.now())) {
                     listStatus.add(null);
                 } else {
-                    check = false;
+                    for (int j = 0; j < list.size(); j++) {
+                        if (Integer.parseInt(dateUtil.convertLocalDateToStringDay(list.get(j).getDate())) == i) {
+                            listStatus.add(list.get(j).getDateStatus());
+                            check = true;
+                        }
+                    }
+                    if (check == false) {
+                        listStatus.add(null);
+                    } else {
+                        check = false;
+                    }
                 }
             }
         } else if (list.size() == daysOfMonth) {
@@ -69,7 +76,7 @@ public class TimesheetServiceImpl implements TimesheetService {
         }
         List<Integer> listDayCheck = dateUtil.getListDayCheck(listStatus);
         dto.setStaffId(staffId);
-        dto.setStaffName(staffRepository.findStaffById(staffId).getSurname() + " " + staffRepository.findStaffById(staffId).getFirstName());
+        dto.setStaffName(staffRepository.findStaffById(staffId).getFullName());
         dto.setMonthYear(month);
         dto.setDayCheck(listDayCheck);
         return dto;
@@ -121,12 +128,13 @@ public class TimesheetServiceImpl implements TimesheetService {
         List<Integer> listStaffId = staffRepository.getListStaffIdEnable();
         for (Integer staffId : listStaffId) {
             List<Timesheet> listTimesheetByMonth = getTimesheetByStaffIdAndMonth(staffId, monthYear);
-            if(listTimesheetByMonth == null){
+            Staff staff = staffRepository.findStaffById(staffId);
+            if (listTimesheetByMonth == null) {
                 listDto.add(new TimesheetDTO(staffId,
-                        staffRepository.findStaffById(staffId).getSurname() + " " + staffRepository.findStaffById(staffId).getFirstName(),
+                        staff.getFullName(),
                         monthYear,
                         null));
-            }else {
+            } else {
                 TimesheetDTO timesheetDTO = checkDayStatus(listTimesheetByMonth, staffId, monthYear);
                 listDto.add(timesheetDTO);
             }

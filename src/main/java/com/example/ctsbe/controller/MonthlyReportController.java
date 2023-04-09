@@ -70,7 +70,7 @@ public class MonthlyReportController {
     public ResponseEntity<?> showListMonthlyReport(@RequestParam(required = false) String monthYear){
         try{
             List<TimesheetDTO> list =  timesheetService.getListTimeSheetByMonth(monthYear);
-            monthlyReportService.addToMonthlyReport(list);
+            //monthlyReportService.addToMonthlyReport(list);
             return new ResponseEntity<>(list, HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

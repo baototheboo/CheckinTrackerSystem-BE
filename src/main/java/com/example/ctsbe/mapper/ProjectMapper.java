@@ -12,8 +12,7 @@ public class ProjectMapper {
         ProjectDTO dto = new ProjectDTO(
                 project.getId(),
                 project.getProjectName(),
-                project.getProjectManager().getSurname() + " "
-                        + project.getProjectManager().getFirstName(),
+                project.getProjectManager().getFullName(),
                 project.getProjectManager().getId(),
                 project.getGroup().getGroupName(),
                 project.getGroup().getId(),

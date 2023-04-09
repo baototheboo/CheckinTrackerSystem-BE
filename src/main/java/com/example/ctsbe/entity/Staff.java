@@ -270,6 +270,6 @@ public class Staff {
         return name;
     }
     public String getFullName() {
-        return String.format("%s %s", getFirstName(), getSurname());
+        return String.format("%s %s", getSurname(), getFirstName());
     }
 }

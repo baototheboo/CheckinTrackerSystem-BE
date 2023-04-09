@@ -25,7 +25,7 @@ public class StaffMapper {
         StaffDTO dto = new StaffDTO();
         dto.setId(staff.getId());
         dto.setEmail(staff.getEmail());
-        dto.setFullName(staff.getSurname() + " " + staff.getFirstName());
+        dto.setFullName(staff.getFullName());
         dto.setDateOfBirth(dateUtil.convertLocalDateToString(staff.getDateOfBirth()));
         dto.setPhone(staff.getPhone());
         dto.setPromotionLevel(staff.getPromotionLevel().getId());
@@ -37,7 +37,7 @@ public class StaffMapper {
     public static StaffAvailableDTO convertStaffToStaffAvailableDto(Staff staff){
         StaffAvailableDTO dto = new StaffAvailableDTO();
         dto.setId(staff.getId());
-        dto.setFullName(staff.getSurname() + " " + staff.getFirstName());
+        dto.setFullName(staff.getFullName());
         return dto;
     }
 }

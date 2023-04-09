@@ -21,7 +21,7 @@ public class StaffProjectMapper {
         StringUtil util = new StringUtil();
         Staff staff = sp.getStaff();
         dto.setStaffId(staff.getId());
-        dto.setFullName(staff.getSurname() + " " + staff.getFirstName());
+        dto.setFullName(staff.getFullName());
         dto.setEmail(staff.getEmail());
         dto.setPhone(staff.getPhone());
         dto.setRoleName(util.cutStringRole(

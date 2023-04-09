@@ -25,6 +25,18 @@ public class StaffProjectServiceImpl implements StaffProjectService {
     private ProjectRepository projectRepository;
 
     @Override
+    public void addPMToProject(int pmId,int prjId) {
+        StaffProject staffProject = new StaffProject();
+        StaffProjectId id = new StaffProjectId();
+        id.setProjectId(prjId);
+        id.setStaffId(pmId);
+        staffProject.setId(id);
+        staffProject.setStaff(staffRepository.getById(pmId));
+        staffProject.setProject(projectRepository.getById(prjId));
+        repository.save(staffProject);
+    }
+
+    @Override
     public void addStaffToProject(StaffProjectAddDTO dto) {
         StaffProject staffProject = new StaffProject();
         StaffProjectId id = new StaffProjectId();
