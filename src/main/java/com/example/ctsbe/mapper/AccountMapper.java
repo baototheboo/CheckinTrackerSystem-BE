@@ -28,8 +28,10 @@ public class AccountMapper {
         dto.setEmail(account.getStaff().getEmail());
         dto.setRoleName(util.cutStringRole(account.getRole().getRoleName()));
         dto.setStaffName(account.getStaff().getFullName());
-        dto.setGroupName(account.getStaff().getGroup().getGroupName());
-        dto.setGroupId(account.getStaff().getGroup().getId());
+        dto.setGroupName((account.getStaff().getGroup() == null) ?
+                null : account.getStaff().getGroup().getGroupName());
+        dto.setGroupId((account.getStaff().getGroup() == null) ?
+                null :account.getStaff().getGroup().getId());
         dto.setEnable((account.getEnable() == 1) ? true : false);
         return dto;
     }
