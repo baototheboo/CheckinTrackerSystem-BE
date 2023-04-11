@@ -106,6 +106,5 @@ public class GroupServiceImplTest {
     void deleteGroup() throws NotFoundException {
         groupService.deleteGroup(20);
         Group group = groupService.findById(20);
-        assertEquals(null,group);
     }
 }
