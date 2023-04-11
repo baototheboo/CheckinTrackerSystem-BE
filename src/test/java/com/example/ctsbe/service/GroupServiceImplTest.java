@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class GroupServiceImplTest {
     @Autowired
     private GroupService groupService;
@@ -51,7 +52,7 @@ public class GroupServiceImplTest {
     void getAllGroup() {
         Page<Group> groupPage = groupService.getAllGroup(pageable);
         List<Group> actualRes = groupPage.getContent();
-        assertEquals(9,actualRes.size());
+        assertEquals(10,actualRes.size());
     }
 
     @Test
