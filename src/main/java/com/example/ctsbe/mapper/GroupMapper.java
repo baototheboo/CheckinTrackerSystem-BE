@@ -9,8 +9,7 @@ public class GroupMapper {
         GroupDTO dto = new GroupDTO(
                 group.getId(),
                 group.getGroupName(),
-                group.getGroupLeader().getSurname() + " "
-                        + group.getGroupLeader().getFirstName(),
+                group.getGroupLeader().getFullName(),
                 group.getGroupLeader().getId()
         );
         return  dto;

@@ -135,8 +135,12 @@ public class ProjectController {
         try {
             //int staffId = getIdFromToken();
             //int tokenRoleId = accountService.getAccountById(staffId).getRole().getId();
-            staffProjectService.addStaffToProject(dto);
-            return new ResponseEntity<>("Add staff to the project successfully", HttpStatus.OK);
+            if(dto.getStaffId().size() == 0){
+                return new ResponseEntity<>("Chưa chọn nhân viên.", HttpStatus.BAD_REQUEST);
+            }else{
+                staffProjectService.addStaffToProject(dto);
+            }
+            return new ResponseEntity<>("Thêm nhân viên vào dự án thành công", HttpStatus.OK);
         }catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -145,8 +149,12 @@ public class ProjectController {
     @DeleteMapping("/removeStaffFromProject")
     public ResponseEntity<?> removeStaffFromProject(@RequestBody StaffProjectAddDTO dto) {
         try {
-            staffProjectService.removeStaffFromProject(dto);
-            return new ResponseEntity<>("Remove successfully", HttpStatus.OK);
+            if(dto.getStaffId().size() == 0){
+                return new ResponseEntity<>("Chưa chọn nhân viên.", HttpStatus.BAD_REQUEST);
+            }else {
+                staffProjectService.removeStaffFromProject(dto);
+            }
+            return new ResponseEntity<>("Xóa nhân viên thành công", HttpStatus.OK);
         }catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

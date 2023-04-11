@@ -12,18 +12,18 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface AccountRepository extends JpaRepository<Account,Integer>{
+public interface AccountRepository extends JpaRepository<Account, Integer> {
     Optional<Account> findByUsername(String username);
 
     Page<Account> findByUsernameContaining(String username, Pageable pageable);
 
     //Page<Account> findByUsernameContainingAndVerified(String username,int filter, Pageable pageable);
 
-    Page<Account> findByUsernameContainingAndEnable(String username,byte enable,Pageable pageable);
+    Page<Account> findByUsernameContainingAndEnable(String username, byte enable, Pageable pageable);
 
-    Page<Account> findAccountByEnable(byte enable,Pageable pageable);
+    Page<Account> findAccountByEnable(byte enable, Pageable pageable);
 
-    @Query(value = "select a from Account a where a.role.id =:role")
+    @Query(value = "select a from Account a where a.role.id =:role and a.enable=1")
     List<Account> getAccByRole(int role);
 
     @Query(value = "select a from Account a where a.staff.email =:email")

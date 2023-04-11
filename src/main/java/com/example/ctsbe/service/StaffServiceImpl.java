@@ -79,12 +79,7 @@ public class StaffServiceImpl implements StaffService{
 
     @Override
     public List<Staff> getListPMAvailable(int role) {
-        List<Staff> staffList = new ArrayList<>();
-        List<Account> accountList = accountRepository.getListPMAvailable(role);
-        for (Account acc : accountList) {
-            staffList.add(acc.getStaff());
-        }
-        return staffList;
+        return staffRepository.getListPMAvailable();
     }
 
     @Override

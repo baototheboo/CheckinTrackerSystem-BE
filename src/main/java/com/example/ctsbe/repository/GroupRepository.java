@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 public interface GroupRepository extends JpaRepository<Group, Integer> {
     Page<Group> findByGroupNameContaining(String name, Pageable pageable);
 
+    Group findGroupByGroupName(String name);
+
     @Query(value = "select g from Group g where g.groupLeader.id =:staffId")
     Page<Group> getListGroupByStaffId(int staffId, Pageable pageable);
 

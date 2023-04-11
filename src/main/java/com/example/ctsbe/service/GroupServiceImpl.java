@@ -58,7 +58,7 @@ public class GroupServiceImpl implements GroupService {
 
 
     @Override
-    public void editGroup(int id,GroupUpdateDTO dto) {
+    public void editGroup(int id, GroupUpdateDTO dto) {
         Group existedGroup = groupRepository.getById(id);
         existedGroup.setGroupName(dto.getGroupName());
         existedGroup.setGroupLeader(staffRepository.getById(dto.getGroupLeaderId()));
@@ -69,7 +69,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public void addStaffToGroup(StaffProjectAddDTO dto) {
         List<Integer> listStaffId = dto.getStaffId();
-        for (int i = 0;i<listStaffId.size();i++){
+        for (int i = 0; i < listStaffId.size(); i++) {
             Staff existedStaff = staffRepository.getById(listStaffId.get(i));
             existedStaff.setGroup(groupRepository.getById(dto.getProjectId()));
             staffRepository.save(existedStaff);
@@ -79,7 +79,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public void removeStaffFromGroup(GroupRemoveStaffDTO dto) {
         List<Integer> listStaffId = dto.getStaffId();
-        for (int i = 0;i<listStaffId.size();i++){
+        for (int i = 0; i < listStaffId.size(); i++) {
             Staff existedStaff = staffRepository.getById(listStaffId.get(i));
             existedStaff.setGroup(null);
             staffRepository.save(existedStaff);
@@ -87,9 +87,9 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public Group findById(int id)  {
+    public Group findById(int id) {
         Group existedGroup = groupRepository.getById(id);
-         return existedGroup ;
+        return existedGroup;
     }
 
     @Override

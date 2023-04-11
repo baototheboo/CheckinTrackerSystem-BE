@@ -119,6 +119,22 @@ public class StaffController {
         }
     }
 
+    @GetMapping("/getStaffByRole")
+    public ResponseEntity<Map<String, Object>> getStaffByRole(@RequestParam int role){
+        try{
+            List<Staff> list= staffService.getStaffsByRole(role);
+            List<StaffAvailableDTO> listDto = list.stream().
+                    map(StaffMapper::convertStaffToStaffAvailableDto).collect(Collectors.toList());
+            Map<String, Object> response = new HashMap<>();
+            response.put("list", listDto);
+            return new ResponseEntity<>(response,HttpStatus.OK);
+        }catch (Exception e){
+            Map<String, Object> response = new HashMap<>();
+            response.put("exception", e.getMessage());
+            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping("/getListPMAvailable")
     public ResponseEntity<Map<String, Object>> getListPMAvailable(){
         try{

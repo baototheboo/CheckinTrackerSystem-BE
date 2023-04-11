@@ -42,6 +42,11 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
             "and s.id not in (select g.groupLeader.id from Group g)")
     List<Staff> getListGroupLeaderAvailable();
 
+    @Query(value = "select s from Staff s \n" +
+            "where s.id in (select a.staff.id from Account a where a.role.id = 3 and a.enable = 1) \n" +
+            "and s.id not in (select p.projectManager.id from Project p)")
+    List<Staff> getListPMAvailable();
+
     Staff findStaffById(Integer staffId);
 
     @Query(value = "select s from Staff as s " +
