@@ -14,4 +14,8 @@ public class ApplicationConstant {
 
 
     public static final String VN_TIME_ZONE = "Asia/Ho_Chi_Minh";
+
+    public static final String IMAGE_PATH = "D:/images";
+
+    public static final String IMAGE_THRESHOLD = "80";
 }

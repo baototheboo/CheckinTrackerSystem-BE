@@ -37,10 +37,10 @@ import java.util.stream.Collectors;
 @Service
 public class ImageVerifyServiceImpl implements ImageVerifyService{
 
-    @Value("D:/images")
+    @Value(ApplicationConstant.IMAGE_PATH)
     private String imagePath;
 
-    @Value("80")
+    @Value(ApplicationConstant.IMAGE_THRESHOLD)
     private Float threshold;
 
     @Autowired
@@ -62,8 +62,6 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
     private static String errorPath = "/error-by-date/";
 
     private static String successPath = "/success-by-date/";
-
-    private static String setupPath = "/setup/";
 
     @Override
     public ImagesVerify saveImageForVerify(ImageSetupVggDTO imageSetupVggDTO, LocalDateTime localDateTime, RecognizedStaffDTO recognizedStaffDTO) {

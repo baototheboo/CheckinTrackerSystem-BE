@@ -34,10 +34,6 @@ public class ImageSetupServiceImpl implements ImageSetupService{
     @Autowired
     FacialRecognitionClient facialRecognitionClient;
 
-    private static String errorPath = "/error-by-date/";
-
-    private static String successPath = "/success-by-date/";
-
     private static String setupPath = "/setup/";
 
     @Override

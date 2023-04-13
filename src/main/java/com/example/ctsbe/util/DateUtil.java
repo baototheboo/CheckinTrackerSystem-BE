@@ -79,7 +79,7 @@ public class DateUtil {
         return compare.isAfter(now);
     }
 
-    public boolean checkWeekend(LocalDate date){
+    public static boolean checkWeekend(LocalDate date){
         DayOfWeek day = date.getDayOfWeek();
         if(day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY) return true;
         else return false;
