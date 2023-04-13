@@ -71,17 +71,24 @@ public class MonthlyReportServiceImpl implements MonthlyReportService {
                             break;
                     }
                 }
-                MonthlyReport monthlyReport = new MonthlyReport();
-                monthlyReport.setStaff(staffRepository.findStaffById(dto.getStaffId()));
-                monthlyReport.setMonth(dateUtil.convertStringToLocalDate(dto.getMonthYear() + "-01"));
-                monthlyReport.setActiveDay(activeDay);
-                monthlyReport.setLateDay(lateDay);
-                monthlyReport.setOffDay(dayOff);
-                monthlyReport.setWorkingHour((activeDay + lateDay) * 8);
-                monthlyReport.setCreatedDate(Instant.now());
-                monthlyReportRepository.save(monthlyReport);
+                if(monthlyReportRepository.getMonthlyReportByMonthAndId(dto.getStaffId(),dto.getMonthYear())==null){
+                    MonthlyReport monthlyReport = new MonthlyReport();
+                    monthlyReport.setStaff(staffRepository.findStaffById(dto.getStaffId()));
+                    monthlyReport.setMonth(dateUtil.convertStringToLocalDate(dto.getMonthYear() + "-01"));
+                    monthlyReport.setActiveDay(activeDay);
+                    monthlyReport.setLateDay(lateDay);
+                    monthlyReport.setOffDay(dayOff);
+                    monthlyReport.setWorkingHour((activeDay + lateDay) * 8);
+                    monthlyReport.setCreatedDate(Instant.now());
+                    monthlyReportRepository.save(monthlyReport);
+                }
                 lateDay = activeDay = dayOff = workingHours = 0;
             }
         }
+    }
+
+    @Override
+    public MonthlyReport getMonthlyReportByIdAndMonth(int staffId, String yearMonth) {
+        return monthlyReportRepository.getMonthlyReportByMonthAndId(staffId, yearMonth);
     }
 }

@@ -188,15 +188,18 @@ public class MonthlyReportExport {
                             break;
                         case 2:
                             cell1.setCellValue("Muộn");
-                            cell1.getCellStyle().setFillForegroundColor(IndexedColors.CORAL.getIndex());
+                            //cell1.getCellStyle().setFillForegroundColor(IndexedColors.CORAL.getIndex());
                             break;
                         case 3:
                             cell1.setCellValue("x");
-                            cell1.getCellStyle().setFillForegroundColor(IndexedColors.RED.getIndex());
+                            //cell1.getCellStyle().setFillForegroundColor(IndexedColors.RED.getIndex());
+                            break;
+                        case 4:
+                            cell1.setCellValue("Ngày nghỉ/Cuối tuần");
                             break;
                         case 5:
                             cell1.setCellValue("Not yet");
-                            cell1.getCellStyle().setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
+                            //cell1.getCellStyle().setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
                             break;
                     }
                     sheet2.autoSizeColumn(i);

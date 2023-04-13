@@ -26,4 +26,6 @@ public interface MonthlyReportService {
     List<MonthlyReportAddDTO> getListMonthlyReportToAdd(List<TimesheetDTO> list);
 
     void addToMonthlyReport(List<TimesheetDTO> list);
+
+    MonthlyReport getMonthlyReportByIdAndMonth(int staffId,String yearMonth);
 }

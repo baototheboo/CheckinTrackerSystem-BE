@@ -143,7 +143,7 @@ public class GroupController {
     }
 
     @DeleteMapping("/deleteGroup/{id}")
-    public ResponseEntity<?> deleteGroup(@PathVariable("id") int id) throws NotFoundException {
+    public ResponseEntity<?> deleteGroup(@PathVariable("id") int id){
         try {
             groupService.deleteGroup(id);
             return new ResponseEntity<>("Delete successfully", HttpStatus.OK);

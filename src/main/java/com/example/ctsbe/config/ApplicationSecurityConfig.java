@@ -78,6 +78,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                         ,"/image/image-verify"
                         ,"/staffs/*/get-image-setup"
                         ,"/timesheets/*/*"
+                        ,"/timesheets/*"
                         ,"/image-setup/*/*").permitAll()
                 //.antMatchers("/products").hasAuthority("ROLE_EDITOR")
                 .anyRequest().authenticated();

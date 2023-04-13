@@ -66,12 +66,15 @@ public class MonthlyReportController {
         }
     }
 
-    @GetMapping("/showListMonthlyReport")
-    public ResponseEntity<?> showListMonthlyReport(@RequestParam(required = false) String monthYear){
+    @PostMapping("/addToMonthlyReport")
+    public ResponseEntity<?> addToMonthlyReport(@RequestParam(required = false) String monthYear){
         try{
+            if(monthYear == null) {
+                monthYear = new DateUtil().convertLocalDateToMonthAndYear(LocalDate.now());
+            }
             List<TimesheetDTO> list =  timesheetService.getListTimeSheetByMonth(monthYear);
-            //monthlyReportService.addToMonthlyReport(list);
-            return new ResponseEntity<>(list, HttpStatus.OK);
+            monthlyReportService.addToMonthlyReport(list);
+            return new ResponseEntity<>("Add thành công", HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

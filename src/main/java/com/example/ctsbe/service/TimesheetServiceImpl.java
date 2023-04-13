@@ -58,7 +58,7 @@ public class TimesheetServiceImpl implements TimesheetService {
                 } else {
                     for (int j = 0; j < list.size(); j++) {
                         if (Integer.parseInt(dateUtil.convertLocalDateToStringDay(list.get(j).getDate())) == i) {
-                            listStatus.add(list.get(j).getDateStatus());
+                            listStatus.add(list.get(j).getDateStatus() + "-" + list.get(j).getNote());
                             check = true;
                         }
                     }
@@ -71,7 +71,7 @@ public class TimesheetServiceImpl implements TimesheetService {
             }
         } else if (list.size() == daysOfMonth) {
             for (int i = 0; i < list.size(); i++) {
-                listStatus.add(list.get(i).getDateStatus());
+                listStatus.add(list.get(i).getDateStatus() + "-" + list.get(i).getNote());
             }
         }
         List<Integer> listDayCheck = dateUtil.getListDayCheck(listStatus);
@@ -98,28 +98,29 @@ public class TimesheetServiceImpl implements TimesheetService {
 
     @Override
     public TimesheetResponseDTO getTimesheetByStaffAndDate(int staffId, LocalDate date) {
-            Optional<Staff> staff = staffRepository.findAvailableStaffById(staffId);
-            if (staff.isEmpty()) {
-                throw new StaffNotAvailableException("Staff không khả dụng hoặc không tồn tại.");
-            }
-            TimesheetResponseDTO timesheetResponseDTO = timesheetRepository.getByStaffAndDate(staffId, date);
-            return timesheetResponseDTO;
+        Optional<Staff> staff = staffRepository.findAvailableStaffById(staffId);
+        if (staff.isEmpty()) {
+            throw new StaffNotAvailableException("Staff không khả dụng hoặc không tồn tại.");
+        }
+        TimesheetResponseDTO timesheetResponseDTO = timesheetRepository.getByStaffAndDate(staffId, date);
+        return timesheetResponseDTO;
     }
 
     @Override
     public void updateTimesheetStatus(int staffId, TimesheetUpdateDTO timesheetUpdateDTO) {
-            Optional<Staff> staff = staffRepository.findAvailableStaffById(staffId);
-            if (staff.isEmpty()) {
-                throw new StaffNotAvailableException("Staff không khả dụng hoặc không tồn tại.");
-            }
-            Timesheet timesheet = timesheetRepository.findByStaffAndAndDate(staff, timesheetUpdateDTO.getDate());
-            if (timesheet == null) {
-                throw new TimesheetNotExist("Không tìm thấy thông tin của ngày.");
-            }else {
-                timesheet.setDateStatus(timesheetUpdateDTO.getDateStatus());
-                timesheet.setNote(timesheetUpdateDTO.getNote());
-                timesheetRepository.save(timesheet);
-            }
+        Optional<Staff> staff = staffRepository.findAvailableStaffById(staffId);
+        if (staff.isEmpty()) {
+            throw new StaffNotAvailableException("Staff không khả dụng hoặc không tồn tại.");
+        }
+        Timesheet timesheet = timesheetRepository.findByStaffAndAndDate(staff, timesheetUpdateDTO.getDate());
+        if (timesheet == null) {
+            throw new TimesheetNotExist("Không tìm thấy thông tin của ngày.");
+        } else {
+            timesheet.setDateStatus(timesheetUpdateDTO.getDateStatus());
+            timesheet.setNote((timesheetUpdateDTO.getNote() == null || timesheetUpdateDTO.getNote() == "")
+                    ? null : timesheetUpdateDTO.getNote());
+            timesheetRepository.save(timesheet);
+        }
     }
 
     @Override
