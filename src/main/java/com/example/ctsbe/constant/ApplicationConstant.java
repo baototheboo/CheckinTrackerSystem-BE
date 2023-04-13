@@ -12,10 +12,13 @@ public class ApplicationConstant {
     public static final Double WORKING_HOURS_AFTERNOON = 4.5;
     public static final Double WORKING_HOURS_ABSENT = 0.0;
 
-
     public static final String VN_TIME_ZONE = "Asia/Ho_Chi_Minh";
 
-    public static final String IMAGE_PATH = "D:/images";
-
+//    public static final String IMAGE_PATH = "D:/images";
+    public static final String IMAGE_PATH = "D:/Capstone Project/CheckinTrackerSystem/CTS_FE/fe_check_in_checker/src/assets/Images";
     public static final String IMAGE_THRESHOLD = "80";
+
+    public static final String VGG_URL_LOCAL = "http://localhost:5001";
+    public static final String VGG_URL_AWS = "http://13.229.226.24";
+
 }
