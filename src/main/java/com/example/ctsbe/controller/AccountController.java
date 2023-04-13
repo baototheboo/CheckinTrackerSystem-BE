@@ -116,6 +116,10 @@ public class AccountController {
     @PutMapping("/changeEnableAccount/{id}")
     public ResponseEntity<?> changeEnableAccount(@PathVariable("id") int id) {
         try {
+            int currentAdmin = getIdFromToken();
+            if (id == currentAdmin){
+                throw new Exception("Không thể khoá tài khoản của chính bản thân!");
+            }
             accountService.changeEnableAccount(id);
             return new ResponseEntity<>("Update enable status successfully", HttpStatus.OK);
         } catch (Exception e) {

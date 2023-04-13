@@ -79,7 +79,6 @@ public class FacialRecognitionClientImpl implements FacialRecognitionClient{
         RecognizedStaffDTO recognizedStaffDTO = new RecognizedStaffDTO();
         RestTemplate restTemplate = new RestTemplate();
         ImagesVerify verifiedImage;
-        Boolean showMessage = false;
         try {
             String result = restTemplate.postForObject(
                     facialRecognitionConfiguration.getFacialRecognitionUri() + "/verify-staff",
