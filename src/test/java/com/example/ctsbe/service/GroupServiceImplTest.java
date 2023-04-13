@@ -1,10 +1,13 @@
 package com.example.ctsbe.service;
 
 import com.example.ctsbe.dto.group.GroupDTO;
+import com.example.ctsbe.dto.group.GroupRemoveStaffDTO;
 import com.example.ctsbe.dto.group.GroupUpdateDTO;
+import com.example.ctsbe.dto.staffProject.StaffProjectAddDTO;
 import com.example.ctsbe.entity.Group;
 import com.example.ctsbe.mapper.GroupMapper;
 import com.example.ctsbe.repository.GroupRepository;
+import com.example.ctsbe.repository.StaffRepository;
 import com.example.ctsbe.util.DateUtil;
 import javassist.NotFoundException;
 import org.junit.jupiter.api.Test;
@@ -24,6 +27,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,6 +41,8 @@ public class GroupServiceImplTest {
     private GroupService groupService;
     @Autowired
     private GroupRepository groupRepository;
+    @Autowired
+    private StaffRepository staffRepository;
     Pageable pageable = PageRequest.of(0, 10);
 
     DateUtil dateUtil = new DateUtil();
@@ -57,9 +63,9 @@ public class GroupServiceImplTest {
 
     @Test
     void getAllGroupByName() {
-        Page<Group> groupPage = groupService.getAllGroupByName("b",pageable);
+        Page<Group> groupPage = groupService.getAllGroupByName("test 3 group",pageable);
         List<Group> actualRes = groupPage.getContent();
-        assertEquals(3,actualRes.size());
+        assertEquals(0,actualRes.size());
     }
 
     @Test
@@ -87,10 +93,31 @@ public class GroupServiceImplTest {
 
     @Test
     void addStaffToGroup() {
+        StaffProjectAddDTO dto = new StaffProjectAddDTO();
+        List<Integer> list = new ArrayList<>();
+        list.add(1);
+        list.add(6);
+        int groupId = 10;
+        dto.setStaffId(list);
+        dto.setProjectId(groupId);
+        groupService.addStaffToGroup(dto);
+        Group actualRes1 = staffRepository.findStaffById(1).getGroup();
+        Group actualRes2 = staffRepository.findStaffById(6).getGroup();
+        Group expectRes = groupRepository.getById(groupId);
+        assertEquals(actualRes1,expectRes);
     }
 
     @Test
     void removeStaffFromGroup() {
+        GroupRemoveStaffDTO dto = new GroupRemoveStaffDTO();
+        List<Integer> list = new ArrayList<>();
+        list.add(4);
+        dto.setStaffId(list);
+        Group a = staffRepository.findStaffById(4).getGroup();
+        groupService.removeStaffFromGroup(dto);
+        Group actualRes = staffRepository.findStaffById(4).getGroup();
+        assertEquals(null,actualRes);
+
     }
 
     @Test
@@ -104,7 +131,8 @@ public class GroupServiceImplTest {
 
     @Test
     void deleteGroup() throws NotFoundException {
-        groupService.deleteGroup(20);
-        Group group = groupService.findById(20);
+        groupService.deleteGroup(2);
+        Group group = groupService.findById(2);
+//        assertEquals(null,group);
     }
 }

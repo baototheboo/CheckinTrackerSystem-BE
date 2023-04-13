@@ -66,16 +66,7 @@ public class MonthlyReportController {
         }
     }
 
-    @GetMapping("/showListMonthlyReport")
-    public ResponseEntity<?> showListMonthlyReport(@RequestParam(required = false) String monthYear){
-        try{
-            List<TimesheetDTO> list =  timesheetService.getListTimeSheetByMonth(monthYear);
-            //monthlyReportService.addToMonthlyReport(list);
-            return new ResponseEntity<>(list, HttpStatus.OK);
-        }catch (Exception e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
+
 
     @GetMapping("/export")
     public void exportFile(@RequestParam String monthYear, HttpServletResponse response) throws IOException, ParseException {

@@ -74,6 +74,20 @@ public class TimesheetController {
         }
     }
 
+    @GetMapping("/showListTimeSheet")
+    public ResponseEntity<?> showListMonthlyReport(@RequestParam(required = false) String monthYear){
+        try{
+            if(monthYear == null) {
+                monthYear = new DateUtil().convertLocalDateToMonthAndYear(LocalDate.now());
+            }
+            List<TimesheetDTO> list =  timesheetService.getListTimeSheetByMonth(monthYear);
+            //monthlyReportService.addToMonthlyReport(list);
+            return new ResponseEntity<>(list, HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     public int getIdFromToken() {
         final String requestTokenHeader = request.getHeader("Authorization");
         String jwtToken = null;

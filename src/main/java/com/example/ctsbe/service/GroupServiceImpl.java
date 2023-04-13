@@ -89,11 +89,12 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public Group findById(int id) {
         Group existedGroup = groupRepository.getById(id);
-        return existedGroup;
+        if(existedGroup!=null) return existedGroup;
+        else return null;
     }
 
     @Override
-    public void deleteGroup(int id) throws NotFoundException {
+    public void deleteGroup(int id) {
         Group existedGroup = this.findById(id);
         groupRepository.delete(existedGroup);
     }

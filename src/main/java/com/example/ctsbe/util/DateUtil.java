@@ -37,6 +37,7 @@ public class DateUtil {
         String dateFormat = formatter.format(date);
         return dateFormat.substring(0, 10);
     }
+
     public static String convertInstantToTimeVerifyString(Instant date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         return date.atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE)).format(formatter);
@@ -66,7 +67,7 @@ public class DateUtil {
         return res.lengthOfMonth();
     }
 
-    public YearMonth convertStringToYearMonth(String yearMonth){
+    public YearMonth convertStringToYearMonth(String yearMonth) {
         String[] monthAndYear = yearMonth.split("-");
         int year = Integer.parseInt(monthAndYear[0]);
         int month = Integer.parseInt(monthAndYear[1]);
@@ -74,14 +75,14 @@ public class DateUtil {
         return res;
     }
 
-    public boolean compareYearMonth(String yearMonth,YearMonth now){
+    public boolean compareYearMonth(String yearMonth, YearMonth now) {
         YearMonth compare = convertStringToYearMonth(yearMonth);
         return compare.isAfter(now);
     }
 
-    public boolean checkWeekend(LocalDate date){
+    public boolean checkWeekend(LocalDate date) {
         DayOfWeek day = date.getDayOfWeek();
-        if(day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY) return true;
+        if (day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY) return true;
         else return false;
     }
 
@@ -94,10 +95,20 @@ public class DateUtil {
     public List<Integer> getListDayCheck(List<String> list) {
         List<Integer> res = new ArrayList<>();
         for (String s : list) {
-            if (s != null && s.equalsIgnoreCase("ok")) res.add(1); //1 la ok
-            else if (s != null && s.equalsIgnoreCase("late")) res.add(2); // 2 la late
-            else if (s != null && s.equalsIgnoreCase("absent")) res.add(3); // 3 la ko di lam
-            else if (s == null) res.add(5); // 5 la not yet
+            String[] statusNote =(s == null) ? null : s.split("-");
+            String status = (s == null) ? null :  statusNote[0];
+            String note = (s == null) ? null : statusNote[1];
+            if (status != null && status.equalsIgnoreCase("ok")) res.add(1); //1 la ok
+            else if (status != null && status.equalsIgnoreCase("late")) res.add(2); // 2 la late
+            else if (status != null
+                    && status.equalsIgnoreCase("absent")
+                    && note.equalsIgnoreCase("Vắng"))
+                res.add(3); // 3 la ko di lam
+            else if (status != null
+                    && status.equalsIgnoreCase("absent")
+                    && (note.equalsIgnoreCase("Cuối tuần") || note.equalsIgnoreCase("Ngày nghỉ lễ")))
+                res.add(4); // 4 la ngay nghi hoac cuoi tuan
+            else if (status == null && note == null) res.add(5); // 5 la not yet
         }
         return res;
     }

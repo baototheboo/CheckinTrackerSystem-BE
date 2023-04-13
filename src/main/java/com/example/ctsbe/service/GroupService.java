@@ -26,5 +26,5 @@ public interface GroupService {
 
     Group findById(int id) ;
 
-    void deleteGroup(int id) throws NotFoundException;
+    void deleteGroup(int id) ;
 }
