@@ -21,7 +21,7 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
 
     Staff findByEmail(String email);
 
-    @Query(value = "select a.staff from Account a where a.role.id = 5 and a.staff.group.id is null")
+    @Query(value = "select a.staff from Account a where a.role.id = 5 and a.enable = 1 and a.staff.group.id is null")
     List<Staff> getListStaffAvailableAddToGroup();
 
     @Query(value = "SELECT s \n" +

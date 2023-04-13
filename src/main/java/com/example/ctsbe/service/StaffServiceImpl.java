@@ -78,7 +78,7 @@ public class StaffServiceImpl implements StaffService{
     }
 
     @Override
-    public List<Staff> getListPMAvailable(int role) {
+    public List<Staff> getListPMAvailable() {
         return staffRepository.getListPMAvailable();
     }
 
