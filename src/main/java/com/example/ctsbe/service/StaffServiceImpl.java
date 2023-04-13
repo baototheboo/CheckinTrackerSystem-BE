@@ -103,7 +103,7 @@ public class StaffServiceImpl implements StaffService{
         staff.setLastUpdated(Instant.now());
         staff.setDateOfBirth(dateUtil.convertStringToLocalDate(dto.getDateOfBirth()));
         staff.setPhone(dto.getPhone());
-        staff.setPromotionLevel(promotionLevelService.getPromotionLevelById(dto.getPromotionLevelId()));
+        staff.setPromotionLevel(promotionLevelService.getPromotionLevelById(1));
         return  staff;
     }
 }

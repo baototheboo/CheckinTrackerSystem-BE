@@ -17,6 +17,6 @@ public class StaffAddDTO {
     private String dateOfBirth;
     @NotBlank(message = "Phone is required")
     private String phone;
-    private Integer promotionLevelId;
+    //private Integer promotionLevelId;
 
 }

@@ -66,7 +66,19 @@ public class MonthlyReportController {
         }
     }
 
-
+    @PostMapping("/addToMonthlyReport")
+    public ResponseEntity<?> addToMonthlyReport(@RequestParam(required = false) String monthYear){
+        try{
+            if(monthYear == null) {
+                monthYear = new DateUtil().convertLocalDateToMonthAndYear(LocalDate.now());
+            }
+            List<TimesheetDTO> list =  timesheetService.getListTimeSheetByMonth(monthYear);
+            monthlyReportService.addToMonthlyReport(list);
+            return new ResponseEntity<>("Add thành công", HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @GetMapping("/export")
     public void exportFile(@RequestParam String monthYear, HttpServletResponse response) throws IOException, ParseException {

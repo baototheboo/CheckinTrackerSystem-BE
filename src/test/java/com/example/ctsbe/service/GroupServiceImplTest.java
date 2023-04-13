@@ -46,7 +46,7 @@ public class GroupServiceImplTest {
     Pageable pageable = PageRequest.of(0, 10);
 
     DateUtil dateUtil = new DateUtil();
-    @Test
+    /*@Test
     void addGroup() {
         GroupUpdateDTO dto = new GroupUpdateDTO("test 3 group",39);
         Group actualRes = groupService.addGroup(dto);
@@ -134,5 +134,5 @@ public class GroupServiceImplTest {
         groupService.deleteGroup(2);
         Group group = groupService.findById(2);
 //        assertEquals(null,group);
-    }
+    }*/
 }

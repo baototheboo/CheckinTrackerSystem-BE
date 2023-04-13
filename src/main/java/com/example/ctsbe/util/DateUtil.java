@@ -86,6 +86,11 @@ public class DateUtil {
         else return false;
     }
 
+    public String cutStringDateToYearMonth(String date){
+        String afterCut = date.substring(0,7);
+        return afterCut;
+    }
+
     public String convertLocalDateToStringDay(LocalDate date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd");
         String dateFormat = date.format(formatter);
@@ -95,8 +100,8 @@ public class DateUtil {
     public List<Integer> getListDayCheck(List<String> list) {
         List<Integer> res = new ArrayList<>();
         for (String s : list) {
-            String[] statusNote =(s == null) ? null : s.split("-");
-            String status = (s == null) ? null :  statusNote[0];
+            String[] statusNote = (s == null) ? null : s.split("-");
+            String status = (s == null) ? null : statusNote[0];
             String note = (s == null) ? null : statusNote[1];
             if (status != null && status.equalsIgnoreCase("ok")) res.add(1); //1 la ok
             else if (status != null && status.equalsIgnoreCase("late")) res.add(2); // 2 la late
@@ -106,9 +111,11 @@ public class DateUtil {
                 res.add(3); // 3 la ko di lam
             else if (status != null
                     && status.equalsIgnoreCase("absent")
-                    && (note.equalsIgnoreCase("Cuối tuần") || note.equalsIgnoreCase("Ngày nghỉ lễ")))
-                res.add(4); // 4 la ngay nghi hoac cuoi tuan
-            else if (status == null && note == null) res.add(5); // 5 la not yet
+                    && note.equalsIgnoreCase("Ngày nghỉ lễ"))
+                res.add(4); // 4 la ngay nghi
+            else if ((status == null && note == null)
+                    || (status.equalsIgnoreCase("absent") && note.equalsIgnoreCase("Cuối tuần")))
+                res.add(5); // 5 la not yet hoac cuoi tuan
         }
         return res;
     }
