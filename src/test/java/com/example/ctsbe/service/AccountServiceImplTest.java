@@ -2,6 +2,7 @@ package com.example.ctsbe.service;
 
 import com.example.ctsbe.dto.account.AccountAddDTO;
 import com.example.ctsbe.dto.account.AccountDTO;
+import com.example.ctsbe.dto.account.ProfileUpdateDTO;
 import com.example.ctsbe.dto.staff.StaffAddDTO;
 import com.example.ctsbe.entity.Account;
 import com.example.ctsbe.entity.Group;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -29,6 +31,7 @@ class AccountServiceImplTest {
     @Autowired
     private AccountRepository accountRepository;
     Pageable pageable = PageRequest.of(0, 10);
+    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     /*@Test
     void getAll() {
@@ -103,17 +106,28 @@ class AccountServiceImplTest {
 
     @Test
     void updateAccount() {
+        ProfileUpdateDTO dto = new ProfileUpdateDTO("Anh","Nguyen Duc","2001-05-19","0123456789");
+        accountService.updateAccount(2,dto);
+        String expectedRes = "Nguyen Duc Anh";
+        String actualRes = accountService.getAccountById(2).getStaff().getFullName();
+        assertEquals(expectedRes,actualRes);
     }
 
     @Test
     void resetPassword() {
+        Account account = accountService.getAccountById(2);
+        String expectedRes = "hungle";
+        accountService.resetPassword(account,expectedRes);
+        String actualRes = accountService.getAccountById(2).getPassword();
+        assertTrue(passwordEncoder.matches(expectedRes,actualRes));
     }
 
     @Test
     void changeEnableAccount() {
-    }
-
-    @Test
-    void findByUsername() {
+        accountService.changeEnableAccount(2);
+        byte expectedRes = 0;
+        byte actualRes = accountService.getAccountById(2).getEnable();
+        assertEquals(expectedRes,actualRes);
     }*/
+
 }

@@ -23,8 +23,8 @@ public class CtsBeApplication {
         SpringApplication.run(CtsBeApplication.class, args);
         //System.out.println(Instant.from(Instant.now().atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE))));
         //StringUtil util = new StringUtil();
-       // DateUtil dateUtil = new DateUtil();
-       //System.out.println(dateUtil.cutStringDateToYearMonth("2023-04-01"));
+        //DateUtil dateUtil = new DateUtil();
+       //System.out.println(util.cutStringRole("role_STAFF"));
     }
 
 }
