@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface MonthlyReportRepository extends JpaRepository<MonthlyReport,Integer> {
+public interface MonthlyReportRepository extends JpaRepository<MonthlyReport, Integer> {
     @Query(value = "select mr from MonthlyReport mr" +
             " where mr.staff.id =:staffId " +
             "and function('date_format',mr.month,'%Y-%m') =:monthYear")
@@ -21,6 +21,10 @@ public interface MonthlyReportRepository extends JpaRepository<MonthlyReport,Int
     Page<MonthlyReport> getListReportByMonthYear(String monthYear, Pageable pageable);
 
     @Query(value = "select mr from MonthlyReport mr" +
-            " where function('date_format',mr.month,'%Y-%m') =:monthYear")
+            " where function('date_format',mr.month,'%Y-%m') =:monthYear order by mr.staff.id asc")
     List<MonthlyReport> getReportByMonthYear(String monthYear);
+
+    @Query(value = "select mr from MonthlyReport mr" +
+            " where mr.staff.id =:staffId and function('date_format',mr.month,'%Y-%m') =:monthYear")
+    MonthlyReport getMonthlyReportByMonthAndId(int staffId, String monthYear);
 }

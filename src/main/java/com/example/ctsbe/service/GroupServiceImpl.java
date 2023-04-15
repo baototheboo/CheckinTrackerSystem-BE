@@ -46,9 +46,19 @@ public class GroupServiceImpl implements GroupService {
         return groupRepository.findByGroupNameContaining(name, pageable);
     }
 
+    @Override
+    public Page<Group> getListGroupByStaffId(int staffId, Pageable pageable) {
+        return groupRepository.getListGroupByStaffId(staffId, pageable);
+    }
 
     @Override
-    public void editGroup(int id,GroupUpdateDTO dto) {
+    public Page<Group> getListGroupByStaffIdAndGroupName(int staffId, String name, Pageable pageable) {
+        return groupRepository.getListGroupByStaffIdAndGroupName(staffId, name, pageable);
+    }
+
+
+    @Override
+    public void editGroup(int id, GroupUpdateDTO dto) {
         Group existedGroup = groupRepository.getById(id);
         existedGroup.setGroupName(dto.getGroupName());
         existedGroup.setGroupLeader(staffRepository.getById(dto.getGroupLeaderId()));
@@ -59,7 +69,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public void addStaffToGroup(StaffProjectAddDTO dto) {
         List<Integer> listStaffId = dto.getStaffId();
-        for (int i = 0;i<listStaffId.size();i++){
+        for (int i = 0; i < listStaffId.size(); i++) {
             Staff existedStaff = staffRepository.getById(listStaffId.get(i));
             existedStaff.setGroup(groupRepository.getById(dto.getProjectId()));
             staffRepository.save(existedStaff);
@@ -69,7 +79,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public void removeStaffFromGroup(GroupRemoveStaffDTO dto) {
         List<Integer> listStaffId = dto.getStaffId();
-        for (int i = 0;i<listStaffId.size();i++){
+        for (int i = 0; i < listStaffId.size(); i++) {
             Staff existedStaff = staffRepository.getById(listStaffId.get(i));
             existedStaff.setGroup(null);
             staffRepository.save(existedStaff);
@@ -77,16 +87,14 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public Group findById(int id) throws NotFoundException {
+    public Group findById(int id) {
         Group existedGroup = groupRepository.getById(id);
-        if(existedGroup.getId() == null){
-            throw new NotFoundException("Cannot found this group.");
-        }
-        else return existedGroup ;
+        if(existedGroup!=null) return existedGroup;
+        else return null;
     }
 
     @Override
-    public void deleteGroup(int id) throws NotFoundException {
+    public void deleteGroup(int id) {
         Group existedGroup = this.findById(id);
         groupRepository.delete(existedGroup);
     }

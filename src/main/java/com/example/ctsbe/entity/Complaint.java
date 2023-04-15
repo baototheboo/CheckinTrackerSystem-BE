@@ -22,7 +22,6 @@ public class Complaint {
     @Column(name = "created_date", nullable = false)
     private Instant createdDate;
 
-    @NotNull
     @Column(name = "last_updated", nullable = false)
     private Instant lastUpdated;
 

@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ImageSetupRepository extends JpaRepository<ImagesSetup, Integer> {
 
@@ -18,7 +20,13 @@ public interface ImageSetupRepository extends JpaRepository<ImagesSetup, Integer
             "FROM ImagesSetup AS i " +
             "INNER JOIN Staff AS s " +
             "ON (i.staff.id = s.id) " +
-            "WHERE i.staff.id = :staffId")
+            "WHERE i.staff.id = :staffId " +
+            "AND i.status = 'OK'")
     Page<ImageSetupDTO>findImageSetupByStaffId(@Param("staffId") Integer staffId, Pageable pageable);
 
+    @Query(value = "SELECT i " +
+            "FROM ImagesSetup AS i " +
+            "WHERE i.staff.id = :staffId " +
+            "AND i.status = 'OK'")
+    List<ImagesSetup> findImageSetupByStaffId(@Param("staffId") Integer staffId);
 }

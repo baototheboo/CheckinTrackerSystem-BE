@@ -1,7 +1,10 @@
 package com.example.ctsbe.controller;
 
+import com.example.ctsbe.dto.account.ProfileUpdateDTO;
 import com.example.ctsbe.dto.staff.StaffAvailableDTO;
 import com.example.ctsbe.dto.timesheet.TimesheetDTO;
+import com.example.ctsbe.dto.timesheet.TimesheetResponseDTO;
+import com.example.ctsbe.dto.timesheet.TimesheetUpdateDTO;
 import com.example.ctsbe.entity.Staff;
 import com.example.ctsbe.entity.Timesheet;
 import com.example.ctsbe.mapper.StaffMapper;
@@ -9,11 +12,15 @@ import com.example.ctsbe.service.TimesheetService;
 import com.example.ctsbe.util.DateUtil;
 import com.example.ctsbe.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.sql.Time;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -67,6 +74,20 @@ public class TimesheetController {
         }
     }
 
+    @GetMapping("/showListTimeSheet")
+    public ResponseEntity<?> showListMonthlyReport(@RequestParam(required = false) String monthYear){
+        try{
+            if(monthYear == null) {
+                monthYear = new DateUtil().convertLocalDateToMonthAndYear(LocalDate.now());
+            }
+            List<TimesheetDTO> list =  timesheetService.getListTimeSheetByMonth(monthYear);
+            //monthlyReportService.addToMonthlyReport(list);
+            return new ResponseEntity<>(list, HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     public int getIdFromToken() {
         final String requestTokenHeader = request.getHeader("Authorization");
         String jwtToken = null;
@@ -75,5 +96,23 @@ public class TimesheetController {
         }
         int id = jwtTokenUtil.getIdFromToken(jwtToken);
         return id;
+    }
+
+    @GetMapping("/get-timesheet/{staffId}")
+    public ResponseEntity<TimesheetResponseDTO> getTimesheetByStaffAndDate(@PathVariable("staffId") int staffId,
+                                                                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        TimesheetResponseDTO timesheetResponseDTO = timesheetService.getTimesheetByStaffAndDate(staffId, date);
+        return new ResponseEntity<>(timesheetResponseDTO, HttpStatus.OK);
+    }
+
+    @PutMapping("/update-timesheet-status/{staffId}")
+    public ResponseEntity<?> updateTimesheetStatus(@PathVariable("staffId") int staffId,
+                                                   @Valid @RequestBody TimesheetUpdateDTO timesheetUpdateDTO) {
+        try {
+            timesheetService.updateTimesheetStatus(staffId, timesheetUpdateDTO);
+            return new ResponseEntity<>("Cập nhật thành công!", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.example.ctsbe.service;
 
 import com.example.ctsbe.dto.staff.StaffAddDTO;
 import com.example.ctsbe.dto.staff.StaffAvailableDTO;
+import com.example.ctsbe.dto.staff.StaffUpdateDTO;
 import com.example.ctsbe.entity.Staff;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +18,7 @@ public interface StaffService {
 
     Staff findStaffByEmail(String email);
 
-    void changePromotionLevel(int staffId,int levelId);
+    void changePromotionLevel(StaffUpdateDTO dto);
 
     List<Staff> getListAvailableStaff(int groupId);
 
@@ -27,7 +28,7 @@ public interface StaffService {
 
     Page<Staff> getListStaffByGroup(int groupId,Pageable pageable);
 
-    List<Staff> getListPMAvailable(int role);
+    List<Staff> getListPMAvailable();
 
     List<Staff> getListGLAvailable();
 

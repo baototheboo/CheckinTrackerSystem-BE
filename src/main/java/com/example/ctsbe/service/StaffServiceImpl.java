@@ -2,10 +2,13 @@ package com.example.ctsbe.service;
 
 import com.example.ctsbe.dto.staff.StaffAddDTO;
 import com.example.ctsbe.dto.staff.StaffAvailableDTO;
+import com.example.ctsbe.dto.staff.StaffUpdateDTO;
 import com.example.ctsbe.entity.Account;
 import com.example.ctsbe.entity.PromotionLevel;
 import com.example.ctsbe.entity.Staff;
 import com.example.ctsbe.repository.AccountRepository;
+import com.example.ctsbe.repository.PromotionLevelRepository;
+import com.example.ctsbe.repository.RoleRepository;
 import com.example.ctsbe.repository.StaffRepository;
 import com.example.ctsbe.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +29,10 @@ public class StaffServiceImpl implements StaffService{
     private AccountRepository accountRepository;
 
     @Autowired
-    private PromotionLevelService promotionLevelService;
+    private PromotionLevelRepository promotionLevelRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Override
     public Staff addStaff(StaffAddDTO staffAddDTO) {
@@ -50,10 +56,14 @@ public class StaffServiceImpl implements StaffService{
     }
 
     @Override
-    public void changePromotionLevel(int staffId,int levelId) {
-        Staff staff = staffRepository.getById(staffId);
-        staff.setPromotionLevel(promotionLevelService.getPromotionLevelById(levelId));
+    public void changePromotionLevel(StaffUpdateDTO dto) {
+        Account account = accountRepository.getById(dto.getStaffId());
+        Staff staff = account.getStaff();
+        staff.setPromotionLevel(promotionLevelRepository.getById(dto.getLevelId()));
+        account.setRole(roleRepository.getById(dto.getRoleId()));
+        account.setLastUpdated(Instant.now());
         staff.setLastUpdated(Instant.now());
+        accountRepository.save(account);
         staffRepository.save(staff);
     }
 
@@ -78,13 +88,8 @@ public class StaffServiceImpl implements StaffService{
     }
 
     @Override
-    public List<Staff> getListPMAvailable(int role) {
-        List<Staff> staffList = new ArrayList<>();
-        List<Account> accountList = accountRepository.getListPMAvailable(role);
-        for (Account acc : accountList) {
-            staffList.add(acc.getStaff());
-        }
-        return staffList;
+    public List<Staff> getListPMAvailable() {
+        return staffRepository.getListPMAvailable();
     }
 
     @Override
@@ -108,7 +113,7 @@ public class StaffServiceImpl implements StaffService{
         staff.setLastUpdated(Instant.now());
         staff.setDateOfBirth(dateUtil.convertStringToLocalDate(dto.getDateOfBirth()));
         staff.setPhone(dto.getPhone());
-        staff.setPromotionLevel(promotionLevelService.getPromotionLevelById(dto.getPromotionLevelId()));
+        staff.setPromotionLevel(promotionLevelRepository.findById(1));
         return  staff;
     }
 }

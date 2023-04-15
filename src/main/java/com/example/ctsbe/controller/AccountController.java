@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequestMapping("/accounts")
+@CrossOrigin(origins = "*")
 public class AccountController {
     @Autowired
     private AccountService accountService;
@@ -86,9 +87,9 @@ public class AccountController {
         try {
             Account existedAccount = accountService.getAccountById(id);
             if(!passwordEncoder.matches(dto.getPassword(),existedAccount.getPassword())){
-                throw new Exception("Mật khẩu không đúng!");
+                return new ResponseEntity<>("Mật khẩu không đúng!",HttpStatus.BAD_REQUEST);
             }else if(!dto.getNewPassword().equals(dto.getConfirmNewPassword())){
-                throw new Exception("Mật khẩu không khớp.Vui lòng nhập lại!");
+                return new ResponseEntity<>("Mật khẩu không khớp.Vui lòng nhập lại!",HttpStatus.BAD_REQUEST);
             }
             else {
                 accountService.resetPassword(existedAccount,dto.getNewPassword());
@@ -116,6 +117,10 @@ public class AccountController {
     @PutMapping("/changeEnableAccount/{id}")
     public ResponseEntity<?> changeEnableAccount(@PathVariable("id") int id) {
         try {
+            int currentAdmin = getIdFromToken();
+            if (id == currentAdmin){
+                throw new Exception("Không thể khoá tài khoản của chính bản thân!");
+            }
             accountService.changeEnableAccount(id);
             return new ResponseEntity<>("Update enable status successfully", HttpStatus.OK);
         } catch (Exception e) {

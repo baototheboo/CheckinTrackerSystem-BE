@@ -7,6 +7,7 @@ import com.example.ctsbe.entity.Timesheet;
 import com.example.ctsbe.repository.ImageVerifyRepository;
 import com.example.ctsbe.repository.StaffRepository;
 import com.example.ctsbe.repository.TimesheetRepository;
+import com.example.ctsbe.service.HolidayService;
 import com.example.ctsbe.service.ImageVerifyService;
 import com.example.ctsbe.util.DateUtil;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -39,10 +41,23 @@ public class ScheduledCheckIn {
     @Autowired
     private StaffRepository staffRepository;
 
+    @Autowired
+    private HolidayService holidayService;
+
+    private static int minus_day = 1;
+
+    @PostConstruct
+    public void init() {
+        checkInForgot(); // Thực hiện job ngay khi ứng dụng được khởi động
+    }
+
+
     @Scheduled(cron = "0 0 0 * * *")
     public void checkInForgot() {
-        Instant startTime = DateUtil.convertLocalDateTimeToInstant(LocalDate.now().atStartOfDay().minusDays(1));
-        Instant endTime = DateUtil.convertLocalDateTimeToInstant(LocalDate.now().atStartOfDay().minusSeconds(1));
+//        for (int i = 42; i <= 102 ; i++){
+//            int minus_day = i;
+        Instant startTime = DateUtil.convertLocalDateTimeToInstant(LocalDate.now().atStartOfDay().minusDays(minus_day));
+        Instant endTime = DateUtil.convertLocalDateTimeToInstant(LocalDate.now().atStartOfDay().minusDays(minus_day).minusSeconds(1));
         List<Staff> staffAbsent = staffRepository.findStaffAbsent(startTime, endTime);
         if(CollectionUtils.isEmpty(staffAbsent)) {
             return;
@@ -51,11 +66,19 @@ public class ScheduledCheckIn {
                 for (Staff staff : staffAbsent) {
                     List<Timesheet> check = timesheetRepository.getTimesheetByStaffAndAndDate(staff, startTime.atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE)).toLocalDate());
                     if (check.isEmpty()){
+                        LocalDate date = LocalDate.now().minusDays(minus_day);
                         Timesheet timesheet = new Timesheet();
                         timesheet.setStaff(staff);
-                        timesheet.setDate(LocalDate.now().minusDays(1));
+                        timesheet.setDate(date);
                         timesheet.setDateStatus("ABSENT");
-                        timesheet.setNote("Vắng");
+                        if (holidayService.checkHoliday(date)){
+                            timesheet.setNote("Ngày nghỉ lễ");
+                        } else if (DateUtil.checkWeekend(date)) {
+                            timesheet.setNote("Cuối tuần");
+                        }
+                        else {
+                            timesheet.setNote("Vắng");
+                        }
                         timesheet.setWorkingHours(ApplicationConstant.WORKING_HOURS_ABSENT);
                         timesheetRepository.save(timesheet);
                     }
@@ -65,4 +88,5 @@ public class ScheduledCheckIn {
             }
         }
     }
+//    }
 }

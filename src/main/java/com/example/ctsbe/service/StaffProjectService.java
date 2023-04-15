@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface StaffProjectService {
+    void addPMToProject(int pmId,int prjId);
+
     void addStaffToProject(StaffProjectAddDTO dto);
 
     void removeStaffFromProject(StaffProjectAddDTO dto);

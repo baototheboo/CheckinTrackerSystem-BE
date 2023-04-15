@@ -55,15 +55,24 @@ public class ProjectController {
     @GetMapping("/getAllProject")
     public ResponseEntity<Map<String, Object>> getAllProject(@RequestParam(defaultValue = "1") int page
             , @RequestParam(defaultValue = "3") int size
+            , @RequestParam(defaultValue = "0") int staffId
             , @RequestParam(required = false) String name) {
         try {
             List<Project> list = new ArrayList<>();
             Pageable pageable = PageRequest.of(page - 1, size);
             Page<Project> projectPage;
             if (name == null) {
-                projectPage = projectService.getAllProject(pageable);
+                if(staffId == 0){
+                    projectPage = projectService.getAllProject(pageable);
+                }else {
+                    projectPage = projectService.getListProjectByPMId(staffId,pageable);
+                }
             } else {
-                projectPage = projectService.getProjectByNameContain(name,pageable);
+                if(staffId == 0){
+                    projectPage = projectService.getProjectByNameContain(name,pageable);
+                }else {
+                    projectPage = projectService.getListProjectByPMIdAndProjectName(staffId,name,pageable);
+                }
             }
             list = projectPage.getContent();
             List<ProjectDTO> listDto = list.stream().
@@ -80,14 +89,24 @@ public class ProjectController {
     }
 
     @PostMapping("/addProject")
-    public ResponseEntity<?> addGroup(@Valid @RequestBody ProjectAddDTO dto){
+    public ResponseEntity<?> addProject(@Valid @RequestBody ProjectAddDTO dto){
         try{
-            projectService.addProject(dto);
-            return new ResponseEntity<>("Add project "+dto.getProjectName()+" successfully",HttpStatus.OK);
+            Project p = projectService.addProject(dto);
+            staffProjectService.addPMToProject(dto.getProjectManagerId(),p.getId());
+            return new ResponseEntity<>("Tạo dự án "+dto.getProjectName()+" thành công.",HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
+    }
 
+    @PostMapping("/addPMToProject")
+    public ResponseEntity<?> addPMToProject(@RequestParam int pmId,@RequestParam int projectId){
+        try{
+            staffProjectService.addPMToProject(pmId, projectId);
+            return new ResponseEntity<>("Add project PM successfully",HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/editProject/{id}")
@@ -116,8 +135,12 @@ public class ProjectController {
         try {
             //int staffId = getIdFromToken();
             //int tokenRoleId = accountService.getAccountById(staffId).getRole().getId();
-            staffProjectService.addStaffToProject(dto);
-            return new ResponseEntity<>("Add staff to the project successfully", HttpStatus.OK);
+            if(dto.getStaffId().size() == 0){
+                return new ResponseEntity<>("Chưa chọn nhân viên.", HttpStatus.BAD_REQUEST);
+            }else{
+                staffProjectService.addStaffToProject(dto);
+            }
+            return new ResponseEntity<>("Thêm nhân viên vào dự án thành công", HttpStatus.OK);
         }catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -126,8 +149,12 @@ public class ProjectController {
     @DeleteMapping("/removeStaffFromProject")
     public ResponseEntity<?> removeStaffFromProject(@RequestBody StaffProjectAddDTO dto) {
         try {
-            staffProjectService.removeStaffFromProject(dto);
-            return new ResponseEntity<>("Remove successfully", HttpStatus.OK);
+            if(dto.getStaffId().size() == 0){
+                return new ResponseEntity<>("Chưa chọn nhân viên.", HttpStatus.BAD_REQUEST);
+            }else {
+                staffProjectService.removeStaffFromProject(dto);
+            }
+            return new ResponseEntity<>("Xóa nhân viên thành công", HttpStatus.OK);
         }catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

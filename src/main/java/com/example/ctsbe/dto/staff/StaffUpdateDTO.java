@@ -6,4 +6,5 @@ import lombok.Data;
 public class StaffUpdateDTO {
     private int staffId;
     private int levelId;
+    private int roleId;
 }

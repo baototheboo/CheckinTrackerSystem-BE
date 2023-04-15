@@ -17,4 +17,5 @@ public class ComplaintDTO {
     private String approveName;
     private Integer approveId;
     private String complaintType;
+    private String lastUpdate;
 }

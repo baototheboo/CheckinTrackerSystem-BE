@@ -1,7 +1,9 @@
 package com.example.ctsbe.service;
 
+import com.example.ctsbe.dto.monthlyReport.MonthlyReportAddDTO;
 import com.example.ctsbe.dto.monthlyReport.MonthlyReportDTO;
 import com.example.ctsbe.dto.monthlyReport.MonthlyReportExport;
+import com.example.ctsbe.dto.timesheet.TimesheetDTO;
 import com.example.ctsbe.entity.MonthlyReport;
 import com.example.ctsbe.repository.MonthlyReportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,5 +21,11 @@ public interface MonthlyReportService {
 
     List<MonthlyReport> getListReportExportByMonth(String monthYear);
 
-    MonthlyReportExport export(List<MonthlyReportDTO> list);
+    MonthlyReportExport export(List<MonthlyReportDTO> list,List<TimesheetDTO> listTimesheet);
+
+    List<MonthlyReportAddDTO> getListMonthlyReportToAdd(List<TimesheetDTO> list);
+
+    void addToMonthlyReport(List<TimesheetDTO> list);
+
+    MonthlyReport getMonthlyReportByIdAndMonth(int staffId,String yearMonth);
 }

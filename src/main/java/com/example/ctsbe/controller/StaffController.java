@@ -51,7 +51,7 @@ public class StaffController {
     //@RolesAllowed("ROLE_HUMAN RESOURCE")
     public ResponseEntity<?> changePromotionLevel(@RequestBody StaffUpdateDTO dto){
         try{
-            staffService.changePromotionLevel(dto.getStaffId(), dto.getLevelId());
+            staffService.changePromotionLevel(dto);
             return new ResponseEntity<>("Update promotion level of staff with id"+dto.getStaffId()+" successfully",HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
@@ -119,10 +119,26 @@ public class StaffController {
         }
     }
 
+    @GetMapping("/getStaffByRole")
+    public ResponseEntity<Map<String, Object>> getStaffByRole(@RequestParam int role){
+        try{
+            List<Staff> list= staffService.getStaffsByRole(role);
+            List<StaffAvailableDTO> listDto = list.stream().
+                    map(StaffMapper::convertStaffToStaffAvailableDto).collect(Collectors.toList());
+            Map<String, Object> response = new HashMap<>();
+            response.put("list", listDto);
+            return new ResponseEntity<>(response,HttpStatus.OK);
+        }catch (Exception e){
+            Map<String, Object> response = new HashMap<>();
+            response.put("exception", e.getMessage());
+            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping("/getListPMAvailable")
     public ResponseEntity<Map<String, Object>> getListPMAvailable(){
         try{
-            List<Staff> list= staffService.getListPMAvailable(3);
+            List<Staff> list= staffService.getListPMAvailable();
             List<StaffAvailableDTO> listDto = list.stream().
                     map(StaffMapper::convertStaffToStaffAvailableDto).collect(Collectors.toList());
             Map<String, Object> response = new HashMap<>();

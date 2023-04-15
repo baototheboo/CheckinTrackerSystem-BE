@@ -61,9 +61,9 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public void addAccount(AccountAddDTO dto) {
+    public Account addAccount(AccountAddDTO dto) {
         Account acc = convertAccountAddDTOToAccount(dto);
-        accountRepository.save(acc);
+        return accountRepository.save(acc);
     }
 
     @Override
