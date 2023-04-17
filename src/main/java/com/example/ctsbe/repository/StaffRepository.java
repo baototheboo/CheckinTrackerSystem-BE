@@ -17,7 +17,10 @@ import java.util.Optional;
 
 @Repository
 public interface StaffRepository extends JpaRepository<Staff, Integer> {
-    Page<Staff> findBySurnameContainingOrFirstNameContaining(String surname, String firstname, Pageable pageable);
+    @Query(value = "select a.staff from Account a " +
+            "where concat(a.staff.surname,' ',a.staff.firstName) like %:name% " +
+            "and  a.role.id <> 1")
+    Page<Staff> getListStaffByName(String name, Pageable pageable);
 
     Staff findByEmail(String email);
 
@@ -74,4 +77,16 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
 
     @Query(value = "select a.staff.id from Account a where a.enable=1")
     List<Integer> getListStaffIdEnable();
+
+    @Query(value = "select a.staff from Account a where a.enable=:enable and a.role.id <> 1")
+    Page<Staff> getListStaffByEnable(byte enable,Pageable pageable);
+
+    @Query(value = "select a.staff from Account a " +
+            "where concat(a.staff.surname,' ',a.staff.firstName) like %:name% " +
+            "and a.enable = :enable " +
+            "and a.role.id <> 1")
+    Page<Staff> getListStaffByNameAndEnable(String name,byte enable,Pageable pageable);
+
+    @Query(value = "select a.staff from Account a where a.role.id <> 1")
+    Page<Staff> getListStaffExceptAdmin(Pageable pageable);
 }

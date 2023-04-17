@@ -16,6 +16,8 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
     @Query(value = "select p from Project p where p.group.id=:groupId")
     List<Project> getListProjectByGroupId(int groupId);
 
+    Project findProjectByProjectName(String name);
+
     @Query(value = "select p from Project p where p.projectManager.id=:staffId")
     Page<Project> getListProjectByPMId(int staffId, Pageable pageable);
 

@@ -61,7 +61,15 @@ public class GroupServiceImpl implements GroupService {
     public void editGroup(int id, GroupUpdateDTO dto) {
         Group existedGroup = groupRepository.getById(id);
         existedGroup.setGroupName(dto.getGroupName());
-        existedGroup.setGroupLeader(staffRepository.getById(dto.getGroupLeaderId()));
+        if(dto.getGroupLeaderId() != existedGroup.getGroupLeader().getId()){
+            Staff oldGL = staffRepository.findStaffById(existedGroup.getGroupLeader().getId());
+            oldGL.setGroup(null);
+            existedGroup.setGroupLeader(staffRepository.getById(dto.getGroupLeaderId()));
+            Staff newGL = staffRepository.findStaffById(dto.getGroupLeaderId());
+            newGL.setGroup(groupRepository.getById(id));
+            staffRepository.save(oldGL);
+            staffRepository.save(newGL);
+        }
         existedGroup.setLastUpdated(Instant.now());
         groupRepository.save(existedGroup);
     }
@@ -97,5 +105,12 @@ public class GroupServiceImpl implements GroupService {
     public void deleteGroup(int id) {
         Group existedGroup = this.findById(id);
         groupRepository.delete(existedGroup);
+    }
+
+    @Override
+    public void addGLToGroup(int glId, int groupId) {
+        Staff existedStaff = staffRepository.getById(glId);
+        existedStaff.setGroup(groupRepository.getById(groupId));
+        staffRepository.save(existedStaff);
     }
 }

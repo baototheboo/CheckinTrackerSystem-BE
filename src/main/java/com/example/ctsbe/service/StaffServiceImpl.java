@@ -42,12 +42,12 @@ public class StaffServiceImpl implements StaffService{
 
     @Override
     public Page<Staff> getAllStaff(Pageable pageable) {
-        return staffRepository.findAll(pageable);
+        return staffRepository.getListStaffExceptAdmin(pageable);
     }
 
     @Override
-    public Page<Staff> getStaffByName(String surname,String firstname, Pageable pageable) {
-        return staffRepository.findBySurnameContainingOrFirstNameContaining(surname,firstname,pageable);
+    public Page<Staff> getStaffByName(String name, Pageable pageable) {
+        return staffRepository.getListStaffByName(name,pageable);
     }
 
     @Override
@@ -95,6 +95,16 @@ public class StaffServiceImpl implements StaffService{
     @Override
     public List<Staff> getListGLAvailable() {
         return staffRepository.getListGroupLeaderAvailable();
+    }
+
+    @Override
+    public Page<Staff> getListStaffByEnable(byte enable, Pageable pageable) {
+        return staffRepository.getListStaffByEnable(enable, pageable);
+    }
+
+    @Override
+    public Page<Staff> getListStaffByNameAndEnable(String name, byte enable, Pageable pageable) {
+        return staffRepository.getListStaffByNameAndEnable(name, enable, pageable);
     }
 
     @Override

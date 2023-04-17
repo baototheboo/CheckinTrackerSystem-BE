@@ -30,7 +30,7 @@ class AccountServiceImplTest {
     private AccountService accountService;
     @Autowired
     private AccountRepository accountRepository;
-    Pageable pageable = PageRequest.of(0, 10);
+    Pageable pageable = PageRequest.of(0, 50);
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     /*@Test

@@ -123,7 +123,8 @@ public class GroupController {
     @PostMapping("/addGroup")
     public ResponseEntity<?> addGroup(@RequestBody GroupUpdateDTO dto) {
         try {
-            groupService.addGroup(dto);
+            Group group = groupService.addGroup(dto);
+            groupService.addGLToGroup(dto.getGroupLeaderId(), group.getId());
             return new ResponseEntity<>("Add group" + dto.getGroupName() + " successfully", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

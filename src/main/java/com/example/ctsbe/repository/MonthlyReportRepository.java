@@ -17,7 +17,7 @@ public interface MonthlyReportRepository extends JpaRepository<MonthlyReport, In
     Page<MonthlyReport> getListReportByIdAndMonthYear(int staffId, String monthYear, Pageable pageable);
 
     @Query(value = "select mr from MonthlyReport mr" +
-            " where function('date_format',mr.month,'%Y-%m') =:monthYear")
+            " where function('date_format',mr.month,'%Y-%m') =:monthYear order by mr.staff.id asc")
     Page<MonthlyReport> getListReportByMonthYear(String monthYear, Pageable pageable);
 
     @Query(value = "select mr from MonthlyReport mr" +
