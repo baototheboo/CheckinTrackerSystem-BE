@@ -17,7 +17,8 @@ import java.util.Optional;
 public interface TimesheetRepository extends JpaRepository<Timesheet,Integer> {
 
     @Query(value = "SELECT new com.example.ctsbe.dto.timesheet.TimesheetResponseDTO(t.id, t.staff.id, t.staff.firstName," +
-            "t.staff.surname, t.date, t.timeCheckIn, t.timeCheckOut, t.dateStatus, t.note, t.workingHours" +
+            "t.staff.surname, t.date, t.timeCheckIn, t.timeCheckOut, t.dateStatus, t.note, t.workingHours," +
+            "t.dayWorkingStatus, t.lateCheckInMinutes, t.earlyCheckOutMinutes, t.updatedHistory, t.lastUpdated" +
             ") FROM Timesheet as t where t.staff.id = :staffId and t.date = :date")
     TimesheetResponseDTO getByStaffAndDate(@Param("staffId") int staffId,@Param("date") LocalDate date);
 

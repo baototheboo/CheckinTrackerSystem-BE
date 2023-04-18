@@ -82,6 +82,7 @@ public class ScheduledCheckIn {
                             timesheet.setNote("Vắng");
                             timesheet.setWorkingHours(ApplicationConstant.WORKING_HOURS_ABSENT);
                         }
+                        timesheet.setLastUpdated(Instant.now());
                         timesheetRepository.save(timesheet);
                     }
                 }

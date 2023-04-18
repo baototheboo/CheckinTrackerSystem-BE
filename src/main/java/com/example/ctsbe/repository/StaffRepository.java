@@ -62,7 +62,7 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
 
     @Query(value = "select s from Staff as s " +
             "where s.id=:id and s.id IN (SELECT a.staff.id FROM Account a WHERE a.role.id = 2 AND a.enable = 1)")
-    Optional<Staff> findAvailableHRById(@Param("id") int id);
+    Staff findAvailableHRById(@Param("id") int id);
 
     @Query(value = "select s from Staff as s " +
             "where s.id IN (SELECT a.staff.id FROM Account a WHERE a.enable = 1)")

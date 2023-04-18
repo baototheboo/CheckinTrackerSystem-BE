@@ -45,12 +45,30 @@ public class TimesheetResponseDTO {
     @JsonProperty
     private Double workingHours;
 
+    @JsonProperty
+    private String dayWorkingStatus;
+
+    @JsonProperty
+    private Double lateCheckInMinutes;
+
+    @JsonProperty
+    private Double earlyCheckOutMinutes;
+
+
+    @JsonProperty
+    private String updatedHistory;
+
+    @JsonProperty
+    private String lastUpdated;
     public  TimesheetResponseDTO() {
 
     }
 
     public TimesheetResponseDTO(Integer id, Integer staffId, String firstName, String lastName,
-                                LocalDate date, Instant timeCheckIn, Instant timeCheckOut, String dateStatus, String note, Double workingHours) {
+                                LocalDate date, Instant timeCheckIn, Instant timeCheckOut, String dateStatus,
+                                String note, Double workingHours, String dayWorkingStatus,
+                                Double lateCheckInMinutes, Double earlyCheckOutMinutes,
+                                String updatedHistory, Instant lastUpdated) {
         this.id = id;
         this.staffId = staffId;
         this.firstName = firstName;
@@ -61,5 +79,10 @@ public class TimesheetResponseDTO {
         this.dateStatus = dateStatus;
         this.note = note;
         this.workingHours = workingHours;
+        this.dayWorkingStatus = dayWorkingStatus;
+        this.lateCheckInMinutes = lateCheckInMinutes;
+        this.earlyCheckOutMinutes = earlyCheckOutMinutes;
+        this.updatedHistory = updatedHistory;
+        this.lastUpdated = DateUtil.convertInstantToTimeVerifyString(lastUpdated);
     }
 }
