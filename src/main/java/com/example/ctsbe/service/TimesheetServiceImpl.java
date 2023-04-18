@@ -107,7 +107,11 @@ public class TimesheetServiceImpl implements TimesheetService {
     }
 
     @Override
-    public void updateTimesheetStatus(int staffId, TimesheetUpdateDTO timesheetUpdateDTO) {
+    public void updateTimesheetStatus(int hrId, int staffId, TimesheetUpdateDTO timesheetUpdateDTO) {
+        Optional<Staff> hr = staffRepository.findAvailableHRById(hrId);
+        if (hr.isEmpty()) {
+            throw new StaffNotAvailableException("HR không khả dụng hoặc không tồn tại.");
+        }
         Optional<Staff> staff = staffRepository.findAvailableStaffById(staffId);
         if (staff.isEmpty()) {
             throw new StaffNotAvailableException("Staff không khả dụng hoặc không tồn tại.");

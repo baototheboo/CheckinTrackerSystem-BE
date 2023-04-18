@@ -1,8 +1,5 @@
 package com.example.ctsbe.entity;
 
-import com.example.ctsbe.dto.timesheet.TimesheetResponseDTO;
-import com.example.ctsbe.util.DateUtil;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -37,6 +34,9 @@ public class Timesheet {
     @Column(name = "date_status", nullable = false)
     private String dateStatus;
 
+    @Size(max = 45)
+    @Column(name = "day_working_status", length = 45)
+    private String dayWorkingStatus;
     @Size(max = 1000)
     @Column(name = "note", length = 1000)
     private String note;

@@ -229,7 +229,8 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
                 fos.write(data);
                 Path pathImages = Paths.get(relativePath + fileName);
                 if (probability != null) {
-                    FaceStatus status = (probability * 100) == 0 ? FaceStatus.FAIL : (probability * 100) >= threshold ? FaceStatus.APPROVED : FaceStatus.PENDING;
+//                    FaceStatus status = (probability * 100) == 0 ? FaceStatus.FAIL : (probability * 100) >= threshold ? FaceStatus.APPROVED : FaceStatus.PENDING;
+                    FaceStatus status = (probability * 100) == 0 ? FaceStatus.FAIL : FaceStatus.APPROVED;
                     ImageVerifyDTO imageVerifyDTO = new ImageVerifyDTO();
                     imageVerifyDTO.setName(fullName.replace("_", " "));
                     imageVerifyDTO.setImage(pathImages.toString());
@@ -242,8 +243,6 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
                 String path = pathImages.toString().replace("\\", "/");
                 ImageSetupDTO imageSetupDTO = new ImageSetupDTO(path, localDateTime, staffId, fullName, "OK", localDateTime, LocalDateTime.now());
                 imageSetupDTOs.add(imageSetupDTO);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
