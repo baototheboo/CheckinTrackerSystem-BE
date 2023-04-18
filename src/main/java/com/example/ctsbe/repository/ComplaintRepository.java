@@ -19,7 +19,7 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Integer> {
     Page<Complaint> getAllComplaint(Pageable pageable);
 
     @Query(value = "SELECT c FROM Complaint c where c.staff.id =:id order by c.lastUpdated desc,c.createdDate desc ")
-    Page<Complaint> getListById(int id, Pageable pageable);
+    Page<Complaint> getListByStaffId(int id, Pageable pageable);
 
     @Query(value = "SELECT c FROM Complaint c where c.staff.id =:id and c.status =:status order by c.lastUpdated desc,c.createdDate desc ")
     Page<Complaint> getListByIdAndStatus(int id, String status, Pageable pageable);

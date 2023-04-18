@@ -61,7 +61,7 @@ public class ComplaintServiceImpl implements ComplaintService{
 
     @Override
     public Page<Complaint> getListComplaintById(int id, Pageable pageable) {
-        return complaintRepository.getListById(id, pageable);
+        return complaintRepository.getListByStaffId(id, pageable);
     }
 
     @Override

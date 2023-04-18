@@ -39,22 +39,35 @@ class ComplaintServiceImplTest {
     void getListComplaint() {
         Page<Complaint> complaintPage = complaintService.getListComplaint(pageable);
         List<Complaint> actualRes = complaintPage.getContent();
-        assertEquals(10,actualRes.size());
+        assertEquals(11,actualRes.size());
     }
 
     @Test
     void updateComplaint() {
+        complaintService.updateComplaint(7,0);
+        String actualRes = complaintRepository.getById(7).getStatus();
+        String expectedRes = "Reject";
+        assertEquals(expectedRes,actualRes);
     }
 
     @Test
     void getListComplaintByStatus() {
+        Page<Complaint> complaintPage = complaintService.getListComplaintByStatus("Reject",pageable);
+        List<Complaint> actualRes = complaintPage.getContent();
+        assertEquals(4,actualRes.size());
     }
 
     @Test
     void getListComplaintById() {
+        Page<Complaint> complaintPage = complaintService.getListComplaintById(11,pageable);
+        List<Complaint> actualRes = complaintPage.getContent();
+        assertEquals(5,actualRes.size());
     }
 
     @Test
     void getListComplaintByIdAndStatus() {
+        Page<Complaint> complaintPage = complaintService.getListComplaintByIdAndStatus(11,"Accept",pageable);
+        List<Complaint> actualRes = complaintPage.getContent();
+        assertEquals(3,actualRes.size());
     }*/
 }

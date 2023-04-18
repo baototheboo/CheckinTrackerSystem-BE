@@ -27,7 +27,7 @@ class ProjectServiceImplTest {
     private ProjectRepository projectRepository;
     Pageable pageable = PageRequest.of(0, 50);
 
-    /*@Test
+    @Test
     void getAllProject() {
         Page<Project> projectPage = projectService.getAllProject(pageable);
         List<Project> actualRes = projectPage.getContent();
@@ -98,5 +98,5 @@ class ProjectServiceImplTest {
     void getListProjectByGroupId() {
         List<Project> list = projectService.getListProjectByGroupId(2);
         assertEquals(5,list.size());
-    }*/
+    }
 }

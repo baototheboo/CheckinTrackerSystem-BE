@@ -31,7 +31,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Page<Project> getAllProject(Pageable pageable) {
-        return projectRepository.findAll(pageable);
+        return projectRepository.getAllProject(pageable);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Page<Project> getProjectByNameContain(String name, Pageable pageable) {
-        return projectRepository.findByProjectNameContaining(name, pageable);
+        return projectRepository.getListProjectByName(name, pageable);
     }
 
     @Override
