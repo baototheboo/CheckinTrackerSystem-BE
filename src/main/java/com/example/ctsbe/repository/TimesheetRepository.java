@@ -23,7 +23,7 @@ public interface TimesheetRepository extends JpaRepository<Timesheet,Integer> {
 
 
     @Query(value = "SELECT ts FROM Timesheet ts WHERE ts.staff.id = :staffId AND ts.date = :date AND ts.dateStatus IN (:dateStatusOk, :dateStatusLate)")
-    List<Timesheet> findCheckedInStaff(Integer staffId, LocalDate date, String dateStatusOk, String dateStatusLate);
+    Timesheet findCheckedInStaff(Integer staffId, LocalDate date, String dateStatusOk, String dateStatusLate);
 
     @Query(value = "select ts from Timesheet ts where ts.staff.id =:staffId" +
             " and function('date_format',ts.date,'%Y-%m') =:yearMonth order by ts.date asc")

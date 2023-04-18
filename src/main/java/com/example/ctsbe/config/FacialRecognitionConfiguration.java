@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class FacialRecognitionConfiguration {
 
-    @Value(ApplicationConstant.VGG_URL_AWS)
+    @Value(ApplicationConstant.VGG_URL_LOCAL)
     private String facialRecognitionUri;
 
     public String getFacialRecognitionUri() {

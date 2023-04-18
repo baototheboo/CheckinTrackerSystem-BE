@@ -46,10 +46,10 @@ public class ScheduledCheckIn {
 
     private static int minus_day = 1;
 
-    @PostConstruct
-    public void init() {
-        checkInForgot(); // Thực hiện job ngay khi ứng dụng được khởi động
-    }
+//    @PostConstruct
+//    public void init() {
+//        checkInForgot(); // Thực hiện job ngay khi ứng dụng được khởi động
+//    }
 
 
     @Scheduled(cron = "0 0 0 * * *")
@@ -73,13 +73,15 @@ public class ScheduledCheckIn {
                         timesheet.setDateStatus("ABSENT");
                         if (holidayService.checkHoliday(date)){
                             timesheet.setNote("Ngày nghỉ lễ");
+                            timesheet.setWorkingHours(ApplicationConstant.WORKING_HOURS_DEFAULT);
                         } else if (DateUtil.checkWeekend(date)) {
                             timesheet.setNote("Cuối tuần");
+                            timesheet.setWorkingHours(ApplicationConstant.WORKING_HOURS_ABSENT);
                         }
                         else {
                             timesheet.setNote("Vắng");
+                            timesheet.setWorkingHours(ApplicationConstant.WORKING_HOURS_ABSENT);
                         }
-                        timesheet.setWorkingHours(ApplicationConstant.WORKING_HOURS_ABSENT);
                         timesheetRepository.save(timesheet);
                     }
                 }
@@ -87,6 +89,7 @@ public class ScheduledCheckIn {
                 logger.error("Không thể đánh vắng cho nhân viên");
             }
         }
+        //Check working hour = 0, không check out => vắng
     }
 //    }
 }

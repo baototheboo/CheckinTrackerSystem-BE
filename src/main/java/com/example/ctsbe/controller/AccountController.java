@@ -5,6 +5,7 @@ import com.example.ctsbe.dto.account.*;
 import com.example.ctsbe.dto.project.ProjectInProfileDTO;
 import com.example.ctsbe.entity.Account;
 import com.example.ctsbe.entity.Project;
+import com.example.ctsbe.exception.StaffSelfDisableException;
 import com.example.ctsbe.filter.JwtTokenFilter;
 import com.example.ctsbe.mapper.AccountMapper;
 import com.example.ctsbe.mapper.ProjectMapper;
@@ -119,7 +120,7 @@ public class AccountController {
         try {
             int currentAdmin = getIdFromToken();
             if (id == currentAdmin){
-                throw new Exception("Không thể khoá tài khoản của chính bản thân!");
+                throw new StaffSelfDisableException("Không thể khoá tài khoản của chính bản thân!");
             }
             accountService.changeEnableAccount(id);
             return new ResponseEntity<>("Update enable status successfully", HttpStatus.OK);
