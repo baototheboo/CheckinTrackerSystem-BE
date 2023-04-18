@@ -18,4 +18,5 @@ public class StaffDTO {
     private String phone;
     private Integer promotionLevel;
     private String roleName;
+    private boolean enable;
 }

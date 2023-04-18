@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ComplaintService {
-    void addComplaint(ComplaintAddDTO dto);
+    Complaint addComplaint(ComplaintAddDTO dto);
 
     Page<Complaint> getListComplaint(Pageable pageable);
 

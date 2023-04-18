@@ -26,10 +26,12 @@ public class ProjectServiceImpl implements ProjectService {
     private StaffRepository staffRepository;
     @Autowired
     private StaffProjectRepository staffProjectRepository;
+    @Autowired
+    private StaffProjectService staffProjectService;
 
     @Override
     public Page<Project> getAllProject(Pageable pageable) {
-        return projectRepository.findAll(pageable);
+        return projectRepository.getAllProject(pageable);
     }
 
     @Override
@@ -57,7 +59,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Page<Project> getProjectByNameContain(String name, Pageable pageable) {
-        return projectRepository.findByProjectNameContaining(name, pageable);
+        return projectRepository.getListProjectByName(name, pageable);
     }
 
     @Override
@@ -69,7 +71,24 @@ public class ProjectServiceImpl implements ProjectService {
     public void editProject(int id, ProjectAddDTO dto) {
         Project project = projectRepository.getById(id);
         project.setProjectName(dto.getProjectName());
-        project.setProjectManager(staffRepository.getById(dto.getProjectManagerId()));
+        if(dto.getProjectManagerId() != project.getProjectManager().getId()){
+            //delete old PM
+            StaffProjectId staffProjectId = new StaffProjectId();
+            staffProjectId.setProjectId(id);
+            staffProjectId.setStaffId(project.getProjectManager().getId());
+            StaffProject existedSP = staffProjectRepository.getById(staffProjectId);
+            staffProjectRepository.delete(existedSP);
+            //save new PM and Project to StaffProject
+            project.setProjectManager(staffRepository.getById(dto.getProjectManagerId()));
+            StaffProject newStaffProject = new StaffProject();
+            StaffProjectId newId = new StaffProjectId();
+            newId.setProjectId(id);
+            newId.setStaffId(dto.getProjectManagerId());
+            newStaffProject.setId(newId);
+            newStaffProject.setStaff(staffRepository.getById(dto.getProjectManagerId()));
+            newStaffProject.setProject(projectRepository.getById(id));
+            staffProjectRepository.save(newStaffProject);
+        }
         project.setGroup(groupRepository.getById(dto.getGroupId()));
         project.setLastUpdated(Instant.now());
         projectRepository.save(project);

@@ -11,7 +11,7 @@ public class ComplaintMapper {
         dto.setId(complaint.getId());
         dto.setStaffName(complaint.getStaff().getFullName());
         dto.setStaffId(complaint.getStaff().getId());
-        dto.setCreateDay(dateUtil.convertInstantToStringYearMonthDay(complaint.getCreatedDate()));
+        dto.setCreateDay(dateUtil.convertInstantToTimeVerifyString(complaint.getCreatedDate()));
         dto.setContent(complaint.getContent());
         dto.setStatus(complaint.getStatus());
         dto.setApproveName((complaint.getApprover() == null) ? null :
@@ -19,7 +19,7 @@ public class ComplaintMapper {
         dto.setApproveId((complaint.getApprover() == null) ? null : complaint.getApprover().getId());
         dto.setComplaintType(complaint.getComplaintType().getName());
         dto.setLastUpdate((complaint.getLastUpdated() == null) ? null :
-                dateUtil.convertInstantToStringYearMonthDay(complaint.getLastUpdated()));
+                dateUtil.convertInstantToTimeVerifyString(complaint.getLastUpdated()));
         return dto;
     }
 }

@@ -57,9 +57,9 @@ public class AccountController {
     public ResponseEntity<?> addAccount(@Valid @RequestBody AccountAddDTO dto) {
         try {
             if (accountService.getAccountByUsername(dto.getUsername()) != null) {
-                throw new Exception("Tên đăng nhập này đã tồn tại!");
+                return new ResponseEntity<>("Tên đăng nhập này đã tồn tại!",HttpStatus.BAD_REQUEST);
             } else if (staffService.findStaffByEmail(dto.getStaffAddDTO().getEmail()) != null) {
-                throw new Exception("Email này đã được đăng kí!");
+                return new ResponseEntity<>("Email này đã được đăng kí!",HttpStatus.BAD_REQUEST);
             } else {
                 accountService.addAccount(dto);
             }
