@@ -20,7 +20,7 @@ public class Group {
     @Column(name = "group_name", nullable = false)
     private String groupName;
 
-    @NotNull
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "group_leader_id", nullable = false)
     private Staff groupLeader;

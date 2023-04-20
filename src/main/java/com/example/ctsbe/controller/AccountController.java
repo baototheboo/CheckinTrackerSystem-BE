@@ -125,7 +125,7 @@ public class AccountController {
             accountService.changeEnableAccount(id);
             return new ResponseEntity<>("Update enable status successfully", HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
 
     }

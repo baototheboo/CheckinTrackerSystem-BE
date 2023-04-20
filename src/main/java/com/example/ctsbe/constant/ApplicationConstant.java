@@ -33,4 +33,6 @@ public class ApplicationConstant {
     public static final String VGG_URL_LOCAL = "http://localhost:5001";
     public static final String VGG_URL_AWS = "http://13.229.226.24";
 
+    public static final int TIME_OF_EXIST_IMAGE_FAIL = 30;
+
 }
