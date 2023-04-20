@@ -19,4 +19,7 @@ public interface StaffProjectRepository extends JpaRepository<StaffProject, Staf
     @Query(value = "Select sp.project from StaffProject sp where sp.staff.id =:staffId")
     List<Project> getListProjectByStaffId(int staffId);
 
+    @Query(value = "Select sp.staff from StaffProject sp where sp.project.id =:projectId")
+    List<Staff> getListStaffByProjectId(int projectId);
+
 }

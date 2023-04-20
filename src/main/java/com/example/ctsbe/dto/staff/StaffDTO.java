@@ -12,11 +12,13 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class StaffDTO {
     private int id;
+    private String username;
     private String email;
     private String fullName;
     private String dateOfBirth;
     private String phone;
-    private Integer promotionLevel;
+    private String promotionLevel;
+    private Integer promotionLevelId;
     private String roleName;
     private boolean enable;
 }

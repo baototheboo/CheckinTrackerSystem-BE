@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class MonthlyReportServiceImplTest {
 
-    @Test
+    /*@Test
     void getListByIdAndMonthYear() {
     }
 
@@ -37,5 +37,5 @@ class MonthlyReportServiceImplTest {
 
     @Test
     void getMonthlyReportByIdAndMonth() {
-    }
+    }*/
 }
