@@ -43,7 +43,7 @@ public class GroupServiceImplTest {
     private GroupRepository groupRepository;
     @Autowired
     private StaffRepository staffRepository;
-    Pageable pageable = PageRequest.of(0, 10);
+    Pageable pageable = PageRequest.of(0, 50);
 
     DateUtil dateUtil = new DateUtil();
     /*@Test

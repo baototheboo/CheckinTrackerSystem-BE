@@ -19,12 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Time;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -107,7 +105,11 @@ public class TimesheetServiceImpl implements TimesheetService {
     }
 
     @Override
-    public void updateTimesheetStatus(int staffId, TimesheetUpdateDTO timesheetUpdateDTO) {
+    public void updateTimesheetStatus(int hrId, int staffId, TimesheetUpdateDTO timesheetUpdateDTO) {
+        Staff hr = staffRepository.findAvailableHRById(hrId);
+        if (hr == null) {
+            throw new StaffNotAvailableException("HR không khả dụng hoặc không tồn tại.");
+        }
         Optional<Staff> staff = staffRepository.findAvailableStaffById(staffId);
         if (staff.isEmpty()) {
             throw new StaffNotAvailableException("Staff không khả dụng hoặc không tồn tại.");
@@ -117,8 +119,17 @@ public class TimesheetServiceImpl implements TimesheetService {
             throw new TimesheetNotExist("Không tìm thấy thông tin của ngày.");
         } else {
             timesheet.setDateStatus(timesheetUpdateDTO.getDateStatus());
-            timesheet.setNote((timesheetUpdateDTO.getNote() == null || timesheetUpdateDTO.getNote() == "")
-                    ? null : timesheetUpdateDTO.getNote());
+//            timesheet.setNote((timesheetUpdateDTO.getNote() == null || Objects.equals(timesheetUpdateDTO.getNote(), ""))
+//                    ? null : timesheetUpdateDTO.getNote());
+            if (timesheetUpdateDTO.getDayWorkingStatus()==1){
+                timesheet.setDayWorkingStatus("Làm cả ngày");
+            }else if (timesheetUpdateDTO.getDayWorkingStatus()==2){
+                timesheet.setDayWorkingStatus("Chỉ làm sáng");
+            }else {
+                timesheet.setDayWorkingStatus("Chỉ làm chiều");
+            }
+            timesheet.setUpdatedHistory("Được thay đổi lần cuối bởi " + hr.getFullName());
+            timesheet.setLastUpdated(Instant.now());
             timesheetRepository.save(timesheet);
         }
     }

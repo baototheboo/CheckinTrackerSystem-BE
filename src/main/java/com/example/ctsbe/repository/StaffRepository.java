@@ -17,20 +17,19 @@ import java.util.Optional;
 
 @Repository
 public interface StaffRepository extends JpaRepository<Staff, Integer> {
-    Page<Staff> findBySurnameContainingOrFirstNameContaining(String surname, String firstname, Pageable pageable);
+    @Query(value = "select a.staff from Account a " +
+            "where concat(a.staff.surname,' ',a.staff.firstName) like %:name% " +
+            "and  a.role.id <> 1")
+    Page<Staff> getListStaffByName(String name, Pageable pageable);
 
     Staff findByEmail(String email);
 
     @Query(value = "select a.staff from Account a where a.role.id = 5 and a.enable = 1 and a.staff.group.id is null")
     List<Staff> getListStaffAvailableAddToGroup();
 
-    @Query(value = "SELECT s \n" +
-            "FROM Staff s \n" +
-            "WHERE s.id NOT IN \n" +
-            "    (SELECT sp.staff.id \n" +
-            "     FROM StaffProject sp JOIN Project p ON sp.project.id = p.id \n" +
-            "     WHERE p.status = 'processing') \n " +
-            "AND s.id IN (SELECT a.staff.id FROM Account a WHERE a.enable = 1) \n" +
+    @Query(value = "SELECT s " +
+            "FROM Staff s " +
+            "WHERE s.id IN (SELECT a.staff.id FROM Account a WHERE a.enable = 1 and a.role.id = 5) " +
             "AND s.group.id =:groupId")
     List<Staff> getAvailableStaffAddToProject(int groupId);
 
@@ -58,6 +57,10 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
     Optional<Staff> findAvailableStaffById(@Param("id") int id);
 
     @Query(value = "select s from Staff as s " +
+            "where s.id=:id and s.id IN (SELECT a.staff.id FROM Account a WHERE a.role.id = 2 AND a.enable = 1)")
+    Staff findAvailableHRById(@Param("id") int id);
+
+    @Query(value = "select s from Staff as s " +
             "where s.id IN (SELECT a.staff.id FROM Account a WHERE a.enable = 1)")
     List<Staff> findAllEnableTrue();
 
@@ -74,4 +77,16 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
 
     @Query(value = "select a.staff.id from Account a where a.enable=1")
     List<Integer> getListStaffIdEnable();
+
+    @Query(value = "select a.staff from Account a where a.enable=:enable and a.role.id <> 1")
+    Page<Staff> getListStaffByEnable(byte enable,Pageable pageable);
+
+    @Query(value = "select a.staff from Account a " +
+            "where concat(a.staff.surname,' ',a.staff.firstName) like %:name% " +
+            "and a.enable = :enable " +
+            "and a.role.id <> 1")
+    Page<Staff> getListStaffByNameAndEnable(String name,byte enable,Pageable pageable);
+
+    @Query(value = "select a.staff from Account a where a.role.id <> 1")
+    Page<Staff> getListStaffExceptAdmin(Pageable pageable);
 }

@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequestMapping("/complaints")
+@CrossOrigin(origins = "*")
 public class ComplaintController {
     @Autowired
     private ComplaintService complaintService;

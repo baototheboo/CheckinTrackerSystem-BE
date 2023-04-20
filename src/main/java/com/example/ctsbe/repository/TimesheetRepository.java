@@ -17,13 +17,14 @@ import java.util.Optional;
 public interface TimesheetRepository extends JpaRepository<Timesheet,Integer> {
 
     @Query(value = "SELECT new com.example.ctsbe.dto.timesheet.TimesheetResponseDTO(t.id, t.staff.id, t.staff.firstName," +
-            "t.staff.surname, t.date, t.timeCheckIn, t.timeCheckOut, t.dateStatus, t.note, t.workingHours" +
+            "t.staff.surname, t.date, t.timeCheckIn, t.timeCheckOut, t.dateStatus, t.note, t.workingHours," +
+            "t.dayWorkingStatus, t.lateCheckInMinutes, t.earlyCheckOutMinutes, t.updatedHistory, t.lastUpdated" +
             ") FROM Timesheet as t where t.staff.id = :staffId and t.date = :date")
     TimesheetResponseDTO getByStaffAndDate(@Param("staffId") int staffId,@Param("date") LocalDate date);
 
 
     @Query(value = "SELECT ts FROM Timesheet ts WHERE ts.staff.id = :staffId AND ts.date = :date AND ts.dateStatus IN (:dateStatusOk, :dateStatusLate)")
-    List<Timesheet> findCheckedInStaff(Integer staffId, LocalDate date, String dateStatusOk, String dateStatusLate);
+    Timesheet findCheckedInStaff(Integer staffId, LocalDate date, String dateStatusOk, String dateStatusLate);
 
     @Query(value = "select ts from Timesheet ts where ts.staff.id =:staffId" +
             " and function('date_format',ts.date,'%Y-%m') =:yearMonth order by ts.date asc")

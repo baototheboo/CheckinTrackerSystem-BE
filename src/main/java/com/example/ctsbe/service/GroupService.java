@@ -27,4 +27,6 @@ public interface GroupService {
     Group findById(int id) ;
 
     void deleteGroup(int id) ;
+
+    void addGLToGroup(int glId,int groupId);
 }

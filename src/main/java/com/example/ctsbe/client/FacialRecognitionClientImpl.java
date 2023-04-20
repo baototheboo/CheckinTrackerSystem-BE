@@ -37,8 +37,8 @@ public class FacialRecognitionClientImpl implements FacialRecognitionClient{
 
     private final FacialRecognitionConfiguration facialRecognitionConfiguration;
 
-    @Value("http://localhost:5001")
-    private String applicationUrl;
+//    @Value("http://localhost:5001")
+//    private String applicationUrl;
 
 
     @Autowired
@@ -50,8 +50,6 @@ public class FacialRecognitionClientImpl implements FacialRecognitionClient{
     @Autowired
     private StaffRepository staffRepository;
 
-    @Autowired
-    private ImageSetupRepository imageSetupRepository;
 
     @Value("75")
     private Float threshold;

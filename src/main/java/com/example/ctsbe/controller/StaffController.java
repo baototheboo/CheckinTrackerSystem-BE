@@ -61,15 +61,25 @@ public class StaffController {
     @GetMapping("/getAllStaff")
     public ResponseEntity<Map<String, Object>> getAllStaff(@RequestParam(defaultValue = "1") int page
             , @RequestParam(defaultValue = "3") int size
-            , @RequestParam(required = false) String name) {
+            , @RequestParam(required = false) String name
+            , @RequestParam(defaultValue = "2") int enable) {
         try {
             List<Staff> list = new ArrayList<>();
             Pageable pageable = PageRequest.of(page - 1, size);
             Page<Staff> staffPage;
             if (name == null) {
-                staffPage = staffService.getAllStaff(pageable);
+                if(enable == 2){
+                    staffPage = staffService.getAllStaff(pageable);
+                }
+                else {
+                    staffPage = staffService.getListStaffByEnable((byte) enable,pageable);
+                }
             } else {
-                staffPage = staffService.getStaffByName(name,name,pageable);
+                if(enable == 2){
+                    staffPage = staffService.getStaffByName(name,pageable);
+                }else {
+                    staffPage = staffService.getListStaffByNameAndEnable(name,(byte) enable,pageable);
+                }
             }
             list = staffPage.getContent();
             List<StaffDTO> listDto = list.stream().

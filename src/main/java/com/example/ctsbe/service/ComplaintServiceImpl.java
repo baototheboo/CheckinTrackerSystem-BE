@@ -29,19 +29,19 @@ public class ComplaintServiceImpl implements ComplaintService{
     private JwtTokenUtil jwtTokenUtil;
     DateUtil dateUtil = new DateUtil();
     @Override
-    public void addComplaint(ComplaintAddDTO dto) {
+    public Complaint addComplaint(ComplaintAddDTO dto) {
         Complaint complaint = new Complaint();
         complaint.setStaff(staffRepository.getById(getIdFromToken()));
         complaint.setCreatedDate(Instant.now());
         complaint.setContent(dto.getContent());
         complaint.setStatus("Pending");
         complaint.setComplaintType(complaintTypeRepository.getById(dto.getComplaintTypeId()));
-        complaintRepository.save(complaint);
+        return complaintRepository.save(complaint);
     }
 
     @Override
     public Page<Complaint> getListComplaint(Pageable pageable) {
-        return complaintRepository.findAll(pageable);
+        return complaintRepository.getAllComplaint(pageable);
     }
 
     @Override
@@ -56,12 +56,12 @@ public class ComplaintServiceImpl implements ComplaintService{
 
     @Override
     public Page<Complaint> getListComplaintByStatus(String status,Pageable pageable) {
-        return complaintRepository.findByStatusOrderByCreatedDateAsc(status,pageable);
+        return complaintRepository.getListComplaintByStatus(status,pageable);
     }
 
     @Override
     public Page<Complaint> getListComplaintById(int id, Pageable pageable) {
-        return complaintRepository.getListById(id, pageable);
+        return complaintRepository.getListByStaffId(id, pageable);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.example.ctsbe.controller;
 import com.example.ctsbe.dto.account.AccountDTO;
 import com.example.ctsbe.dto.LoginDTO;
 import com.example.ctsbe.entity.Account;
+import com.example.ctsbe.exception.ExceptionObject;
 import com.example.ctsbe.mapper.AccountMapper;
 import com.example.ctsbe.response.AuthResponse;
 import com.example.ctsbe.service.AccountService;
@@ -22,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
+
 @Slf4j
 @RestController
 @CrossOrigin(origins = "*")
@@ -37,9 +41,15 @@ public class AuthController {
     @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestBody @Valid LoginDTO loginDTO) {
         try {
+            ExceptionObject exceptionObject = new ExceptionObject();
+            Map<String,String> errorMap = new HashMap<>();
+            int errorCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
+            exceptionObject.setCode(errorCode);
             String dbPassword = accountService.getAccountByUsername(loginDTO.getUsername()).getPassword();
             if(!passwordEncoder.matches(loginDTO.getPassword(), dbPassword)){
-                throw new Exception("Mật khẩu không đúng. Vui lòng thử lại!");
+                errorMap.put("password","Mật khẩu không đúng. Vui lòng thử lại!");
+                exceptionObject.setError(errorMap);
+                return new ResponseEntity<>(exceptionObject,HttpStatus.BAD_REQUEST);
             }
             else {
                 Authentication authentication = authManager.authenticate(

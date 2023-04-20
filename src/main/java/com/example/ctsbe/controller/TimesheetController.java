@@ -109,7 +109,8 @@ public class TimesheetController {
     public ResponseEntity<?> updateTimesheetStatus(@PathVariable("staffId") int staffId,
                                                    @Valid @RequestBody TimesheetUpdateDTO timesheetUpdateDTO) {
         try {
-            timesheetService.updateTimesheetStatus(staffId, timesheetUpdateDTO);
+            Integer hrId = getIdFromToken();
+            timesheetService.updateTimesheetStatus(hrId, staffId, timesheetUpdateDTO);
             return new ResponseEntity<>("Cập nhật thành công!", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

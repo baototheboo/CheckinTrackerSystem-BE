@@ -17,7 +17,7 @@ public interface TimesheetService {
     List<Integer> getListDayOfLocalDate(List<Timesheet> list);
 
     TimesheetResponseDTO getTimesheetByStaffAndDate(int staffId, LocalDate date);
-    void updateTimesheetStatus(int staffId, TimesheetUpdateDTO timesheetUpdateDTO);
+    void updateTimesheetStatus(int hrId, int staffId, TimesheetUpdateDTO timesheetUpdateDTO);
 
     List<TimesheetDTO> getListTimeSheetByMonth(String monthYear);
 }

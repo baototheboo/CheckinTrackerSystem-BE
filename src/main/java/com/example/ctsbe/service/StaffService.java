@@ -14,7 +14,7 @@ public interface StaffService {
 
     Page<Staff> getAllStaff(Pageable pageable);
 
-    Page<Staff> getStaffByName(String surname,String firstname, Pageable pageable);
+    Page<Staff> getStaffByName(String name, Pageable pageable);
 
     Staff findStaffByEmail(String email);
 
@@ -31,5 +31,9 @@ public interface StaffService {
     List<Staff> getListPMAvailable();
 
     List<Staff> getListGLAvailable();
+
+    Page<Staff> getListStaffByEnable(byte enable,Pageable pageable);
+
+    Page<Staff> getListStaffByNameAndEnable(String name,byte enable,Pageable pageable);
 
 }

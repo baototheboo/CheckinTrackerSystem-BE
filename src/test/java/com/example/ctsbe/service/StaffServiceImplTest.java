@@ -25,7 +25,7 @@ class StaffServiceImplTest {
     private StaffService staffService;
     @Autowired
     private StaffRepository staffRepository;
-    Pageable pageable = PageRequest.of(0, 10);
+    Pageable pageable = PageRequest.of(0, 50);
 
     //@Test
     //void addStaff() {
