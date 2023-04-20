@@ -61,7 +61,7 @@ public class ProjectController {
             List<Project> list = new ArrayList<>();
             Pageable pageable = PageRequest.of(page - 1, size);
             Page<Project> projectPage;
-            if (name == null) {
+            if (name == null || name == "") {
                 if(staffId == 0){
                     projectPage = projectService.getAllProject(pageable);
                 }else {

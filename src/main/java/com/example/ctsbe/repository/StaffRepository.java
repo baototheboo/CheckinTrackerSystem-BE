@@ -27,13 +27,9 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
     @Query(value = "select a.staff from Account a where a.role.id = 5 and a.enable = 1 and a.staff.group.id is null")
     List<Staff> getListStaffAvailableAddToGroup();
 
-    @Query(value = "SELECT s \n" +
-            "FROM Staff s \n" +
-            "WHERE s.id NOT IN \n" +
-            "    (SELECT sp.staff.id \n" +
-            "     FROM StaffProject sp JOIN Project p ON sp.project.id = p.id \n" +
-            "     WHERE p.status = 'processing') \n " +
-            "AND s.id IN (SELECT a.staff.id FROM Account a WHERE a.enable = 1) \n" +
+    @Query(value = "SELECT s " +
+            "FROM Staff s " +
+            "WHERE s.id IN (SELECT a.staff.id FROM Account a WHERE a.enable = 1 and a.role.id = 5) " +
             "AND s.group.id =:groupId")
     List<Staff> getAvailableStaffAddToProject(int groupId);
 

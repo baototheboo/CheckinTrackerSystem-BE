@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Integer> {
-    @Query(value = "select p from Project p where p.projectName=:name order by p.status desc ")
+    @Query(value = "select p from Project p where p.projectName like %:name% order by p.status desc ")
     Page<Project> getListProjectByName(String name, Pageable pageable);
 
     @Query(value = "select p from Project p where p.group.id=:groupId order by p.status desc ")
