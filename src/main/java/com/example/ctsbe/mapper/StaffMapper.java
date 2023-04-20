@@ -30,6 +30,7 @@ public class StaffMapper {
         dto.setDateOfBirth(dateUtil.convertLocalDateToString(staff.getDateOfBirth()));
         dto.setPhone(staff.getPhone());
         dto.setPromotionLevel(staff.getPromotionLevel().getName());
+        dto.setPromotionLevelId(staff.getPromotionLevel().getId());
         dto.setRoleName(stringUtil.cutStringRole(
                 accountService.getAccountById(staff.getId()).getRole().getRoleName()));
         dto.setEnable((accountService.getAccountById(staff.getId()).getEnable() == 1) ? true : false);

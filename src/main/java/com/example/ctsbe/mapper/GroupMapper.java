@@ -15,12 +15,12 @@ public class GroupMapper {
         return  dto;
     }
 
-    public static GroupDetailDTO convertGroupToGroupDetailDTO(Group group){
+    /*public static GroupDetailDTO convertGroupToGroupDetailDTO(Group group){
         GroupDetailDTO dto = new GroupDetailDTO();
         dto.setId(group.getId());
         dto.setGroupName(group.getGroupName());
         dto.setGroupLeaderName(group.getGroupLeader().getFullName());
         return dto;
-    }
+    }*/
 
 }

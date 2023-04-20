@@ -18,6 +18,7 @@ public class StaffDTO {
     private String dateOfBirth;
     private String phone;
     private String promotionLevel;
+    private Integer promotionLevelId;
     private String roleName;
     private boolean enable;
 }
