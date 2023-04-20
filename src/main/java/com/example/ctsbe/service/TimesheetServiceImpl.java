@@ -121,13 +121,7 @@ public class TimesheetServiceImpl implements TimesheetService {
             timesheet.setDateStatus(timesheetUpdateDTO.getDateStatus());
 //            timesheet.setNote((timesheetUpdateDTO.getNote() == null || Objects.equals(timesheetUpdateDTO.getNote(), ""))
 //                    ? null : timesheetUpdateDTO.getNote());
-            if (timesheetUpdateDTO.getDayWorkingStatus()==1){
-                timesheet.setDayWorkingStatus("Làm cả ngày");
-            }else if (timesheetUpdateDTO.getDayWorkingStatus()==2){
-                timesheet.setDayWorkingStatus("Chỉ làm sáng");
-            }else {
-                timesheet.setDayWorkingStatus("Chỉ làm chiều");
-            }
+            timesheet.setDayWorkingStatus(timesheetUpdateDTO.getDayWorkingStatus());
             timesheet.setUpdatedHistory("Được thay đổi lần cuối bởi " + hr.getFullName());
             timesheet.setLastUpdated(Instant.now());
             timesheetRepository.save(timesheet);

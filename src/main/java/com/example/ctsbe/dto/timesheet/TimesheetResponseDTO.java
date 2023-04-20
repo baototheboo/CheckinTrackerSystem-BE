@@ -74,8 +74,8 @@ public class TimesheetResponseDTO {
         this.firstName = firstName;
         this.lastName = lastName;
         this.date = date;
-        this.timeCheckIn = (timeCheckIn==null)?"":DateUtil.convertInstantToTimeVerifyString(timeCheckIn);
-        this.timeCheckOut = (timeCheckOut==null)?"":DateUtil.convertInstantToTimeVerifyString(timeCheckOut);
+        this.timeCheckIn = (timeCheckIn==null)?"":DateUtil.convertInstantToHour(timeCheckIn);
+        this.timeCheckOut = (timeCheckOut==null)?"":DateUtil.convertInstantToHour(timeCheckOut);
         this.dateStatus = dateStatus;
         this.note = note;
         this.workingHours = workingHours;
@@ -83,6 +83,6 @@ public class TimesheetResponseDTO {
         this.lateCheckInMinutes = lateCheckInMinutes;
         this.earlyCheckOutMinutes = earlyCheckOutMinutes;
         this.updatedHistory = updatedHistory;
-        this.lastUpdated = DateUtil.convertInstantToTimeVerifyString(lastUpdated);
+        this.lastUpdated = (lastUpdated==null)?"":DateUtil.convertInstantToTimeVerifyString(lastUpdated);
     }
 }

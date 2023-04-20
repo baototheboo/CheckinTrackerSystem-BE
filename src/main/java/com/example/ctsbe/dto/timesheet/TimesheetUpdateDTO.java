@@ -19,5 +19,5 @@ public class TimesheetUpdateDTO {
     private String note;
 
     @JsonProperty
-    private int dayWorkingStatus;
+    private String dayWorkingStatus;
 }

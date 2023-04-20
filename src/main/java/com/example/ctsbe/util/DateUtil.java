@@ -38,6 +38,11 @@ public class DateUtil {
         return dateFormat.substring(0, 10);
     }
 
+    public static String convertInstantToHour(Instant date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        return date.atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE)).format(formatter);
+    }
+
     public static String convertInstantToTimeVerifyString(Instant date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         return date.atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE)).format(formatter);
