@@ -8,11 +8,11 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface ProjectService {
-    Page<Project> getAllProject(Pageable pageable);
+    Page<Project> getAllProject(int groupId,Pageable pageable);
     Project addProject(ProjectAddDTO dto);
-    Page<Project> getListProjectByPMId(int staffId, Pageable pageable);
-    Page<Project> getListProjectByPMIdAndProjectName(int staffId,String name, Pageable pageable);
-    Page<Project> getProjectByNameContain(String name, Pageable pageable);
+    Page<Project> getListProjectByPMId(int groupId,int staffId, Pageable pageable);
+    Page<Project> getListProjectByPMIdAndProjectName(int groupId,int staffId,String name, Pageable pageable);
+    Page<Project> getProjectByNameContain(int groupId,String name, Pageable pageable);
     Project getProjectById(int id);
     void editProject(int id,ProjectAddDTO dto);
     void changeProjectStatus(int id,int status);

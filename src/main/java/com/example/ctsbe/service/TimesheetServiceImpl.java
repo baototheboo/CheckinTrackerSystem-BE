@@ -119,8 +119,8 @@ public class TimesheetServiceImpl implements TimesheetService {
             throw new TimesheetNotExist("Không tìm thấy thông tin của ngày.");
         } else {
             timesheet.setDateStatus(timesheetUpdateDTO.getDateStatus());
-//            timesheet.setNote((timesheetUpdateDTO.getNote() == null || Objects.equals(timesheetUpdateDTO.getNote(), ""))
-//                    ? null : timesheetUpdateDTO.getNote());
+            timesheet.setNote((timesheetUpdateDTO.getNote() == null || Objects.equals(timesheetUpdateDTO.getNote(), ""))
+                    ? null : timesheetUpdateDTO.getNote());
             timesheet.setDayWorkingStatus(timesheetUpdateDTO.getDayWorkingStatus());
             timesheet.setUpdatedHistory("Được thay đổi lần cuối bởi " + hr.getFullName());
             timesheet.setLastUpdated(Instant.now());

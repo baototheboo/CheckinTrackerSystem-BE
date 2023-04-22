@@ -56,6 +56,7 @@ public class ProjectController {
     public ResponseEntity<Map<String, Object>> getAllProject(@RequestParam(defaultValue = "1") int page
             , @RequestParam(defaultValue = "3") int size
             , @RequestParam(defaultValue = "0") int staffId
+            , @RequestParam(defaultValue = "0") int groupId
             , @RequestParam(required = false) String name) {
         try {
             List<Project> list = new ArrayList<>();
@@ -63,15 +64,15 @@ public class ProjectController {
             Page<Project> projectPage;
             if ((name == null) || (name.equals(""))) {
                 if(staffId == 0){
-                    projectPage = projectService.getAllProject(pageable);
+                    projectPage = projectService.getAllProject(groupId,pageable);
                 }else {
-                    projectPage = projectService.getListProjectByPMId(staffId,pageable);
+                    projectPage = projectService.getListProjectByPMId(groupId,staffId,pageable);
                 }
             } else {
                 if(staffId == 0){
-                    projectPage = projectService.getProjectByNameContain(name,pageable);
+                    projectPage = projectService.getProjectByNameContain(groupId,name,pageable);
                 }else {
-                    projectPage = projectService.getListProjectByPMIdAndProjectName(staffId,name,pageable);
+                    projectPage = projectService.getListProjectByPMIdAndProjectName(groupId,staffId,name,pageable);
                 }
             }
             list = projectPage.getContent();

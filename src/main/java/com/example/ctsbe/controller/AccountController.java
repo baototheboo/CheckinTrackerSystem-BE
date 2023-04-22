@@ -35,10 +35,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Slf4j
+//@Slf4j
 @RestController
 @RequestMapping("/accounts")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class AccountController {
     @Autowired
     private AccountService accountService;
@@ -58,17 +58,17 @@ public class AccountController {
     public ResponseEntity<?> addAccount(@Valid @RequestBody AccountAddDTO dto) {
         try {
             ExceptionObject exceptionObject = new ExceptionObject();
-            Map<String,String> errorMap = new HashMap<>();
+            Map<String, String> errorMap = new HashMap<>();
             int errorCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
             exceptionObject.setCode(errorCode);
             if (accountService.getAccountByUsername(dto.getUsername()) != null) {
-                errorMap.put("username","Tên đăng nhập này đã tồn tại!");
+                errorMap.put("username", "Tên đăng nhập này đã tồn tại!");
                 exceptionObject.setError(errorMap);
-                return new ResponseEntity<>(exceptionObject,HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(exceptionObject, HttpStatus.BAD_REQUEST);
             } else if (staffService.findStaffByEmail(dto.getStaffAddDTO().getEmail()) != null) {
-                errorMap.put("staffAddDTO.email","Email này đã được đăng kí!");
+                errorMap.put("staffAddDTO.email", "Email này đã được đăng kí!");
                 exceptionObject.setError(errorMap);
-                return new ResponseEntity<>(exceptionObject,HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(exceptionObject, HttpStatus.BAD_REQUEST);
             } else {
                 accountService.addAccount(dto);
             }
@@ -82,9 +82,13 @@ public class AccountController {
     public ResponseEntity<?> updateAccount(@PathVariable("id") int id, @RequestBody ProfileUpdateDTO dto) {
         try {
             int tokenId = getIdFromToken();
-            if (tokenId != id) throw new AccessDeniedException("Bạn không có quyền sửa tài khoản này");
-            else accountService.updateAccount(id, dto);
-            return new ResponseEntity<>("Chỉnh sửa tài khoản thành công.", HttpStatus.OK);
+            Account acc = accountService.getAccountById(id);
+            if (acc.getRole().getId() == 2 || tokenId != id) {
+                throw new AccessDeniedException("Bạn không có quyền sửa tài khoản này");
+            } else {
+                accountService.updateAccount(id, dto);
+                return new ResponseEntity<>("Chỉnh sửa tài khoản thành công.", HttpStatus.OK);
+            }
         } catch (AccessDeniedException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         } catch (Exception e) {
@@ -93,24 +97,23 @@ public class AccountController {
     }
 
     @PutMapping("/changePassword/{id}")
-    public ResponseEntity<?> changePassword(@PathVariable int id,@RequestBody @Valid AccountUpdateDTO dto) {
+    public ResponseEntity<?> changePassword(@PathVariable int id, @RequestBody @Valid AccountUpdateDTO dto) {
         try {
             ExceptionObject exceptionObject = new ExceptionObject();
-            Map<String,String> errorMap = new HashMap<>();
+            Map<String, String> errorMap = new HashMap<>();
             int errorCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
             exceptionObject.setCode(errorCode);
             Account existedAccount = accountService.getAccountById(id);
-            if(!passwordEncoder.matches(dto.getPassword(),existedAccount.getPassword())){
-                errorMap.put("password","Mật khẩu không đúng!");
+            if (!passwordEncoder.matches(dto.getPassword(), existedAccount.getPassword())) {
+                errorMap.put("password", "Mật khẩu không đúng!");
                 exceptionObject.setError(errorMap);
-                return new ResponseEntity<>(exceptionObject,HttpStatus.BAD_REQUEST);
-            }else if(!dto.getNewPassword().equals(dto.getConfirmNewPassword())){
-                errorMap.put("newPassword","Mật khẩu không khớp.Vui lòng nhập lại!");
+                return new ResponseEntity<>(exceptionObject, HttpStatus.BAD_REQUEST);
+            } else if (!dto.getNewPassword().equals(dto.getConfirmNewPassword())) {
+                errorMap.put("newPassword", "Mật khẩu không khớp.Vui lòng nhập lại!");
                 exceptionObject.setError(errorMap);
-                return new ResponseEntity<>(exceptionObject,HttpStatus.BAD_REQUEST);
-            }
-            else {
-                accountService.resetPassword(existedAccount,dto.getNewPassword());
+                return new ResponseEntity<>(exceptionObject, HttpStatus.BAD_REQUEST);
+            } else {
+                accountService.resetPassword(existedAccount, dto.getNewPassword());
                 return new ResponseEntity<>("Đổi mật khẩu thành công", HttpStatus.OK);
             }
         } catch (Exception e) {
@@ -136,7 +139,7 @@ public class AccountController {
     public ResponseEntity<?> changeEnableAccount(@PathVariable("id") int id) {
         try {
             int currentAdmin = getIdFromToken();
-            if (id == currentAdmin){
+            if (id == currentAdmin) {
                 throw new StaffSelfDisableException("Không thể khoá tài khoản của chính bản thân!");
             }
             accountService.changeEnableAccount(id);
@@ -186,18 +189,22 @@ public class AccountController {
     @GetMapping("/getProfile/{username}")
     public ResponseEntity<?> getProfile(@PathVariable("username") String username) {
         try {
-            //int id = getIdFromToken();
+            int id = getIdFromToken();
+            Account acc = accountService.getAccountById(id);
             Account account = accountService.getAccountByUsername(username);
-            ProfileDTO dto = AccountMapper.convertAccountToProfile(account);
-            List<Project> list = staffProjectService.getListProjectInProfile(account.getStaff().getId());
-            List<ProjectInProfileDTO> listDto = list.stream().
-                    map(ProjectMapper::convertProjectToProjectProfileDto).collect(Collectors.toList());
-            dto.setListProject(listDto);
-            return new ResponseEntity<>(dto, HttpStatus.OK);
+            if (acc.getRole().getId() == 2 || account.getId() == id) {
+                ProfileDTO dto = AccountMapper.convertAccountToProfile(account);
+                List<Project> list = staffProjectService.getListProjectInProfile(account.getStaff().getId());
+                List<ProjectInProfileDTO> listDto = list.stream().
+                        map(ProjectMapper::convertProjectToProjectProfileDto).collect(Collectors.toList());
+                dto.setListProject(listDto);
+                return new ResponseEntity<>(dto, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Bạn không có quyền truy cập", HttpStatus.FORBIDDEN);
+            }
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-
     }
 
     public int getIdFromToken() {
