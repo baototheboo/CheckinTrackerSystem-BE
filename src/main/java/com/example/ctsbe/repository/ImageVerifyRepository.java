@@ -81,5 +81,5 @@ public interface ImageVerifyRepository extends JpaRepository<ImagesVerify,Intege
 
 
     @Query(value = "SELECT iv.* FROM images_verify iv WHERE iv.status = 'FAIL' and CURRENT_DATE - cast(iv.time_verify as DATE) > :value",  nativeQuery = true)
-    List<ImagesVerify> findByStatusAndTimeVerify(@Param("value") int value);
+    List<ImagesVerify> findFailImageByStatusAndTimeVerify(@Param("value") int value);
 }

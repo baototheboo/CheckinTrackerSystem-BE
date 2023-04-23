@@ -1,5 +1,6 @@
 package com.example.ctsbe.service;
 
+import com.example.ctsbe.constant.ApplicationConstant;
 import com.example.ctsbe.dto.timesheet.TimesheetDTO;
 import com.example.ctsbe.dto.timesheet.TimesheetResponseDTO;
 import com.example.ctsbe.dto.timesheet.TimesheetUpdateDTO;
@@ -96,12 +97,11 @@ public class TimesheetServiceImpl implements TimesheetService {
 
     @Override
     public TimesheetResponseDTO getTimesheetByStaffAndDate(int staffId, LocalDate date) {
-        Optional<Staff> staff = staffRepository.findAvailableStaffById(staffId);
-        if (staff.isEmpty()) {
-            throw new StaffNotAvailableException("Staff không khả dụng hoặc không tồn tại.");
-        }
-        TimesheetResponseDTO timesheetResponseDTO = timesheetRepository.getByStaffAndDate(staffId, date);
-        return timesheetResponseDTO;
+//        Optional<Staff> staff = staffRepository.findAvailableStaffById(staffId);
+//        if (staff.isEmpty()) {
+//            throw new StaffNotAvailableException("Staff không khả dụng hoặc không tồn tại.");
+//        }
+        return timesheetRepository.getByStaffAndDate(staffId, date);
     }
 
     @Override
@@ -119,10 +119,16 @@ public class TimesheetServiceImpl implements TimesheetService {
             throw new TimesheetNotExist("Không tìm thấy thông tin của ngày.");
         } else {
             timesheet.setDateStatus(timesheetUpdateDTO.getDateStatus());
-//            timesheet.setNote((timesheetUpdateDTO.getNote() == null || Objects.equals(timesheetUpdateDTO.getNote(), ""))
-//                    ? null : timesheetUpdateDTO.getNote());
+            timesheet.setNote((timesheetUpdateDTO.getNote() == null || Objects.equals(timesheetUpdateDTO.getNote(), ""))
+                    ? null : timesheetUpdateDTO.getNote());
             timesheet.setDayWorkingStatus(timesheetUpdateDTO.getDayWorkingStatus());
             timesheet.setUpdatedHistory("Được thay đổi lần cuối bởi " + hr.getFullName());
+            switch (timesheetUpdateDTO.getDayWorkingStatus()) {
+                case "Làm cả ngày" -> timesheet.setWorkingHours(ApplicationConstant.WORKING_HOURS_DEFAULT);
+                case "Chỉ làm sáng" -> timesheet.setWorkingHours(ApplicationConstant.WORKING_HOURS_MORNING);
+                case "Chỉ làm chiều" -> timesheet.setWorkingHours(ApplicationConstant.WORKING_HOURS_AFTERNOON);
+                default -> timesheet.setWorkingHours(ApplicationConstant.WORKING_HOURS_ABSENT);
+            }
             timesheet.setLastUpdated(Instant.now());
             timesheetRepository.save(timesheet);
         }

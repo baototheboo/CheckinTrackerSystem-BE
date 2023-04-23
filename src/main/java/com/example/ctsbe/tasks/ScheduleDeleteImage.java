@@ -33,7 +33,7 @@ public class ScheduleDeleteImage {
     public void cleanImageFailTimeTooLimit() throws IOException {
 
         String imagePathLocal = this.imagePath;
-        List<ImagesVerify> listImageVerify = imageVerifyRepository.findByStatusAndTimeVerify(ApplicationConstant.TIME_OF_EXIST_IMAGE_FAIL);
+        List<ImagesVerify> listImageVerify = imageVerifyRepository.findFailImageByStatusAndTimeVerify(ApplicationConstant.TIME_OF_EXIST_IMAGE_FAIL);
         imageVerifyRepository.deleteAll(listImageVerify);
         for(ImagesVerify imageVerify : listImageVerify) {
             String absolutePath = imagePathLocal + imageVerify.getImage().replace("/","\\");
