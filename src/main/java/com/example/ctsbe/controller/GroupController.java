@@ -6,6 +6,7 @@ import com.example.ctsbe.dto.group.GroupRemoveStaffDTO;
 import com.example.ctsbe.dto.group.GroupUpdateDTO;
 import com.example.ctsbe.dto.project.ProjectInGroupDTO;
 import com.example.ctsbe.dto.project.ProjectInProfileDTO;
+import com.example.ctsbe.dto.staff.StaffAvailableDTO;
 import com.example.ctsbe.dto.staff.StaffDTO;
 import com.example.ctsbe.dto.staffProject.StaffProjectAddDTO;
 import com.example.ctsbe.entity.Group;
@@ -179,6 +180,32 @@ public class GroupController {
             return new ResponseEntity<>("Remove successfully", HttpStatus.OK);
         }catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/getListPMInGroup")
+    public ResponseEntity<?> getListPMInGroup(@RequestParam int groupId){
+        try{
+            List<Staff> list= staffService.getListPMInGroup(groupId);
+            List<StaffAvailableDTO> listDto = list.stream().
+                    map(StaffMapper::convertStaffToStaffAvailableDto).collect(Collectors.toList());
+            Map<String, Object> response = new HashMap<>();
+            response.put("list", listDto);
+            return new ResponseEntity<>(response,HttpStatus.OK);
+        }catch (Exception e){
+            Map<String, Object> response = new HashMap<>();
+            response.put("exception", e.getMessage());
+            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/setStaffToPM")
+    public ResponseEntity<?> setStaffToPM(@RequestParam int staffId){
+        try{
+            staffService.setStaffToPM(staffId);
+            return new ResponseEntity<>("Đưa nhân viên lên PM thành công",HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
     }
 

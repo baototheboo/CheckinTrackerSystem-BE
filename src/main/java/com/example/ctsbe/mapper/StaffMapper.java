@@ -33,6 +33,8 @@ public class StaffMapper {
         dto.setPromotionLevelId(staff.getPromotionLevel().getId());
         dto.setRoleName(stringUtil.cutStringRole(
                 accountService.getAccountById(staff.getId()).getRole().getRoleName()));
+        dto.setRoleId(
+                accountService.getAccountById(staff.getId()).getRole().getId());
         dto.setEnable((accountService.getAccountById(staff.getId()).getEnable() == 1) ? true : false);
         return dto;
     }

@@ -33,8 +33,8 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
             "AND s.group.id =:groupId")
     List<Staff> getAvailableStaffAddToProject(int groupId);
 
-    @Query(value = "select s from Staff s where s.group.id =:groupId")
-    Page<Staff> getListStaffByGroup(int groupId, Pageable pageable);
+    @Query(value = "select a.staff from Account a where a.staff.group.id =:groupId and a.enable = 1")
+    Page<Staff> getListMemberByGroup(int groupId, Pageable pageable);
 
     @Query(value = "select s from Staff s \n" +
             "where s.id in (select a.staff.id from Account a where a.role.id = 4 and a.enable = 1) \n" +
@@ -89,4 +89,10 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
 
     @Query(value = "select a.staff from Account a where a.role.id <> 1")
     Page<Staff> getListStaffExceptAdmin(Pageable pageable);
+
+    @Query(value = "select a.staff from Account a where a.role.id = 3 and a.staff.group.id =:groupId and a.enable = 1")
+    List<Staff> getListPMInGroup(int groupId);
+
+    @Query(value = "select a.staff from Account a where a.role.id = 5 and a.staff.group.id =:groupId and a.enable = 1")
+    List<Staff> getListStaffInGroup(int groupId);
 }

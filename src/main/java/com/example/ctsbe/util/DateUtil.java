@@ -110,16 +110,12 @@ public class DateUtil {
             String note = (s == null) ? null : statusNote[1];
             if (status != null && status.equalsIgnoreCase("ok")) res.add(1); //1 la ok
             else if (status != null && status.equalsIgnoreCase("late")) res.add(2); // 2 la late
-            else if (status != null
-                    && status.equalsIgnoreCase("absent")
-                    && note.equalsIgnoreCase("Vắng"))
-                res.add(3); // 3 la ko di lam
-            else if (status != null
-                    && status.equalsIgnoreCase("absent")
-                    && note.equalsIgnoreCase("Ngày nghỉ lễ"))
-                res.add(4); // 4 la ngay nghi
-            else if ((status == null && note == null)
-                    || (status.equalsIgnoreCase("absent") && note.equalsIgnoreCase("Cuối tuần")))
+            else if (status != null && status.equalsIgnoreCase("absent")){
+                if (note.equalsIgnoreCase("Ngày nghỉ lễ")) res.add(4); // 4 la holiday
+                else if (note.equalsIgnoreCase("Cuối tuần")) res.add(5); // 5 la not yet hoac cuoi tuan
+                else res.add(3);
+            }
+            else if (status == null && note == null)
                 res.add(5); // 5 la not yet hoac cuoi tuan
         }
         return res;

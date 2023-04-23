@@ -36,4 +36,8 @@ public interface StaffService {
 
     Page<Staff> getListStaffByNameAndEnable(String name,byte enable,Pageable pageable);
 
+    List<Staff> getListPMInGroup(int groupId);
+
+    void setStaffToPM(int staffId);
+
 }
