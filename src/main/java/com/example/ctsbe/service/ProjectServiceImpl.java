@@ -30,8 +30,10 @@ public class ProjectServiceImpl implements ProjectService {
     private StaffProjectService staffProjectService;
 
     @Override
-    public Page<Project> getAllProject(Pageable pageable) {
-        return projectRepository.getAllProject(pageable);
+    public Page<Project> getAllProject(int groupId, Pageable pageable) {
+        return (groupId == 0)
+                ? projectRepository.getAllProject(pageable)
+                : projectRepository.getAllProjectByGroupId(groupId, pageable);
     }
 
     @Override
@@ -48,18 +50,24 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Page<Project> getListProjectByPMId(int staffId, Pageable pageable) {
-        return projectRepository.getListProjectByPMId(staffId, pageable);
+    public Page<Project> getListProjectByPMId(int groupId, int staffId, Pageable pageable) {
+        return (groupId == 0)
+                ? projectRepository.getListProjectByPMId(staffId, pageable)
+                : projectRepository.getListProjectByPMIdAndGroupId(groupId, staffId, pageable);
     }
 
     @Override
-    public Page<Project> getListProjectByPMIdAndProjectName(int staffId, String name, Pageable pageable) {
-        return projectRepository.getListProjectByPMIdAndProjectName(staffId, name, pageable);
+    public Page<Project> getListProjectByPMIdAndProjectName(int groupId, int staffId, String name, Pageable pageable) {
+        return (groupId == 0)
+                ? projectRepository.getListProjectByPMIdAndProjectName(staffId, name, pageable)
+                : projectRepository.getListProjectByPMIdAndProjectNameAndGroupId(groupId, staffId, name, pageable);
     }
 
     @Override
-    public Page<Project> getProjectByNameContain(String name, Pageable pageable) {
-        return projectRepository.getListProjectByName(name, pageable);
+    public Page<Project> getProjectByNameContain(int groupId, String name, Pageable pageable) {
+        return (groupId == 0)
+                ? projectRepository.getListProjectByName(name, pageable)
+                : projectRepository.getListProjectByNameAndGroupId(groupId, name, pageable);
     }
 
     @Override
@@ -71,7 +79,7 @@ public class ProjectServiceImpl implements ProjectService {
     public void editProject(int id, ProjectAddDTO dto) {
         Project project = projectRepository.getById(id);
         project.setProjectName(dto.getProjectName());
-        if(dto.getProjectManagerId() != project.getProjectManager().getId()){
+        if (dto.getProjectManagerId() != project.getProjectManager().getId()) {
             //delete old PM
             StaffProjectId staffProjectId = new StaffProjectId();
             staffProjectId.setProjectId(id);

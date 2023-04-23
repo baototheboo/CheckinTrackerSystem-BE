@@ -108,8 +108,20 @@ public class StaffServiceImpl implements StaffService{
     }
 
     @Override
+    public List<Staff> getListPMInGroup(int groupId) {
+        return staffRepository.getListPMInGroup(groupId);
+    }
+
+    @Override
+    public void setStaffToPM(int staffId) {
+        Account account = accountRepository.getById(staffId);
+        account.setRole(roleRepository.getById(3));
+        accountRepository.save(account);
+    }
+
+    @Override
     public Page<Staff> getListStaffByGroup(int groupId,Pageable pageable) {
-        return staffRepository.getListStaffByGroup(groupId,pageable);
+        return staffRepository.getListMemberByGroup(groupId,pageable);
     }
 
 
