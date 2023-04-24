@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GroupUpdateDTO {
+public class GroupAddDTO {
     private String groupName;
+    private Integer groupLeaderId;
 }
+
+

@@ -72,8 +72,7 @@ public class MonthlyReportController {
             if(monthYear == null) {
                 monthYear = new DateUtil().convertLocalDateToMonthAndYear(LocalDate.now());
             }
-            List<TimesheetDTO> list =  timesheetService.getListTimeSheetByMonth(monthYear);
-            monthlyReportService.addToMonthlyReport(list);
+
             return new ResponseEntity<>("Add thành công", HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -82,14 +81,17 @@ public class MonthlyReportController {
 
     @GetMapping("/export")
     public void exportFile(@RequestParam String monthYear, HttpServletResponse response) throws IOException, ParseException {
+        List<TimesheetDTO> list =  timesheetService.getListTimeSheetByMonth(monthYear);
+        monthlyReportService.addToMonthlyReport(list);
+
         response.setContentType("application/octet-stream");
         String headerKey = "Content-Disposition";
         String headerValue = "attachment;filename=Tong_hop_"+monthYear+".xlsx";
         response.setHeader(headerKey, headerValue);
 
         List<TimesheetDTO> listTimeSheet =  timesheetService.getListTimeSheetByMonth(monthYear);
-        List<MonthlyReport> list = monthlyReportService.getListReportExportByMonth(monthYear);
-        List<MonthlyReportDTO> listDto = list.stream()
+        List<MonthlyReport> listReport = monthlyReportService.getListReportExportByMonth(monthYear);
+        List<MonthlyReportDTO> listDto = listReport.stream()
                 .map(MonthlyReportMapper::convertEntityToDto).collect(Collectors.toList());
         MonthlyReportExport exporter = monthlyReportService.export(listDto,listTimeSheet);
         exporter.export(response);

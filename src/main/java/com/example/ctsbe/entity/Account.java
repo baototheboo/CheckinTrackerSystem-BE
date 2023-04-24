@@ -58,8 +58,6 @@ public class Account implements UserDetails {
     @Column(name = "last_updated", nullable = false)
     private Instant lastUpdated;
 
-    @OneToMany(mappedBy = "account")
-    private Set<AccountVerification> accountVerifications = new LinkedHashSet<>();
 
     public Integer getId() {
         return id;
@@ -161,12 +159,5 @@ public class Account implements UserDetails {
         this.lastUpdated = lastUpdated;
     }
 
-    public Set<AccountVerification> getAccountVerifications() {
-        return accountVerifications;
-    }
-
-    public void setAccountVerifications(Set<AccountVerification> accountVerifications) {
-        this.accountVerifications = accountVerifications;
-    }
 
 }

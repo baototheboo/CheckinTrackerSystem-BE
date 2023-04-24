@@ -45,21 +45,28 @@ public class AuthController {
             Map<String,String> errorMap = new HashMap<>();
             int errorCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
             exceptionObject.setCode(errorCode);
-            String dbPassword = accountService.getAccountByUsername(loginDTO.getUsername()).getPassword();
-            if(!passwordEncoder.matches(loginDTO.getPassword(), dbPassword)){
-                errorMap.put("password","Mật khẩu không đúng. Vui lòng thử lại!");
+            if(accountService.getAccountByUsername(loginDTO.getUsername()) == null) {
+                errorMap.put("username", "Tên tài khoản không đúng!");
                 exceptionObject.setError(errorMap);
-                return new ResponseEntity<>(exceptionObject,HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(exceptionObject, HttpStatus.BAD_REQUEST);
             }
-            else {
-                Authentication authentication = authManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(loginDTO.getUsername(),loginDTO.getPassword())
-                );
-                Account user = (Account) authentication.getPrincipal();
-                AccountDTO dto = AccountMapper.convertEntityToDTO(user);
-                String accessToken = jwtUtil.generateAccessToken(user);
-                AuthResponse response = new AuthResponse(dto, accessToken);
-                return ResponseEntity.ok().body(response);
+            else{
+                String dbPassword = accountService.getAccountByUsername(loginDTO.getUsername()).getPassword();
+                if(!passwordEncoder.matches(loginDTO.getPassword(), dbPassword)){
+                    errorMap.put("password","Mật khẩu không đúng. Vui lòng thử lại!");
+                    exceptionObject.setError(errorMap);
+                    return new ResponseEntity<>(exceptionObject,HttpStatus.BAD_REQUEST);
+                }
+                else {
+                    Authentication authentication = authManager.authenticate(
+                            new UsernamePasswordAuthenticationToken(loginDTO.getUsername(),loginDTO.getPassword())
+                    );
+                    Account user = (Account) authentication.getPrincipal();
+                    AccountDTO dto = AccountMapper.convertEntityToDTO(user);
+                    String accessToken = jwtUtil.generateAccessToken(user);
+                    AuthResponse response = new AuthResponse(dto, accessToken);
+                    return ResponseEntity.ok().body(response);
+                }
             }
         } catch (BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

@@ -195,10 +195,10 @@ public class MonthlyReportExport {
                             //cell1.getCellStyle().setFillForegroundColor(IndexedColors.RED.getIndex());
                             break;
                         case 4:
-                            cell1.setCellValue("Ngày nghỉ/Cuối tuần");
+                            cell1.setCellValue("Ngày nghỉ");
                             break;
                         case 5:
-                            cell1.setCellValue("Not yet");
+                            cell1.setCellValue("Chưa có/Cuối tuần");
                             //cell1.getCellStyle().setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
                             break;
                     }

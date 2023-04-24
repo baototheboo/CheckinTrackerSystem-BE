@@ -1,5 +1,6 @@
 package com.example.ctsbe.service;
 
+import com.example.ctsbe.dto.group.GroupAddDTO;
 import com.example.ctsbe.dto.group.GroupDTO;
 import com.example.ctsbe.dto.group.GroupRemoveStaffDTO;
 import com.example.ctsbe.dto.group.GroupUpdateDTO;
@@ -27,7 +28,7 @@ public class GroupServiceImpl implements GroupService {
     private StaffRepository staffRepository;
 
     @Override
-    public Group addGroup(GroupUpdateDTO dto) {
+    public Group addGroup(GroupAddDTO dto) {
         Group addGroup = new Group();
         addGroup.setGroupName(dto.getGroupName());
         addGroup.setGroupLeader(staffRepository.getById(dto.getGroupLeaderId()));
@@ -61,15 +62,6 @@ public class GroupServiceImpl implements GroupService {
     public void editGroup(int id, GroupUpdateDTO dto) {
         Group existedGroup = groupRepository.getById(id);
         existedGroup.setGroupName(dto.getGroupName());
-        if(dto.getGroupLeaderId() != existedGroup.getGroupLeader().getId()){
-            Staff oldGL = staffRepository.findStaffById(existedGroup.getGroupLeader().getId());
-            oldGL.setGroup(null);
-            existedGroup.setGroupLeader(staffRepository.getById(dto.getGroupLeaderId()));
-            Staff newGL = staffRepository.findStaffById(dto.getGroupLeaderId());
-            newGL.setGroup(groupRepository.getById(id));
-            staffRepository.save(oldGL);
-            staffRepository.save(newGL);
-        }
         existedGroup.setLastUpdated(Instant.now());
         groupRepository.save(existedGroup);
     }

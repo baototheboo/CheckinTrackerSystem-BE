@@ -55,7 +55,7 @@ public class MonthlyReportServiceImpl implements MonthlyReportService {
 
     @Override
     public void addToMonthlyReport(List<TimesheetDTO> list) {
-        int lateDay = 0, activeDay = 0, dayOff = 0, workingHours = 0;
+        int lateDay = 0, activeDay = 0, dayOff = 0;
         for (TimesheetDTO dto : list) {
             if(!(dto.getDayCheck() == null)){
                 for (int status : dto.getDayCheck()) {
@@ -71,18 +71,25 @@ public class MonthlyReportServiceImpl implements MonthlyReportService {
                             break;
                     }
                 }
-                if(monthlyReportRepository.getMonthlyReportByMonthAndId(dto.getStaffId(),dto.getMonthYear())==null){
+                MonthlyReport existed = monthlyReportRepository.getMonthlyReportByMonthAndId(dto.getStaffId(),dto.getMonthYear());
+                if(existed == null){
                     MonthlyReport monthlyReport = new MonthlyReport();
                     monthlyReport.setStaff(staffRepository.findStaffById(dto.getStaffId()));
                     monthlyReport.setMonth(dateUtil.convertStringToLocalDate(dto.getMonthYear() + "-01"));
                     monthlyReport.setActiveDay(activeDay);
                     monthlyReport.setLateDay(lateDay);
                     monthlyReport.setOffDay(dayOff);
-                    monthlyReport.setWorkingHour((activeDay + lateDay) * 8);
+                    monthlyReport.setWorkingHour(dto.getWorkingHours().intValue());
                     monthlyReport.setCreatedDate(Instant.now());
                     monthlyReportRepository.save(monthlyReport);
+                }else{
+                    existed.setActiveDay(activeDay);
+                    existed.setLateDay(lateDay);
+                    existed.setOffDay(dayOff);
+                    existed.setWorkingHour(dto.getWorkingHours().intValue());
+                    monthlyReportRepository.save(existed);
                 }
-                lateDay = activeDay = dayOff = workingHours = 0;
+                lateDay = activeDay = dayOff = 0;
             }
         }
     }
