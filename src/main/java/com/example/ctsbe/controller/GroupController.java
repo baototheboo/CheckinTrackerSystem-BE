@@ -1,9 +1,6 @@
 package com.example.ctsbe.controller;
 
-import com.example.ctsbe.dto.group.GroupDTO;
-import com.example.ctsbe.dto.group.GroupDetailDTO;
-import com.example.ctsbe.dto.group.GroupRemoveStaffDTO;
-import com.example.ctsbe.dto.group.GroupUpdateDTO;
+import com.example.ctsbe.dto.group.*;
 import com.example.ctsbe.dto.project.ProjectInGroupDTO;
 import com.example.ctsbe.dto.project.ProjectInProfileDTO;
 import com.example.ctsbe.dto.staff.StaffAvailableDTO;
@@ -130,7 +127,7 @@ public class GroupController {
     }
 
     @PostMapping("/addGroup")
-    public ResponseEntity<?> addGroup(@RequestBody GroupUpdateDTO dto) {
+    public ResponseEntity<?> addGroup(@RequestBody GroupAddDTO dto) {
         try {
             Group group = groupService.addGroup(dto);
             groupService.addGLToGroup(dto.getGroupLeaderId(), group.getId());

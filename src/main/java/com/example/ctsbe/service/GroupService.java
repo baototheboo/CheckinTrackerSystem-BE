@@ -1,5 +1,6 @@
 package com.example.ctsbe.service;
 
+import com.example.ctsbe.dto.group.GroupAddDTO;
 import com.example.ctsbe.dto.group.GroupRemoveStaffDTO;
 import com.example.ctsbe.dto.group.GroupUpdateDTO;
 import com.example.ctsbe.dto.staff.StaffAddDTO;
@@ -11,7 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface GroupService {
-    Group addGroup(GroupUpdateDTO dto);
+    Group addGroup(GroupAddDTO dto);
 
     Page<Group> getAllGroup(Pageable pageable);
 

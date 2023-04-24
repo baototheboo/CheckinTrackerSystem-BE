@@ -49,6 +49,7 @@ public class TimesheetServiceImpl implements TimesheetService {
         int daysOfMonth = dateUtil.getLengthOfMonth(month);
         TimesheetDTO dto = new TimesheetDTO();
         List<String> listStatus = new ArrayList<>();
+        Double workingHours = 0.0;
         boolean check = false;
         if (list == null || list.size() < daysOfMonth) {
             for (int i = 1; i <= daysOfMonth; i++) {
@@ -58,6 +59,7 @@ public class TimesheetServiceImpl implements TimesheetService {
                     for (int j = 0; j < list.size(); j++) {
                         if (Integer.parseInt(dateUtil.convertLocalDateToStringDay(list.get(j).getDate())) == i) {
                             listStatus.add(list.get(j).getDateStatus() + "-" + list.get(j).getNote());
+                            workingHours += list.get(j).getWorkingHours();
                             check = true;
                         }
                     }
@@ -71,12 +73,14 @@ public class TimesheetServiceImpl implements TimesheetService {
         } else if (list.size() == daysOfMonth) {
             for (int i = 0; i < list.size(); i++) {
                 listStatus.add(list.get(i).getDateStatus() + "-" + list.get(i).getNote());
+                workingHours += list.get(i).getWorkingHours();
             }
         }
         List<Integer> listDayCheck = dateUtil.getListDayCheck(listStatus);
         dto.setStaffId(staffId);
         dto.setStaffName(staffRepository.findStaffById(staffId).getFullName());
         dto.setMonthYear(month);
+        dto.setWorkingHours(workingHours);
         dto.setDayCheck(listDayCheck);
         return dto;
     }
@@ -145,6 +149,7 @@ public class TimesheetServiceImpl implements TimesheetService {
                 listDto.add(new TimesheetDTO(staffId,
                         staff.getFullName(),
                         monthYear,
+                        null,
                         null));
             } else {
                 TimesheetDTO timesheetDTO = checkDayStatus(listTimesheetByMonth, staffId, monthYear);
