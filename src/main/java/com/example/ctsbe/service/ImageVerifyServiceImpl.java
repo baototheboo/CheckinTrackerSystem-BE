@@ -69,8 +69,7 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
     private static String successPath = "/success-by-date/";
 
     @Override
-    public ImagesVerify saveImageForVerify(ImageSetupVggDTO imageSetupVggDTO, LocalDateTime localDateTime, RecognizedStaffDTO recognizedStaffDTO) {
-        LocalDateTime currentTime = localDateTime;
+    public ImagesVerify saveImageForVerify(ImageSetupVggDTO imageSetupVggDTO, LocalDateTime currentTime, RecognizedStaffDTO recognizedStaffDTO) {
         String fullName = "";
         Float probability = 0F;
         Integer staffId = null;
@@ -99,7 +98,7 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
                     timesheet.setLastUpdated(Instant.now());
                     timesheetRepository.save(timesheet);
                 } else { // xử lý check-out
-                    Timesheet timesheet = timesheetRepository.findCheckedInStaff(staffId, localDateTime.toLocalDate(), "OK", "LATE");
+                    Timesheet timesheet = timesheetRepository.findCheckedInStaff(staffId, currentTime.toLocalDate(), "OK", "LATE");
                     timesheet.setTimeCheckOut(DateUtil.convertLocalDateTimeToInstant(currentTime));
                     if (Objects.equals(timesheet.getDateStatus(), "OK")) { //check-in đúng giờ
                         if (!isEarlyAfternoonOrNot(currentTime)){
@@ -230,7 +229,7 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
             return null;
         }
         return saveImageToFolder(imageSetupVggDTO.getImgs(), relativePath,
-                localDateTime, fullName, probability, staffId, false);
+                currentTime, fullName, probability, staffId, false);
     }
 
     @Override
@@ -247,7 +246,6 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
         List<ImageVerifyDTO> imageVerifyDTOList = new ArrayList<>();
         for (String image : images) {
             byte[] data = Base64.getMimeDecoder().decode(image);
-            localDateTime = localDateTime.plusSeconds(10);
             String strDate = localDateTime.toString().replace(":", "_");
             String fileName = fullName + "_" + strDate + "_" + (probability != null ? probability.toString() : "") + ".jpg";
             try {

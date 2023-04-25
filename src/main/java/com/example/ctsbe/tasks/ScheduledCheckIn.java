@@ -46,10 +46,10 @@ public class ScheduledCheckIn {
 
     private static int minus_day = 1;
 
-    @PostConstruct
-    public void init() {
-        checkInForgot(); // Thực hiện job ngay khi ứng dụng được khởi động
-    }
+//    @PostConstruct
+//    public void init() {
+//        checkInForgot(); // Thực hiện job ngay khi ứng dụng được khởi động
+//    }
 
 
     @Scheduled(cron = "0 0 0 * * *")
