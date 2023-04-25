@@ -21,11 +21,14 @@ public class StaffProjectMapper {
         StringUtil util = new StringUtil();
         Staff staff = sp.getStaff();
         dto.setStaffId(staff.getId());
-        dto.setFullName(staff.getSurname() + " " + staff.getFirstName());
+        dto.setUsername(accountService.getAccountById(staff.getId()).getUsername());
+        dto.setFullName(staff.getFullName());
         dto.setEmail(staff.getEmail());
         dto.setPhone(staff.getPhone());
         dto.setRoleName(util.cutStringRole(
                 accountService.getAccountById(staff.getId()).getRole().getRoleName()));
+        dto.setRoleId(
+                accountService.getAccountById(staff.getId()).getRole().getId());
         dto.setPromotionLevel(staff.getPromotionLevel().getId());
         return dto;
     }

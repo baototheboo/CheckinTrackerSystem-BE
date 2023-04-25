@@ -1,12 +1,14 @@
 package com.example.ctsbe.client;
 
 import com.example.ctsbe.config.FacialRecognitionConfiguration;
+import com.example.ctsbe.dto.vgg.ImageDeleteVggDTO;
 import com.example.ctsbe.dto.vgg.ImageSetupVggDTO;
 import com.example.ctsbe.dto.staff.RecognizedStaffDTO;
 import com.example.ctsbe.dto.staff.StaffVerifyDTO;
 import com.example.ctsbe.dto.staff.StaffSetupDTO;
 import com.example.ctsbe.entity.ImagesVerify;
 import com.example.ctsbe.entity.Staff;
+import com.example.ctsbe.exception.DeleteStaffException;
 import com.example.ctsbe.exception.FacialRecognitionIdentifyException;
 import com.example.ctsbe.exception.ValidationException;
 import com.example.ctsbe.repository.ImageSetupRepository;
@@ -35,8 +37,8 @@ public class FacialRecognitionClientImpl implements FacialRecognitionClient{
 
     private final FacialRecognitionConfiguration facialRecognitionConfiguration;
 
-    @Value("http://localhost:5001")
-    private String applicationUrl;
+//    @Value("http://localhost:5001")
+//    private String applicationUrl;
 
 
     @Autowired
@@ -48,8 +50,6 @@ public class FacialRecognitionClientImpl implements FacialRecognitionClient{
     @Autowired
     private StaffRepository staffRepository;
 
-    @Autowired
-    private ImageSetupRepository imageSetupRepository;
 
     @Value("75")
     private Float threshold;
@@ -77,7 +77,6 @@ public class FacialRecognitionClientImpl implements FacialRecognitionClient{
         RecognizedStaffDTO recognizedStaffDTO = new RecognizedStaffDTO();
         RestTemplate restTemplate = new RestTemplate();
         ImagesVerify verifiedImage;
-        Boolean showMessage = false;
         try {
             String result = restTemplate.postForObject(
                     facialRecognitionConfiguration.getFacialRecognitionUri() + "/verify-staff",
@@ -99,7 +98,7 @@ public class FacialRecognitionClientImpl implements FacialRecognitionClient{
             throw new FacialRecognitionIdentifyException();
         }
         Integer staffId = Integer.parseInt(partId);
-        Staff staff = staffRepository.findStaffById(staffId);
+        Staff staff = staffRepository.findAvailableStaffByStaffId(staffId);
 
         if (Boolean.FALSE.equals(isProbabilityHigherThanThreshold(recognizedStaffDTO.getProbability()))) {
             logger.error("GG_ERROR_FACIAL_RECOGNITION threshold not met. The probability was {}", recognizedStaffDTO.getProbability());
@@ -134,6 +133,19 @@ public class FacialRecognitionClientImpl implements FacialRecognitionClient{
             throw new FacialRecognitionIdentifyException();
         }
         return recognizedStaffDTO;
+    }
+
+    @Override
+    public void deleteStaffSetup(int staffId) {
+        RestTemplate restTemplate = new RestTemplate();
+        try {
+            restTemplate.postForObject(
+                    facialRecognitionConfiguration.getFacialRecognitionUri() + "/delete-staff",
+                    new ImageDeleteVggDTO(Integer.toString(staffId)), String.class);
+
+        } catch (Exception e) {
+            throw new DeleteStaffException(staffId);
+        }
     }
 
     public Boolean isProbabilityHigherThanThreshold(Float probability) {

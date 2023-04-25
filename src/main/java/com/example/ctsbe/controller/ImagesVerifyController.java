@@ -32,14 +32,6 @@ import java.util.*;
 @CrossOrigin(origins = "*")
 public class ImagesVerifyController {
 
-    private static final Logger logger = LoggerFactory.getLogger(ImagesVerifyController.class);
-
-    @Autowired
-    private StaffRepository staffRepository;
-
-    @Autowired
-    private FacialRecognitionClient facialRecognition;
-
     @Autowired
     private ImageVerifyService imageVerifyService;
 

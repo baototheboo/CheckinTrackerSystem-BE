@@ -2,10 +2,13 @@ package com.example.ctsbe.service;
 
 import com.example.ctsbe.dto.staff.StaffAddDTO;
 import com.example.ctsbe.dto.staff.StaffAvailableDTO;
+import com.example.ctsbe.dto.staff.StaffUpdateDTO;
 import com.example.ctsbe.entity.Account;
 import com.example.ctsbe.entity.PromotionLevel;
 import com.example.ctsbe.entity.Staff;
 import com.example.ctsbe.repository.AccountRepository;
+import com.example.ctsbe.repository.PromotionLevelRepository;
+import com.example.ctsbe.repository.RoleRepository;
 import com.example.ctsbe.repository.StaffRepository;
 import com.example.ctsbe.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +29,10 @@ public class StaffServiceImpl implements StaffService{
     private AccountRepository accountRepository;
 
     @Autowired
-    private PromotionLevelService promotionLevelService;
+    private PromotionLevelRepository promotionLevelRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Override
     public Staff addStaff(StaffAddDTO staffAddDTO) {
@@ -36,12 +42,12 @@ public class StaffServiceImpl implements StaffService{
 
     @Override
     public Page<Staff> getAllStaff(Pageable pageable) {
-        return staffRepository.findAll(pageable);
+        return staffRepository.getListStaffExceptAdmin(pageable);
     }
 
     @Override
-    public Page<Staff> getStaffByName(String surname,String firstname, Pageable pageable) {
-        return staffRepository.findBySurnameContainingOrFirstNameContaining(surname,firstname,pageable);
+    public Page<Staff> getStaffByName(String name, Pageable pageable) {
+        return staffRepository.getListStaffByName(name,pageable);
     }
 
     @Override
@@ -50,10 +56,14 @@ public class StaffServiceImpl implements StaffService{
     }
 
     @Override
-    public void changePromotionLevel(int staffId,int levelId) {
-        Staff staff = staffRepository.getById(staffId);
-        staff.setPromotionLevel(promotionLevelService.getPromotionLevelById(levelId));
+    public void changePromotionLevel(StaffUpdateDTO dto) {
+        Account account = accountRepository.getById(dto.getStaffId());
+        Staff staff = account.getStaff();
+        staff.setPromotionLevel(promotionLevelRepository.getById(dto.getLevelId()));
+        account.setRole(roleRepository.getById(dto.getRoleId()));
+        account.setLastUpdated(Instant.now());
         staff.setLastUpdated(Instant.now());
+        accountRepository.save(account);
         staffRepository.save(staff);
     }
 
@@ -78,13 +88,8 @@ public class StaffServiceImpl implements StaffService{
     }
 
     @Override
-    public List<Staff> getListPMAvailable(int role) {
-        List<Staff> staffList = new ArrayList<>();
-        List<Account> accountList = accountRepository.getListPMAvailable(role);
-        for (Account acc : accountList) {
-            staffList.add(acc.getStaff());
-        }
-        return staffList;
+    public List<Staff> getListPMAvailable() {
+        return staffRepository.getListPMAvailable();
     }
 
     @Override
@@ -93,8 +98,30 @@ public class StaffServiceImpl implements StaffService{
     }
 
     @Override
+    public Page<Staff> getListStaffByEnable(byte enable, Pageable pageable) {
+        return staffRepository.getListStaffByEnable(enable, pageable);
+    }
+
+    @Override
+    public Page<Staff> getListStaffByNameAndEnable(String name, byte enable, Pageable pageable) {
+        return staffRepository.getListStaffByNameAndEnable(name, enable, pageable);
+    }
+
+    @Override
+    public List<Staff> getListPMInGroup(int groupId) {
+        return staffRepository.getListPMInGroup(groupId);
+    }
+
+    @Override
+    public void setStaffToPM(int staffId) {
+        Account account = accountRepository.getById(staffId);
+        account.setRole(roleRepository.getById(3));
+        accountRepository.save(account);
+    }
+
+    @Override
     public Page<Staff> getListStaffByGroup(int groupId,Pageable pageable) {
-        return staffRepository.getListStaffByGroup(groupId,pageable);
+        return staffRepository.getListMemberByGroup(groupId,pageable);
     }
 
 
@@ -108,7 +135,7 @@ public class StaffServiceImpl implements StaffService{
         staff.setLastUpdated(Instant.now());
         staff.setDateOfBirth(dateUtil.convertStringToLocalDate(dto.getDateOfBirth()));
         staff.setPhone(dto.getPhone());
-        staff.setPromotionLevel(promotionLevelService.getPromotionLevelById(dto.getPromotionLevelId()));
+        staff.setPromotionLevel(promotionLevelRepository.findById(1));
         return  staff;
     }
 }

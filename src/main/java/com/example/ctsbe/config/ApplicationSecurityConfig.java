@@ -21,6 +21,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.Collections;
 
 @EnableWebSecurity(debug = true)
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
@@ -59,7 +60,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                         , "/accounts/sendForgotPassword"
                         , "/accounts/changeEnableAccount/*"
                         //, "/accounts/updateAccount/*"
-                        , "/accounts/getProfile/*"
+                        //, "/accounts/getProfile/*"
                         , "/staffs/*"
                         , "/staffs/*/*"
                         ,"/groups/*"
@@ -67,18 +68,22 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                         ,"/levels/*"
                         , "/levels/*/*"
                         ,"/projects/*"
+                        ,"/holidays/*"
                         ,"/reports/*"
                         ,"/complaints/*"
-                        ,"/timesheets/*"
-                        ,"/timesheets/*/*"
+                        ,"/timesheets/getTimesheet/*"
                         ,"/projects/*/*"
                         ,"/projects/*/*"
                         ,"/check-in/facial-recognition/verify"
                         ,"/check-in/*/facial-recognition/setup"
                         ,"/image/image-verify"
-                        ,"/staffs/*/get-image-setup").permitAll()
-                //.antMatchers("/products").hasAuthority("ROLE_EDITOR")
+                        ,"/staffs/*/get-image-setup"
+                        ,"/timesheets/*/*"
+                        ,"/timesheets/*"
+                        ,"/image-setup/*/*").permitAll()
+                //.antMatchers("/accounts/getProfile/*").hasRole("ROLE_HUMAN RESOURCE")
                 .anyRequest().authenticated();
+        http.cors();
 
         http.exceptionHandling()
                 .authenticationEntryPoint(
@@ -92,8 +97,9 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
 //        http.cors().configurationSource(request -> {
 //            final CorsConfiguration cors = new CorsConfiguration();
-//            cors.setAllowedOrigins(Arrays.asList("http://localhost:3000","https://cts-backend.azurewebsites.net"));
-//            cors.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
+//            cors.setAllowedOrigins(Arrays.asList("http://localhost:3000","http://192.168.1.207:8080"));
+ //           cors.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
+            //cors.setAllowedHeaders(Collections.singletonList("*"));
 //            return cors;
 //        });
 

@@ -11,10 +11,10 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProjectAddDTO {
-    @NotBlank(message = "Project name is required!")
+    @NotBlank(message = "Tên dự án không được để trống!")
     private String projectName;
-    @NotNull(message= "Please choose the project manager!")
+    @NotNull(message= "Hãy chọn người quản lý dự án!")
     private Integer projectManagerId;
-    @NotNull(message = "Please choose the group!")
+    @NotNull(message = "Hãy chọn nhóm cho dự án!")
     private Integer groupId;
 }

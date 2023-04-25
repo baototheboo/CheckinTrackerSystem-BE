@@ -9,5 +9,5 @@ import lombok.*;
 @AllArgsConstructor
 public class PromotionLevelDTO {
     private Integer id;
-    private String description;
+    private String name;
 }

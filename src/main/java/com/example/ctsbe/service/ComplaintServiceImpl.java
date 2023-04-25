@@ -29,20 +29,19 @@ public class ComplaintServiceImpl implements ComplaintService{
     private JwtTokenUtil jwtTokenUtil;
     DateUtil dateUtil = new DateUtil();
     @Override
-    public void addComplaint(ComplaintAddDTO dto) {
+    public Complaint addComplaint(ComplaintAddDTO dto) {
         Complaint complaint = new Complaint();
         complaint.setStaff(staffRepository.getById(getIdFromToken()));
         complaint.setCreatedDate(Instant.now());
-        complaint.setLastUpdated(Instant.now());
         complaint.setContent(dto.getContent());
         complaint.setStatus("Pending");
         complaint.setComplaintType(complaintTypeRepository.getById(dto.getComplaintTypeId()));
-        complaintRepository.save(complaint);
+        return complaintRepository.save(complaint);
     }
 
     @Override
     public Page<Complaint> getListComplaint(Pageable pageable) {
-        return complaintRepository.findAll(pageable);
+        return complaintRepository.getAllComplaint(pageable);
     }
 
     @Override
@@ -51,13 +50,23 @@ public class ComplaintServiceImpl implements ComplaintService{
         complaint.setApprover(staffRepository.getById(getIdFromToken()));
         if(status == 1) complaint.setStatus("Accept");
         else if (status == 0) complaint.setStatus("Reject");
-        complaint.setLastUpdated(dateUtil.plusInstant(Instant.now()));
+        complaint.setLastUpdated(Instant.now());
         complaintRepository.save(complaint);
     }
 
     @Override
     public Page<Complaint> getListComplaintByStatus(String status,Pageable pageable) {
-        return complaintRepository.findByStatus(status,pageable);
+        return complaintRepository.getListComplaintByStatus(status,pageable);
+    }
+
+    @Override
+    public Page<Complaint> getListComplaintById(int id, Pageable pageable) {
+        return complaintRepository.getListByStaffId(id, pageable);
+    }
+
+    @Override
+    public Page<Complaint> getListComplaintByIdAndStatus(int id, String status, Pageable pageable) {
+        return complaintRepository.getListByIdAndStatus(id, status, pageable);
     }
 
     public int getIdFromToken() {

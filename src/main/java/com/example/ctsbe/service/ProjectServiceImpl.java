@@ -2,8 +2,11 @@ package com.example.ctsbe.service;
 
 import com.example.ctsbe.dto.project.ProjectAddDTO;
 import com.example.ctsbe.entity.Project;
+import com.example.ctsbe.entity.StaffProject;
+import com.example.ctsbe.entity.StaffProjectId;
 import com.example.ctsbe.repository.GroupRepository;
 import com.example.ctsbe.repository.ProjectRepository;
+import com.example.ctsbe.repository.StaffProjectRepository;
 import com.example.ctsbe.repository.StaffRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,10 +24,16 @@ public class ProjectServiceImpl implements ProjectService {
     private GroupRepository groupRepository;
     @Autowired
     private StaffRepository staffRepository;
+    @Autowired
+    private StaffProjectRepository staffProjectRepository;
+    @Autowired
+    private StaffProjectService staffProjectService;
 
     @Override
-    public Page<Project> getAllProject(Pageable pageable) {
-        return projectRepository.findAll(pageable);
+    public Page<Project> getAllProject(int groupId, Pageable pageable) {
+        return (groupId == 0)
+                ? projectRepository.getAllProject(pageable)
+                : projectRepository.getAllProjectByGroupId(groupId, pageable);
     }
 
     @Override
@@ -41,8 +50,24 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Page<Project> getProjectByNameContain(String name, Pageable pageable) {
-        return projectRepository.findByProjectNameContaining(name, pageable);
+    public Page<Project> getListProjectByPMId(int groupId, int staffId, Pageable pageable) {
+        return (groupId == 0)
+                ? projectRepository.getListProjectByPMId(staffId, pageable)
+                : projectRepository.getListProjectByPMIdAndGroupId(groupId, staffId, pageable);
+    }
+
+    @Override
+    public Page<Project> getListProjectByPMIdAndProjectName(int groupId, int staffId, String name, Pageable pageable) {
+        return (groupId == 0)
+                ? projectRepository.getListProjectByPMIdAndProjectName(staffId, name, pageable)
+                : projectRepository.getListProjectByPMIdAndProjectNameAndGroupId(groupId, staffId, name, pageable);
+    }
+
+    @Override
+    public Page<Project> getProjectByNameContain(int groupId, String name, Pageable pageable) {
+        return (groupId == 0)
+                ? projectRepository.getListProjectByName(name, pageable)
+                : projectRepository.getListProjectByNameAndGroupId(groupId, name, pageable);
     }
 
     @Override
@@ -54,7 +79,24 @@ public class ProjectServiceImpl implements ProjectService {
     public void editProject(int id, ProjectAddDTO dto) {
         Project project = projectRepository.getById(id);
         project.setProjectName(dto.getProjectName());
-        project.setProjectManager(staffRepository.getById(dto.getProjectManagerId()));
+        if (dto.getProjectManagerId() != project.getProjectManager().getId()) {
+            //delete old PM
+            StaffProjectId staffProjectId = new StaffProjectId();
+            staffProjectId.setProjectId(id);
+            staffProjectId.setStaffId(project.getProjectManager().getId());
+            StaffProject existedSP = staffProjectRepository.getById(staffProjectId);
+            staffProjectRepository.delete(existedSP);
+            //save new PM and Project to StaffProject
+            project.setProjectManager(staffRepository.getById(dto.getProjectManagerId()));
+            StaffProject newStaffProject = new StaffProject();
+            StaffProjectId newId = new StaffProjectId();
+            newId.setProjectId(id);
+            newId.setStaffId(dto.getProjectManagerId());
+            newStaffProject.setId(newId);
+            newStaffProject.setStaff(staffRepository.getById(dto.getProjectManagerId()));
+            newStaffProject.setProject(projectRepository.getById(id));
+            staffProjectRepository.save(newStaffProject);
+        }
         project.setGroup(groupRepository.getById(dto.getGroupId()));
         project.setLastUpdated(Instant.now());
         projectRepository.save(project);

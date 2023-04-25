@@ -1,11 +1,14 @@
 package com.example.ctsbe.entity;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.Instant;
 import java.time.LocalDate;
 
+@Data
 @Entity
 @Table(name = "timesheet")
 public class Timesheet {
@@ -34,75 +37,28 @@ public class Timesheet {
     @Column(name = "date_status", nullable = false)
     private String dateStatus;
 
+    @Size(max = 45)
+    @Column(name = "day_working_status", length = 45)
+    private String dayWorkingStatus;
     @Size(max = 1000)
     @Column(name = "note", length = 1000)
     private String note;
 
-    @Column(name = "workingHours")
+    @Column(name = "late_check_in_minutes")
+    private Double lateCheckInMinutes;
+
+    @Column(name = "early_check_out_minutes")
+    private Double earlyCheckOutMinutes;
+
+    @Column(name = "working_hours")
     private Double workingHours;
 
-    public Double getWorkingHours() {
-        return workingHours;
-    }
+    @Size(max = 1000)
+    @Column(name = "updated_history", length = 1000)
+    private String updatedHistory;
 
-    public void setWorkingHours(Double workingHours) {
-        this.workingHours = workingHours;
-    }
+    @Column(name = "last_updated")
+    private Instant lastUpdated;
 
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Staff getStaff() {
-        return staff;
-    }
-
-    public void setStaff(Staff staff) {
-        this.staff = staff;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public Instant getTimeCheckIn() {
-        return timeCheckIn;
-    }
-
-    public void setTimeCheckIn(Instant timeCheckIn) {
-        this.timeCheckIn = timeCheckIn;
-    }
-
-    public Instant getTimeCheckOut() {
-        return timeCheckOut;
-    }
-
-    public void setTimeCheckOut(Instant timeCheckOut) {
-        this.timeCheckOut = timeCheckOut;
-    }
-
-    public String getDateStatus() {
-        return dateStatus;
-    }
-
-    public void setDateStatus(String dateStatus) {
-        this.dateStatus = dateStatus;
-    }
 
 }

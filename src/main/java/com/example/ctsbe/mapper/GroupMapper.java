@@ -9,19 +9,18 @@ public class GroupMapper {
         GroupDTO dto = new GroupDTO(
                 group.getId(),
                 group.getGroupName(),
-                group.getGroupLeader().getSurname() + " "
-                        + group.getGroupLeader().getFirstName(),
+                group.getGroupLeader().getFullName(),
                 group.getGroupLeader().getId()
         );
         return  dto;
     }
 
-    public static GroupDetailDTO convertGroupToGroupDetailDTO(Group group){
+    /*public static GroupDetailDTO convertGroupToGroupDetailDTO(Group group){
         GroupDetailDTO dto = new GroupDetailDTO();
         dto.setId(group.getId());
         dto.setGroupName(group.getGroupName());
-        dto.setGroupLeaderName(group.getGroupLeader().getSurname() + " " + group.getGroupLeader().getFirstName());
+        dto.setGroupLeaderName(group.getGroupLeader().getFullName());
         return dto;
-    }
+    }*/
 
 }

@@ -1,5 +1,6 @@
 package com.example.ctsbe.service;
 
+import com.example.ctsbe.dto.group.GroupAddDTO;
 import com.example.ctsbe.dto.group.GroupRemoveStaffDTO;
 import com.example.ctsbe.dto.group.GroupUpdateDTO;
 import com.example.ctsbe.dto.staff.StaffAddDTO;
@@ -11,18 +12,22 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface GroupService {
-    Group addGroup(GroupUpdateDTO dto);
+    Group addGroup(GroupAddDTO dto);
 
     Page<Group> getAllGroup(Pageable pageable);
 
     Page<Group> getAllGroupByName(String name,Pageable pageable);
+    Page<Group> getListGroupByStaffId(int staffId, Pageable pageable);
+    Page<Group> getListGroupByStaffIdAndGroupName(int staffId, String name, Pageable pageable);
     void editGroup(int id,GroupUpdateDTO dto);
 
     void addStaffToGroup(StaffProjectAddDTO dto);
 
     void removeStaffFromGroup(GroupRemoveStaffDTO dto);
 
-    Group findById(int id) throws NotFoundException;
+    Group findById(int id) ;
 
-    void deleteGroup(int id) throws NotFoundException;
+    void deleteGroup(int id) ;
+
+    void addGLToGroup(int glId,int groupId);
 }

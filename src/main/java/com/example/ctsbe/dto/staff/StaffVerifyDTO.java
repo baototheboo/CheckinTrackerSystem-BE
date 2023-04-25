@@ -16,8 +16,6 @@ public class StaffVerifyDTO {
     private boolean identityVerified;
     @JsonProperty("probability")
     private Float probability;
-    @JsonProperty("showMessage")
-    private Boolean showMessage;
     @JsonProperty
     private Integer imageVerifyId;
     @JsonProperty

@@ -17,6 +17,10 @@ public class StaffSetupDTO {
     @JsonProperty
     private List<String> imgs;
 
+    public StaffSetupDTO(Integer staffId){
+        this.staffId = staffId;
+    }
+
     public StaffSetupDTO(Integer staffId,
                              String staffName,
                              List<String> imgs) {

@@ -3,6 +3,7 @@ package com.example.ctsbe.service;
 import com.example.ctsbe.dto.staffProject.StaffProjectAddDTO;
 import com.example.ctsbe.dto.staffProject.StaffProjectDTO;
 import com.example.ctsbe.entity.Project;
+import com.example.ctsbe.entity.Staff;
 import com.example.ctsbe.entity.StaffProject;
 import com.example.ctsbe.entity.StaffProjectId;
 import com.example.ctsbe.repository.ProjectRepository;
@@ -23,6 +24,18 @@ public class StaffProjectServiceImpl implements StaffProjectService {
     private StaffRepository staffRepository;
     @Autowired
     private ProjectRepository projectRepository;
+
+    @Override
+    public void addPMToProject(int pmId,int prjId) {
+        StaffProject staffProject = new StaffProject();
+        StaffProjectId id = new StaffProjectId();
+        id.setProjectId(prjId);
+        id.setStaffId(pmId);
+        staffProject.setId(id);
+        staffProject.setStaff(staffRepository.getById(pmId));
+        staffProject.setProject(projectRepository.getById(prjId));
+        repository.save(staffProject);
+    }
 
     @Override
     public void addStaffToProject(StaffProjectAddDTO dto) {
@@ -59,5 +72,10 @@ public class StaffProjectServiceImpl implements StaffProjectService {
     @Override
     public List<Project> getListProjectInProfile(int staffId) {
         return repository.getListProjectByStaffId(staffId);
+    }
+
+    @Override
+    public List<Staff> getListStaffByPrjId(int prjId) {
+        return repository.getListStaffByProjectId(prjId);
     }
 }

@@ -1,6 +1,9 @@
 package com.example.ctsbe.util;
 
 import com.example.ctsbe.constant.ApplicationConstant;
+import org.apache.tomcat.jni.Local;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -35,6 +38,17 @@ public class DateUtil {
         return dateFormat.substring(0, 10);
     }
 
+    public static String convertInstantToHour(Instant date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        return date.atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE)).format(formatter);
+    }
+
+    public static String convertInstantToTimeVerifyString(Instant date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        return date.atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE)).format(formatter);
+    }
+
+
     public static String convertTimeVerifyToString(LocalDate date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss");
         String dateFormat = date.atStartOfDay().format(formatter);
@@ -53,13 +67,33 @@ public class DateUtil {
         return dateFormat;
     }
 
-    public int getLengthOfMonth(String YearMonth) {
-        //String convert = convertLocalDateToMonthAndYear(YearMonthDay);
-        String[] monthAndYear = YearMonth.split("-");
+    public int getLengthOfMonth(String yearMonth) {
+        YearMonth res = convertStringToYearMonth(yearMonth);
+        return res.lengthOfMonth();
+    }
+
+    public YearMonth convertStringToYearMonth(String yearMonth) {
+        String[] monthAndYear = yearMonth.split("-");
         int year = Integer.parseInt(monthAndYear[0]);
         int month = Integer.parseInt(monthAndYear[1]);
         YearMonth res = java.time.YearMonth.of(year, month);
-        return res.lengthOfMonth();
+        return res;
+    }
+
+    public boolean compareYearMonth(String yearMonth, YearMonth now) {
+        YearMonth compare = convertStringToYearMonth(yearMonth);
+        return compare.isAfter(now);
+    }
+
+    public static boolean checkWeekend(LocalDate date){
+        DayOfWeek day = date.getDayOfWeek();
+        if (day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY) return true;
+        else return false;
+    }
+
+    public String cutStringDateToYearMonth(String date){
+        String afterCut = date.substring(0,7);
+        return afterCut;
     }
 
     public String convertLocalDateToStringDay(LocalDate date) {
@@ -71,13 +105,21 @@ public class DateUtil {
     public List<Integer> getListDayCheck(List<String> list) {
         List<Integer> res = new ArrayList<>();
         for (String s : list) {
-            if (s != null && s.equalsIgnoreCase("ok")) res.add(1); //1 la ok
-            else if (s != null && s.equalsIgnoreCase("late")) res.add(2); // 2 la late
-            else if (s == null) res.add(5); // 5 la not yet
+            String[] statusNote = (s == null) ? null : s.split("-");
+            String status = (s == null) ? null : statusNote[0];
+            String note = (s == null) ? null : statusNote[1];
+            if (status != null && status.equalsIgnoreCase("ok")) res.add(1); //1 la ok
+            else if (status != null && status.equalsIgnoreCase("late")) res.add(2); // 2 la late
+            else if (status != null && status.equalsIgnoreCase("absent")){
+                if (note.equalsIgnoreCase("Ngày nghỉ lễ")) res.add(4); // 4 la holiday
+                else if (note.equalsIgnoreCase("Cuối tuần")) res.add(5); // 5 la not yet hoac cuoi tuan
+                else res.add(3);
+            }
+            else if (status == null && note == null)
+                res.add(5); // 5 la not yet hoac cuoi tuan
         }
         return res;
     }
-
 
     public static Instant convertLocalDateTimeToInstant(LocalDateTime localDateTime) {
         return localDateTime.atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE)).toInstant();

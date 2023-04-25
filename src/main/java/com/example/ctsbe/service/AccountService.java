@@ -20,7 +20,7 @@ public interface AccountService {
 
     Page<Account> getAccountByEnable(byte enable,Pageable pageable);
 
-    void addAccount(AccountAddDTO accountAddDTO);
+    Account addAccount(AccountAddDTO accountAddDTO);
 
     Account getAccountById(int id);
 

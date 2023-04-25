@@ -1,10 +1,9 @@
 package com.example.ctsbe.controller;
 
-import com.example.ctsbe.dto.group.GroupDTO;
-import com.example.ctsbe.dto.group.GroupDetailDTO;
-import com.example.ctsbe.dto.group.GroupRemoveStaffDTO;
-import com.example.ctsbe.dto.group.GroupUpdateDTO;
+import com.example.ctsbe.dto.group.*;
+import com.example.ctsbe.dto.project.ProjectInGroupDTO;
 import com.example.ctsbe.dto.project.ProjectInProfileDTO;
+import com.example.ctsbe.dto.staff.StaffAvailableDTO;
 import com.example.ctsbe.dto.staff.StaffDTO;
 import com.example.ctsbe.dto.staffProject.StaffProjectAddDTO;
 import com.example.ctsbe.entity.Group;
@@ -47,15 +46,24 @@ public class GroupController {
     @GetMapping("/getAllGroups")
     public ResponseEntity<Map<String, Object>> getAllGroups(@RequestParam(defaultValue = "1") int page
             , @RequestParam(defaultValue = "3") int size
+            , @RequestParam(defaultValue = "0") int staffId
             , @RequestParam(required = false) String groupName) {
         try {
             List<Group> list = new ArrayList<>();
             Pageable pageable = PageRequest.of(page - 1, size);
             Page<Group> groupPage;
             if (groupName == null) {
-                groupPage = groupService.getAllGroup(pageable);
+                if(staffId == 0){
+                    groupPage = groupService.getAllGroup(pageable);
+                }else {
+                    groupPage = groupService.getListGroupByStaffId(staffId,pageable);
+                }
             } else {
-                groupPage = groupService.getAllGroupByName(groupName, pageable);
+                if(staffId == 0){
+                    groupPage = groupService.getAllGroupByName(groupName, pageable);
+                }else {
+                    groupPage = groupService.getListGroupByStaffIdAndGroupName(staffId,groupName,pageable);
+                }
             }
             list = groupPage.getContent();
             List<GroupDTO> listDto = list.stream().
@@ -72,7 +80,7 @@ public class GroupController {
     }
 
     @GetMapping("/getAllStaffInGroup")
-    public ResponseEntity<Map<String, Object>> getAllStaffInGroup(@RequestParam(defaultValue = "1") int page
+    public ResponseEntity<?> getAllStaffInGroup(@RequestParam(defaultValue = "1") int page
             , @RequestParam(defaultValue = "3") int size
             , @RequestParam int groupId) {
         try {
@@ -83,12 +91,18 @@ public class GroupController {
             list = staffPage.getContent();
             List<StaffDTO> listDto = list.stream().
                     map(StaffMapper::convertStaffToStaffDto).collect(Collectors.toList());
+            List<Project> projectList = projectService.getListProjectByGroupId(groupId);
+            List<ProjectInGroupDTO> listPrjDto = projectList.stream().
+                    map(ProjectMapper::convertProjectToProjectInGroupDto).collect(Collectors.toList());
             Map<String, Object> response = new HashMap<>();
             response.put("list", listDto);
             response.put("currentPage", staffPage.getNumber());
             response.put("allProducts", staffPage.getTotalElements());
             response.put("allPages", staffPage.getTotalPages());
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            GroupDetailDTO dto = new GroupDetailDTO();
+            dto.setResponse(response);
+            dto.setListProject(listPrjDto);
+            return new ResponseEntity<>(dto, HttpStatus.OK);
         } catch (Exception e) {
             Map<String, Object> response = new HashMap<>();
             response.put("exception", e.getMessage());
@@ -100,10 +114,11 @@ public class GroupController {
     public ResponseEntity<?> getGroupDetail(@PathVariable("id") int id) {
         try{
             Group group = groupService.findById(id);
-            GroupDetailDTO dto = GroupMapper.convertGroupToGroupDetailDTO(group);
+            //GroupDetailDTO dto = GroupMapper.convertGroupToGroupDetailDTO(group);
+            GroupDetailDTO dto = new GroupDetailDTO();
             List<Project> projectList = projectService.getListProjectByGroupId(group.getId());
-            List<ProjectInProfileDTO> listDto = projectList.stream().
-                    map(ProjectMapper::convertProjectToProjectProfileDto).collect(Collectors.toList());
+            List<ProjectInGroupDTO> listDto = projectList.stream().
+                    map(ProjectMapper::convertProjectToProjectInGroupDto).collect(Collectors.toList());
             dto.setListProject(listDto);
             return new ResponseEntity<>(dto,HttpStatus.OK);
         }catch (Exception e){
@@ -112,9 +127,10 @@ public class GroupController {
     }
 
     @PostMapping("/addGroup")
-    public ResponseEntity<?> addGroup(@RequestBody GroupUpdateDTO dto) {
+    public ResponseEntity<?> addGroup(@RequestBody GroupAddDTO dto) {
         try {
-            groupService.addGroup(dto);
+            Group group = groupService.addGroup(dto);
+            groupService.addGLToGroup(dto.getGroupLeaderId(), group.getId());
             return new ResponseEntity<>("Add group" + dto.getGroupName() + " successfully", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -134,7 +150,7 @@ public class GroupController {
     }
 
     @DeleteMapping("/deleteGroup/{id}")
-    public ResponseEntity<?> deleteGroup(@PathVariable("id") int id) throws NotFoundException {
+    public ResponseEntity<?> deleteGroup(@PathVariable("id") int id){
         try {
             groupService.deleteGroup(id);
             return new ResponseEntity<>("Delete successfully", HttpStatus.OK);
@@ -161,6 +177,32 @@ public class GroupController {
             return new ResponseEntity<>("Remove successfully", HttpStatus.OK);
         }catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/getListPMInGroup")
+    public ResponseEntity<?> getListPMInGroup(@RequestParam int groupId){
+        try{
+            List<Staff> list= staffService.getListPMInGroup(groupId);
+            List<StaffAvailableDTO> listDto = list.stream().
+                    map(StaffMapper::convertStaffToStaffAvailableDto).collect(Collectors.toList());
+            Map<String, Object> response = new HashMap<>();
+            response.put("list", listDto);
+            return new ResponseEntity<>(response,HttpStatus.OK);
+        }catch (Exception e){
+            Map<String, Object> response = new HashMap<>();
+            response.put("exception", e.getMessage());
+            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/setStaffToPM")
+    public ResponseEntity<?> setStaffToPM(@RequestParam int staffId){
+        try{
+            staffService.setStaffToPM(staffId);
+            return new ResponseEntity<>("Đưa nhân viên lên PM thành công",HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
     }
 

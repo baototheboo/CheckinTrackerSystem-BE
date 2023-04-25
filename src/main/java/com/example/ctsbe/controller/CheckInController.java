@@ -41,8 +41,6 @@ public class CheckInController {
     @Autowired
     private FacialRecognitionClient facialRecognition;
 
-    @Autowired
-    private ImageVerifyService imageVerifyService;
 
     @Autowired
     private ImageSetupService imageSetupService;
@@ -58,26 +56,5 @@ public class CheckInController {
 
         return new ResponseEntity<>(staffVerifyDTO, HttpStatus.OK);
     }
-
-    @PostMapping("/{staffId}/facial-recognition/setup")
-    public ResponseEntity<String> setupEmployeeForFacialRecognition(@PathVariable String staffId,
-                                                                    @Valid @RequestBody ImageSetupVggDTO imageSetupVggDTO) {
-
-        Staff staff = staffRepository.findStaffById(Integer.parseInt(staffId));
-
-//        List<FacialRecognitionStatus> facialRecognitionStatuses =
-//                Arrays.asList(FacialRecognitionStatus.PENDING, FacialRecognitionStatus.TRAINED);
-//
-//        if (facialRecognitionStatuses.contains(staff.getFacialRecognitionStatus())) {
-//            throw new SetupEmployeeFacialRecognitionException(staffId);
-//        }
-        String result = facialRecognition.setupStaffForFacialRecognition(staff, imageSetupVggDTO.getImgs());
-        if (result.equals("OK")) {
-            imageSetupService.saveImageForSetup(imageSetupVggDTO.getImgs(), staff);
-        }
-//        employeeService.updateFacialRecognitionStatus(accountEmployee.getEmployee(), FacialRecognitionStatus.PENDING);
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }
-
 
 }

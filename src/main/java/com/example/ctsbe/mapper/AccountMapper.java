@@ -19,14 +19,6 @@ import java.util.stream.Collectors;
 @Component
 public class AccountMapper {
 
-    /*public static AccountUpdateDTO convertEntityToUpdateDTO(Account account) {
-        AccountUpdateDTO dto = new AccountUpdateDTO(
-                account.getId(),
-                account.getPassword()
-        );
-        return dto;
-    }*/
-
 
     public static AccountDTO convertEntityToDTO(Account account) {
         StringUtil util = new StringUtil();
@@ -35,7 +27,11 @@ public class AccountMapper {
         dto.setUsername(account.getUsername());
         dto.setEmail(account.getStaff().getEmail());
         dto.setRoleName(util.cutStringRole(account.getRole().getRoleName()));
-        dto.setStaffName(account.getStaff().getSurname() + " " + account.getStaff().getFirstName());
+        dto.setStaffName(account.getStaff().getFullName());
+        dto.setGroupName((account.getStaff().getGroup() == null) ?
+                null : account.getStaff().getGroup().getGroupName());
+        dto.setGroupId((account.getStaff().getGroup() == null) ?
+                null :account.getStaff().getGroup().getId());
         dto.setEnable((account.getEnable() == 1) ? true : false);
         return dto;
     }

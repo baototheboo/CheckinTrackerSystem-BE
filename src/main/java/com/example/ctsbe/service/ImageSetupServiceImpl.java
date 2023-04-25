@@ -1,17 +1,23 @@
 package com.example.ctsbe.service;
 
+import com.example.ctsbe.client.FacialRecognitionClient;
 import com.example.ctsbe.dto.image.ImageSetupDTO;
+import com.example.ctsbe.entity.ImagesSetup;
 import com.example.ctsbe.entity.Staff;
 import com.example.ctsbe.exception.ImageNotFoundException;
+import com.example.ctsbe.exception.StaffDoesNotExistException;
 import com.example.ctsbe.repository.*;
+import com.example.ctsbe.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.transaction.Transactional;
 import java.time.*;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ImageSetupServiceImpl implements ImageSetupService{
@@ -22,10 +28,11 @@ public class ImageSetupServiceImpl implements ImageSetupService{
     @Autowired
     ImageSetupRepository imageSetupRepository;
 
+    @Autowired
+    StaffRepository staffRepository;
 
-    private static String errorPath = "/error-by-date/";
-
-    private static String successPath = "/success-by-date/";
+    @Autowired
+    FacialRecognitionClient facialRecognitionClient;
 
     private static String setupPath = "/setup/";
 
@@ -41,11 +48,25 @@ public class ImageSetupServiceImpl implements ImageSetupService{
     @Override
     public Page<ImageSetupDTO> findImageSetup(Integer staffId, Pageable pageable) {
         Page<ImageSetupDTO> imageSetupDTOS = imageSetupRepository.findImageSetupByStaffId(staffId, pageable);
-        if (imageSetupDTOS.isEmpty()){
-            throw new ImageNotFoundException("Không tìm thấy ảnh đã được setup nào");
-        }
-        else return imageSetupDTOS;
+        return imageSetupDTOS;
     }
 
+    @Transactional
+    @Override
+    public void removeStaffSetup(int staffId){
+        Staff staff = staffRepository.findStaffById(staffId);
+        if (staff == null) {
+            throw new StaffDoesNotExistException(staffId);
+        }
+        facialRecognitionClient.deleteStaffSetup(staffId);
+        staff.setFacialRecognitionStatus(null);
 
+        List<ImagesSetup> imagesSetupList = imageSetupRepository.findImageSetupByStaffId(staff.getId());
+        for (ImagesSetup imagesSetup: imagesSetupList) {
+            imagesSetup.setLastUpdated(DateUtil.convertLocalDateTimeToInstant(LocalDateTime.now()));
+            imagesSetup.setStatus("REMOVED");
+        }
+        imageSetupRepository.saveAll(imagesSetupList);
+        staffRepository.save(staff);
+    }
 }

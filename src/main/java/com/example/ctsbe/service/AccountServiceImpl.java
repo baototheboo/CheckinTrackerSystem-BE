@@ -61,9 +61,9 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public void addAccount(AccountAddDTO dto) {
+    public Account addAccount(AccountAddDTO dto) {
         Account acc = convertAccountAddDTOToAccount(dto);
-        accountRepository.save(acc);
+        return accountRepository.save(acc);
     }
 
     @Override
@@ -99,14 +99,14 @@ public class AccountServiceImpl implements AccountService {
         account.getStaff().setDateOfBirth(util.convertStringToLocalDate(dto.getDateOfBirth()));
         account.getStaff().setPhone(dto.getPhone());
         account.setLastUpdated(Instant.now());
-        account.getStaff().setLastUpdated(dateUtil.plusInstant(Instant.now()));
+        account.getStaff().setLastUpdated(Instant.now());
         accountRepository.save(account);
     }
 
     @Override
     public void resetPassword(Account account,String newPassword) {
         account.setPassword(passwordEncoder.encode(newPassword));
-        account.setLastUpdated(dateUtil.plusInstant(Instant.now()));
+        account.setLastUpdated(Instant.now());
         accountRepository.save(account);
     }
 
@@ -118,7 +118,7 @@ public class AccountServiceImpl implements AccountService {
         } else {
             account.setEnable((byte) 1);
         }
-        account.setLastUpdated(dateUtil.plusInstant(Instant.now()));
+        account.setLastUpdated(Instant.now());
         accountRepository.save(account);
     }
 

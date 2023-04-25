@@ -8,8 +8,7 @@ public class MonthlyReportMapper {
     public static MonthlyReportDTO convertEntityToDto(MonthlyReport monthlyReport){
         MonthlyReportDTO dto = new MonthlyReportDTO();
         DateUtil util = new DateUtil();
-        dto.setStaffName(monthlyReport.getStaff().getSurname()
-                +" "+ monthlyReport.getStaff().getFirstName());
+        dto.setStaffName(monthlyReport.getStaff().getFullName());
         dto.setMonthAndYear(util.convertLocalDateToMonthAndYear(monthlyReport.getMonth()));
         dto.setActiveDay(monthlyReport.getActiveDay());
         dto.setLateDay(monthlyReport.getLateDay());

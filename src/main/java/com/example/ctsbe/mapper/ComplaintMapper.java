@@ -9,11 +9,17 @@ public class ComplaintMapper {
         DateUtil dateUtil = new DateUtil();
         ComplaintDTO dto = new ComplaintDTO();
         dto.setId(complaint.getId());
-        dto.setStaffName(complaint.getStaff().getSurname() + " " + complaint.getStaff().getFirstName());
-        dto.setCreateDay(dateUtil.convertInstantToStringYearMonthDay(complaint.getCreatedDate()));
+        dto.setStaffName(complaint.getStaff().getFullName());
+        dto.setStaffId(complaint.getStaff().getId());
+        dto.setCreateDay(dateUtil.convertInstantToTimeVerifyString(complaint.getCreatedDate()));
         dto.setContent(complaint.getContent());
         dto.setStatus(complaint.getStatus());
+        dto.setApproveName((complaint.getApprover() == null) ? null :
+                complaint.getApprover().getFullName());
+        dto.setApproveId((complaint.getApprover() == null) ? null : complaint.getApprover().getId());
         dto.setComplaintType(complaint.getComplaintType().getName());
+        dto.setLastUpdate((complaint.getLastUpdated() == null) ? null :
+                dateUtil.convertInstantToTimeVerifyString(complaint.getLastUpdated()));
         return dto;
     }
 }

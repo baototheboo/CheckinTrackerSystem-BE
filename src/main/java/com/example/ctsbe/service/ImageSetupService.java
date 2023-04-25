@@ -12,4 +12,6 @@ public interface ImageSetupService {
     void saveImageForSetup(List<String> images, Staff staff);
 
     Page<ImageSetupDTO> findImageSetup(Integer staffId, Pageable pageable);
+
+    void removeStaffSetup(int staffId);
 }

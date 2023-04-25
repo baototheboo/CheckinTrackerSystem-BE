@@ -11,5 +11,8 @@ import java.util.List;
 @NoArgsConstructor
 public class TimesheetDTO {
     private Integer staffId;
+    private String staffName;
+    private String monthYear;
+    private Double workingHours;
     private List<Integer> dayCheck;
 }
