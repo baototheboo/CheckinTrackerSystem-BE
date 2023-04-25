@@ -50,7 +50,7 @@ public class ComplaintServiceImpl implements ComplaintService{
         complaint.setApprover(staffRepository.getById(getIdFromToken()));
         if(status == 1) complaint.setStatus("Accept");
         else if (status == 0) complaint.setStatus("Reject");
-        complaint.setLastUpdated(dateUtil.plusInstant(Instant.now()));
+        complaint.setLastUpdated(Instant.now());
         complaintRepository.save(complaint);
     }
 

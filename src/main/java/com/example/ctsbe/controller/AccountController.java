@@ -83,8 +83,13 @@ public class AccountController {
         try {
             int tokenId = getIdFromToken();
             Account acc = accountService.getAccountById(id);
-            if (acc.getRole().getId() == 2 || tokenId != id) {
-                throw new AccessDeniedException("Bạn không có quyền sửa tài khoản này");
+            if (acc.getRole().getId() != 2) {
+                if(tokenId != id){
+                    throw new AccessDeniedException("Bạn không có quyền sửa tài khoản này");
+                }else {
+                    accountService.updateAccount(id, dto);
+                    return new ResponseEntity<>("Chỉnh sửa tài khoản thành công.", HttpStatus.OK);
+                }
             } else {
                 accountService.updateAccount(id, dto);
                 return new ResponseEntity<>("Chỉnh sửa tài khoản thành công.", HttpStatus.OK);
