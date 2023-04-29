@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GroupUpdateDTO {
     private String groupName;
+    private Integer groupLeaderId;
 }

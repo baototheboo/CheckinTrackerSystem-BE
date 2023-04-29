@@ -9,12 +9,14 @@ import com.example.ctsbe.dto.staffProject.StaffProjectAddDTO;
 import com.example.ctsbe.entity.Group;
 import com.example.ctsbe.entity.Project;
 import com.example.ctsbe.entity.Staff;
+import com.example.ctsbe.exception.ExceptionObject;
 import com.example.ctsbe.mapper.GroupMapper;
 import com.example.ctsbe.mapper.ProjectMapper;
 import com.example.ctsbe.mapper.StaffMapper;
 import com.example.ctsbe.service.GroupService;
 import com.example.ctsbe.service.ProjectService;
 import com.example.ctsbe.service.StaffService;
+import com.example.ctsbe.util.JwtTokenUtil;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +46,10 @@ public class GroupController {
     private StaffService staffService;
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private HttpServletRequest request;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     @GetMapping("/getAllGroups")
     public ResponseEntity<Map<String, Object>> getAllGroups(@RequestParam(defaultValue = "1") int page
@@ -142,7 +150,7 @@ public class GroupController {
     public ResponseEntity<?> editGroup(@PathVariable("id") int id, @RequestBody GroupUpdateDTO dto) {
         try {
             groupService.editGroup(id, dto);
-            return new ResponseEntity<>("Update group successfully", HttpStatus.OK);
+            return new ResponseEntity<>("Cập nhật nhóm thành công", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -160,9 +168,20 @@ public class GroupController {
     }
 
     @PostMapping("/addStaffToGroup")
-    //@RolesAllowed("ROLE_PROJECT MANAGER")
+    @RolesAllowed("ROLE_GROUP LEADER")
     public ResponseEntity<?> addStaffToGroup(@RequestBody StaffProjectAddDTO dto) {
         try {
+            int tokenId = getIdFromToken();
+            Staff tokenStaff = staffService.getStaffById(tokenId);
+            ExceptionObject exceptionObject = new ExceptionObject();
+            Map<String, String> errorMap = new HashMap<>();
+            int errorCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
+            exceptionObject.setCode(errorCode);
+            if(tokenStaff.getGroup().getId() != dto.getProjectId()){
+                errorMap.put("exception", "Bạn không có quyền thêm nhân viên vào nhóm!");
+                exceptionObject.setError(errorMap);
+                return new ResponseEntity<>(exceptionObject, HttpStatus.FORBIDDEN);
+            }
             groupService.addStaffToGroup(dto);
             return new ResponseEntity<>("Add staff to the group successfully", HttpStatus.OK);
         }catch (Exception e) {
@@ -171,10 +190,31 @@ public class GroupController {
     }
 
     @DeleteMapping("/removeStaffFromGroup")
+    @RolesAllowed("ROLE_GROUP LEADER")
     public ResponseEntity<?> removeStaffFromGroup(@RequestBody GroupRemoveStaffDTO dto) {
         try {
-            groupService.removeStaffFromGroup(dto);
-            return new ResponseEntity<>("Remove successfully", HttpStatus.OK);
+            int tokenId = getIdFromToken();
+            Staff tokenStaff = staffService.getStaffById(tokenId);
+            Staff staff = staffService.getStaffById(dto.getStaffId().get(1));
+            ExceptionObject exceptionObject = new ExceptionObject();
+            Map<String, String> errorMap = new HashMap<>();
+            int errorCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
+            exceptionObject.setCode(errorCode);
+            if(tokenStaff.getGroup().getId() != staff.getGroup().getId()){
+                errorMap.put("exception", "Bạn không có quyền xóa nhân viên nhóm này!");
+                exceptionObject.setError(errorMap);
+                return new ResponseEntity<>(exceptionObject, HttpStatus.FORBIDDEN);
+            }
+            else if(staffService.checkStaffInRemoveFromGroup(dto)){
+                errorMap.put("exception", "Không thể xóa nhân viên khỏi nhóm vì nhân viên đang thực hiện dự án");
+                exceptionObject.setError(errorMap);
+                return new ResponseEntity<>(exceptionObject, HttpStatus.BAD_REQUEST);
+            }
+            else{
+                groupService.removeStaffFromGroup(dto);
+                return new ResponseEntity<>("Xóa nhân viên khỏi nhóm thành công", HttpStatus.OK);
+            }
+
         }catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -204,6 +244,16 @@ public class GroupController {
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
+    }
+
+    public int getIdFromToken() {
+        final String requestTokenHeader = request.getHeader("Authorization");
+        String jwtToken = null;
+        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+            jwtToken = requestTokenHeader.substring(7);
+        }
+        int id = jwtTokenUtil.getIdFromToken(jwtToken);
+        return id;
     }
 
 }
