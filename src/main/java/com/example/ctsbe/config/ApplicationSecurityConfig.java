@@ -53,12 +53,12 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers("/auth/login"
-                        , "/accounts/addAccount"
-                        , "/accounts/resetPassword/*"
-                        , "/accounts/getAllAccount"
-                        , "/accounts/changePassword/*"
+                        //, "/accounts/addAccount"
+                        //, "/accounts/resetPassword/*"
+                        //, "/accounts/getAllAccount"
+                        //, "/accounts/changePassword/*"
                         , "/accounts/sendForgotPassword"
-                        , "/accounts/changeEnableAccount/*"
+                        //, "/accounts/changeEnableAccount/*"
                         //, "/accounts/updateAccount/*"
                         //, "/accounts/getProfile/*"
                         , "/staffs/*"

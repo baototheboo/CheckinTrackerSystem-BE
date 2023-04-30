@@ -5,7 +5,9 @@ import com.example.ctsbe.dto.staff.StaffAddDTO;
 import com.example.ctsbe.dto.staff.StaffAvailableDTO;
 import com.example.ctsbe.dto.staff.StaffDTO;
 import com.example.ctsbe.dto.staff.StaffUpdateDTO;
+import com.example.ctsbe.entity.Account;
 import com.example.ctsbe.entity.Staff;
+import com.example.ctsbe.exception.ExceptionObject;
 import com.example.ctsbe.mapper.StaffMapper;
 import com.example.ctsbe.service.AccountService;
 import com.example.ctsbe.service.ImageSetupService;
@@ -18,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +39,7 @@ public class StaffController {
 
     @Autowired
     private ImageSetupService imageSetupService;
+
     @PostMapping("/addStaff")
     public String addStaff(@RequestBody StaffAddDTO dto) {
         try {
@@ -48,17 +52,28 @@ public class StaffController {
     }
 
     @PutMapping("/changePromotionLevel")
-    //@RolesAllowed("ROLE_HUMAN RESOURCE")
-    public ResponseEntity<?> changePromotionLevel(@RequestBody StaffUpdateDTO dto){
-        try{
+    @RolesAllowed("ROLE_HUMAN RESOURCE")
+    public ResponseEntity<?> changePromotionLevel(@RequestBody StaffUpdateDTO dto) {
+        try {
+            ExceptionObject exceptionObject = new ExceptionObject();
+            Map<String, String> errorMap = new HashMap<>();
+            int errorCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
+            exceptionObject.setCode(errorCode);
+            Account account = accountService.getAccountById(dto.getStaffId());
+            if(dto.getRoleId() == 4 && account.getStaff().getGroup() != null){
+                errorMap.put("exception", "Nhóm của người này hiện đã có Group Leader.");
+                exceptionObject.setError(errorMap);
+                return new ResponseEntity<>(exceptionObject, HttpStatus.BAD_REQUEST);
+            }
             staffService.changePromotionLevel(dto);
-            return new ResponseEntity<>("Update promotion level of staff with id"+dto.getStaffId()+" successfully",HttpStatus.OK);
-        }catch (Exception e){
-            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Cập nhật nhân viên với id " + dto.getStaffId() + " thành công", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("/getAllStaff")
+    @RolesAllowed("ROLE_HUMAN RESOURCE")
     public ResponseEntity<Map<String, Object>> getAllStaff(@RequestParam(defaultValue = "1") int page
             , @RequestParam(defaultValue = "3") int size
             , @RequestParam(required = false) String name
@@ -68,17 +83,16 @@ public class StaffController {
             Pageable pageable = PageRequest.of(page - 1, size);
             Page<Staff> staffPage;
             if (name == null) {
-                if(enable == 2){
+                if (enable == 2) {
                     staffPage = staffService.getAllStaff(pageable);
-                }
-                else {
-                    staffPage = staffService.getListStaffByEnable((byte) enable,pageable);
+                } else {
+                    staffPage = staffService.getListStaffByEnable((byte) enable, pageable);
                 }
             } else {
-                if(enable == 2){
-                    staffPage = staffService.getStaffByName(name,pageable);
-                }else {
-                    staffPage = staffService.getListStaffByNameAndEnable(name,(byte) enable,pageable);
+                if (enable == 2) {
+                    staffPage = staffService.getStaffByName(name, pageable);
+                } else {
+                    staffPage = staffService.getListStaffByNameAndEnable(name, (byte) enable, pageable);
                 }
             }
             list = staffPage.getContent();
@@ -92,88 +106,105 @@ public class StaffController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             Map<String, Object> response = new HashMap<>();
-            response.put("exception",e.getMessage());
+            response.put("exception", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/getListStaffForTimeSheet")
+    //@RolesAllowed({"ROLE_HUMAN RESOURCE","ROLE_PROJECT MANAGER","ROLE_GROUP LEADER"})
+    public ResponseEntity<?> getListStaffForTimeSheet(@RequestParam int staffId
+            , @RequestParam(defaultValue = "0") int projectId
+    ) {
+        try {
+            List<Staff> list = staffService.getListStaffForTimeSheet(staffId, projectId);
+            List<StaffAvailableDTO> listDto = list.stream().
+                    map(StaffMapper::convertStaffToStaffAvailableDto).collect(Collectors.toList());
+            return new ResponseEntity<>(listDto, HttpStatus.OK);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("exception", e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("/getAvailableStaff/{groupId}")
-    public ResponseEntity<Map<String, Object>> getAvailableStaff(@PathVariable("groupId") int groupId){
-        try{
-            List<Staff> list= staffService.getListAvailableStaff(groupId);
+    public ResponseEntity<Map<String, Object>> getAvailableStaff(@PathVariable("groupId") int groupId) {
+        try {
+            List<Staff> list = staffService.getListAvailableStaff(groupId);
             List<StaffAvailableDTO> listDto = list.stream().
                     map(StaffMapper::convertStaffToStaffAvailableDto).collect(Collectors.toList());
             Map<String, Object> response = new HashMap<>();
             response.put("list", listDto);
-            return new ResponseEntity<>(response,HttpStatus.OK);
-        }catch (Exception e){
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
             Map<String, Object> response = new HashMap<>();
             response.put("exception", e.getMessage());
-            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("/getListStaffAvailableAddToGroup")
-    public ResponseEntity<Map<String, Object>> getListStaffAvailableAddToGroup(){
-        try{
-            List<Staff> list= staffService.getListStaffAddToGroup();
+    public ResponseEntity<Map<String, Object>> getListStaffAvailableAddToGroup() {
+        try {
+            List<Staff> list = staffService.getListStaffAddToGroup();
             List<StaffAvailableDTO> listDto = list.stream().
                     map(StaffMapper::convertStaffToStaffAvailableDto).collect(Collectors.toList());
             Map<String, Object> response = new HashMap<>();
             response.put("list", listDto);
-            return new ResponseEntity<>(response,HttpStatus.OK);
-        }catch (Exception e){
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
             Map<String, Object> response = new HashMap<>();
             response.put("exception", e.getMessage());
-            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("/getStaffByRole")
-    public ResponseEntity<Map<String, Object>> getStaffByRole(@RequestParam int role){
-        try{
-            List<Staff> list= staffService.getStaffsByRole(role);
+    public ResponseEntity<Map<String, Object>> getStaffByRole(@RequestParam int role) {
+        try {
+            List<Staff> list = staffService.getStaffsByRole(role);
             List<StaffAvailableDTO> listDto = list.stream().
                     map(StaffMapper::convertStaffToStaffAvailableDto).collect(Collectors.toList());
             Map<String, Object> response = new HashMap<>();
             response.put("list", listDto);
-            return new ResponseEntity<>(response,HttpStatus.OK);
-        }catch (Exception e){
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
             Map<String, Object> response = new HashMap<>();
             response.put("exception", e.getMessage());
-            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("/getListPMAvailable")
-    public ResponseEntity<Map<String, Object>> getListPMAvailable(){
-        try{
-            List<Staff> list= staffService.getListPMAvailable();
+    public ResponseEntity<Map<String, Object>> getListPMAvailable() {
+        try {
+            List<Staff> list = staffService.getListPMAvailable();
             List<StaffAvailableDTO> listDto = list.stream().
                     map(StaffMapper::convertStaffToStaffAvailableDto).collect(Collectors.toList());
             Map<String, Object> response = new HashMap<>();
             response.put("list", listDto);
-            return new ResponseEntity<>(response,HttpStatus.OK);
-        }catch (Exception e){
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
             Map<String, Object> response = new HashMap<>();
             response.put("exception", e.getMessage());
-            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("/getListGLAvailable")
-    public ResponseEntity<Map<String, Object>> getListGLAvailable(){
-        try{
-            List<Staff> list= staffService.getListGLAvailable();
+    public ResponseEntity<Map<String, Object>> getListGLAvailable() {
+        try {
+            List<Staff> list = staffService.getListGLAvailable();
             List<StaffAvailableDTO> listDto = list.stream().
                     map(StaffMapper::convertStaffToStaffAvailableDto).collect(Collectors.toList());
             Map<String, Object> response = new HashMap<>();
             response.put("list", listDto);
-            return new ResponseEntity<>(response,HttpStatus.OK);
-        }catch (Exception e){
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
             Map<String, Object> response = new HashMap<>();
             response.put("exception", e.getMessage());
-            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -181,14 +212,14 @@ public class StaffController {
     public ResponseEntity<Page<ImageSetupDTO>> getImageSetup(@PathVariable Integer staffId,
                                                              @RequestParam(defaultValue = "1") int page,
                                                              @RequestParam(defaultValue = "3") int size) {
-            Pageable pageable = PageRequest.of(page - 1, size);
-            Page<ImageSetupDTO> result = imageSetupService.findImageSetup(staffId, pageable);
-            Map<String, Object> response = new HashMap<>();
-            response.put("listImage", result);
-            response.put("currentPage", result.getNumber());
-            response.put("allProducts", result.getTotalElements());
-            response.put("allPages", result.getTotalPages());
-            return new ResponseEntity<>(result, HttpStatus.OK);
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<ImageSetupDTO> result = imageSetupService.findImageSetup(staffId, pageable);
+        Map<String, Object> response = new HashMap<>();
+        response.put("listImage", result);
+        response.put("currentPage", result.getNumber());
+        response.put("allProducts", result.getTotalElements());
+        response.put("allPages", result.getTotalPages());
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 }

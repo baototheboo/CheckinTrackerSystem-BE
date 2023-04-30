@@ -27,6 +27,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
+import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -55,6 +56,7 @@ public class AccountController {
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @PostMapping("/addAccount")
+    @RolesAllowed("ROLE_ADMIN")
     public ResponseEntity<?> addAccount(@Valid @RequestBody AccountAddDTO dto) {
         try {
             ExceptionObject exceptionObject = new ExceptionObject();
@@ -84,9 +86,9 @@ public class AccountController {
             int tokenId = getIdFromToken();
             Account acc = accountService.getAccountById(id);
             if (acc.getRole().getId() != 2) {
-                if(tokenId != id){
+                if (tokenId != id) {
                     throw new AccessDeniedException("Bạn không có quyền sửa tài khoản này");
-                }else {
+                } else {
                     accountService.updateAccount(id, dto);
                     return new ResponseEntity<>("Chỉnh sửa tài khoản thành công.", HttpStatus.OK);
                 }
@@ -104,17 +106,22 @@ public class AccountController {
     @PutMapping("/changePassword/{id}")
     public ResponseEntity<?> changePassword(@PathVariable int id, @RequestBody @Valid AccountUpdateDTO dto) {
         try {
+            int tokenId = getIdFromToken();
             ExceptionObject exceptionObject = new ExceptionObject();
             Map<String, String> errorMap = new HashMap<>();
             int errorCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
             exceptionObject.setCode(errorCode);
             Account existedAccount = accountService.getAccountById(id);
-            if (!passwordEncoder.matches(dto.getPassword(), existedAccount.getPassword())) {
+            if (tokenId != id) {
+                errorMap.put("exception", "Bạn không có quyền đổi mật khẩu");
+                exceptionObject.setError(errorMap);
+                return new ResponseEntity<>(exceptionObject, HttpStatus.FORBIDDEN);
+            } else if (!passwordEncoder.matches(dto.getPassword(), existedAccount.getPassword())) {
                 errorMap.put("password", "Mật khẩu không đúng!");
                 exceptionObject.setError(errorMap);
                 return new ResponseEntity<>(exceptionObject, HttpStatus.BAD_REQUEST);
             } else if (!dto.getNewPassword().equals(dto.getConfirmNewPassword())) {
-                errorMap.put("newPassword", "Mật khẩu không khớp.Vui lòng nhập lại!");
+                errorMap.put("confirmNewPassword", "Mật khẩu không khớp.Vui lòng nhập lại!");
                 exceptionObject.setError(errorMap);
                 return new ResponseEntity<>(exceptionObject, HttpStatus.BAD_REQUEST);
             } else {
@@ -141,6 +148,7 @@ public class AccountController {
     }
 
     @PutMapping("/changeEnableAccount/{id}")
+    @RolesAllowed("ROLE_ADMIN")
     public ResponseEntity<?> changeEnableAccount(@PathVariable("id") int id) {
         try {
             int currentAdmin = getIdFromToken();
@@ -156,6 +164,7 @@ public class AccountController {
     }
 
     @GetMapping("/getAllAccount")
+    @RolesAllowed("ROLE_ADMIN")
     public ResponseEntity<Map<String, Object>> getAllAccount(@RequestParam(defaultValue = "1") int page
             , @RequestParam(defaultValue = "3") int size
             , @RequestParam(required = false) String username

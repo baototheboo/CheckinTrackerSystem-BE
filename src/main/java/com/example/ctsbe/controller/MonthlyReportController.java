@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.ParseException;
@@ -40,6 +41,7 @@ public class MonthlyReportController {
     private TimesheetService timesheetService;
 
     @GetMapping("/getMonthlyReport")
+    @RolesAllowed("ROLE_HUMAN RESOURCE")
     public ResponseEntity<Map<String, Object>> getMonthlyReport(@RequestParam(defaultValue = "1") int page
             , @RequestParam(defaultValue = "3") int size
             //, @RequestParam(defaultValue = "0") int staffId
@@ -80,6 +82,7 @@ public class MonthlyReportController {
     }
 
     @GetMapping("/export")
+    //@RolesAllowed("ROLE_HUMAN RESOURCE")
     public void exportFile(@RequestParam String monthYear, HttpServletResponse response) throws IOException, ParseException {
         List<TimesheetDTO> list =  timesheetService.getListTimeSheetByMonth(monthYear);
         monthlyReportService.addToMonthlyReport(list);

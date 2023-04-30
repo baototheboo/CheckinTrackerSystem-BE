@@ -5,9 +5,12 @@ import com.example.ctsbe.dto.group.GroupDTO;
 import com.example.ctsbe.dto.group.GroupRemoveStaffDTO;
 import com.example.ctsbe.dto.group.GroupUpdateDTO;
 import com.example.ctsbe.dto.staffProject.StaffProjectAddDTO;
+import com.example.ctsbe.entity.Account;
 import com.example.ctsbe.entity.Group;
 import com.example.ctsbe.entity.Staff;
+import com.example.ctsbe.repository.AccountRepository;
 import com.example.ctsbe.repository.GroupRepository;
+import com.example.ctsbe.repository.RoleRepository;
 import com.example.ctsbe.repository.StaffRepository;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,12 @@ public class GroupServiceImpl implements GroupService {
 
     @Autowired
     private StaffRepository staffRepository;
+
+    @Autowired
+    private AccountRepository accountRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Override
     public Group addGroup(GroupAddDTO dto) {
@@ -61,9 +70,21 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public void editGroup(int id, GroupUpdateDTO dto) {
         Group existedGroup = groupRepository.getById(id);
-        existedGroup.setGroupName(dto.getGroupName());
-        existedGroup.setLastUpdated(Instant.now());
-        groupRepository.save(existedGroup);
+        Account oldGLAcc = accountRepository.getById(existedGroup.getGroupLeader().getId());
+        Account newGLAcc = accountRepository.getById(dto.getGroupLeaderId());
+        //Staff newGL = staffRepository.findStaffById(dto.getGroupLeaderId());
+        if(dto.getGroupLeaderId() != existedGroup.getGroupLeader().getId()){
+            existedGroup.setGroupName(dto.getGroupName());
+            existedGroup.setGroupLeader(newGLAcc.getStaff());
+            existedGroup.setLastUpdated(Instant.now());
+            oldGLAcc.setRole(roleRepository.getById(3));
+            oldGLAcc.setLastUpdated(Instant.now());
+            newGLAcc.setRole(roleRepository.getById(4));
+            newGLAcc.setLastUpdated(Instant.now());
+            accountRepository.save(oldGLAcc);
+            accountRepository.save(newGLAcc);
+            groupRepository.save(existedGroup);
+        }
     }
 
     @Override
