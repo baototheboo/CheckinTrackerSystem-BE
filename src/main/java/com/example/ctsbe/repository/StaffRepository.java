@@ -30,8 +30,9 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
     @Query(value = "SELECT s " +
             "FROM Staff s " +
             "WHERE s.id IN (SELECT a.staff.id FROM Account a WHERE a.enable = 1 and a.role.id = 5) " +
+            "AND s.id NOT IN (SELECT sp.staff.id FROM StaffProject sp WHERE sp.project.id = :projectId) " +
             "AND s.group.id =:groupId")
-    List<Staff> getAvailableStaffAddToProject(int groupId);
+    List<Staff> getAvailableStaffAddToProject(int groupId,int projectId);
 
     @Query(value = "select a.staff from Account a where a.staff.group.id =:groupId and a.enable = 1")
     Page<Staff> getListMemberByGroup(int groupId, Pageable pageable);

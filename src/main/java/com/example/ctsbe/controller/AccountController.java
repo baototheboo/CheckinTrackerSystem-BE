@@ -14,6 +14,7 @@ import com.example.ctsbe.service.AccountService;
 import com.example.ctsbe.service.EmailService;
 import com.example.ctsbe.service.StaffProjectService;
 import com.example.ctsbe.service.StaffService;
+import com.example.ctsbe.util.DateUtil;
 import com.example.ctsbe.util.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,8 @@ public class AccountController {
     private EmailService emailService;
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+    DateUtil dateUtil = new DateUtil();
+
     @PostMapping("/addAccount")
     @RolesAllowed("ROLE_ADMIN")
     public ResponseEntity<?> addAccount(@Valid @RequestBody AccountAddDTO dto) {
@@ -69,6 +72,10 @@ public class AccountController {
                 return new ResponseEntity<>(exceptionObject, HttpStatus.BAD_REQUEST);
             } else if (staffService.findStaffByEmail(dto.getStaffAddDTO().getEmail()) != null) {
                 errorMap.put("staffAddDTO.email", "Email này đã được đăng kí!");
+                exceptionObject.setError(errorMap);
+                return new ResponseEntity<>(exceptionObject, HttpStatus.BAD_REQUEST);
+            }else if (dateUtil.compareLocalDate(dto.getStaffAddDTO().getDateOfBirth()) == false){
+                errorMap.put("staffAddDTO.dateOfBirth", "Không được chọn ngày chưa đến hoặc ngày hiện tại!");
                 exceptionObject.setError(errorMap);
                 return new ResponseEntity<>(exceptionObject, HttpStatus.BAD_REQUEST);
             } else {
