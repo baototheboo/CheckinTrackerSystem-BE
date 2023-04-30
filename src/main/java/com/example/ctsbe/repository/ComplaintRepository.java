@@ -12,16 +12,16 @@ import org.springframework.stereotype.Repository;
 public interface ComplaintRepository extends JpaRepository<Complaint, Integer> {
     Page<Complaint> findByStatusOrderByCreatedDateAsc(String status, Pageable pageable);
 
-    @Query(value = "SELECT c FROM Complaint c where c.status like %:status% order by c.lastUpdated desc,c.createdDate desc")
+    @Query(value = "SELECT c FROM Complaint c where c.status like %:status% order by c.createdDate desc")
     Page<Complaint> getListComplaintByStatus(String status, Pageable pageable);
 
-    @Query(value = "SELECT c FROM Complaint c order by c.lastUpdated desc,c.createdDate desc")
+    @Query(value = "SELECT c FROM Complaint c order by c.createdDate desc")
     Page<Complaint> getAllComplaint(Pageable pageable);
 
-    @Query(value = "SELECT c FROM Complaint c where c.staff.id =:id order by c.lastUpdated desc,c.createdDate desc ")
+    @Query(value = "SELECT c FROM Complaint c where c.staff.id =:id order by c.createdDate desc ")
     Page<Complaint> getListByStaffId(int id, Pageable pageable);
 
-    @Query(value = "SELECT c FROM Complaint c where c.staff.id =:id and c.status =:status order by c.lastUpdated desc,c.createdDate desc ")
+    @Query(value = "SELECT c FROM Complaint c where c.staff.id =:id and c.status =:status order by c.createdDate desc ")
     Page<Complaint> getListByIdAndStatus(int id, String status, Pageable pageable);
 
     @Query(value = "SELECT c FROM Complaint c where c.content like %:content%")

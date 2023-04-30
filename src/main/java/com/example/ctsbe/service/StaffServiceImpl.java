@@ -1,5 +1,6 @@
 package com.example.ctsbe.service;
 
+import com.example.ctsbe.dto.group.GroupRemoveStaffDTO;
 import com.example.ctsbe.dto.staff.StaffAddDTO;
 import com.example.ctsbe.dto.staff.StaffAvailableDTO;
 import com.example.ctsbe.dto.staff.StaffUpdateDTO;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class StaffServiceImpl implements StaffService{
+public class StaffServiceImpl implements StaffService {
     @Autowired
     private StaffRepository staffRepository;
 
@@ -37,7 +38,7 @@ public class StaffServiceImpl implements StaffService{
     @Override
     public Staff addStaff(StaffAddDTO staffAddDTO) {
         Staff staff = convertStaffAddDTOToStaff(staffAddDTO);
-         return staffRepository.save(staff);
+        return staffRepository.save(staff);
     }
 
     @Override
@@ -47,7 +48,7 @@ public class StaffServiceImpl implements StaffService{
 
     @Override
     public Page<Staff> getStaffByName(String name, Pageable pageable) {
-        return staffRepository.getListStaffByName(name,pageable);
+        return staffRepository.getListStaffByName(name, pageable);
     }
 
     @Override
@@ -120,14 +121,53 @@ public class StaffServiceImpl implements StaffService{
     }
 
     @Override
-    public Page<Staff> getListStaffByGroup(int groupId,Pageable pageable) {
-        return staffRepository.getListMemberByGroup(groupId,pageable);
+    public List<Staff> getListStaffForTimeSheet(int staffId, int prjId) {
+        Account account = accountRepository.getById(staffId);
+        List<Staff> empty = new ArrayList<>();
+        int role = account.getRole().getId();
+        if (role == 2 && prjId == 0) {
+            return staffRepository.getListStaff();
+        } else if (role == 4 && prjId == 0) {
+            return staffRepository.getListStaffByGroup(account.getStaff().getGroup().getId());
+        } else if (role == 3) {
+            if (prjId == 0) return empty;
+            else return staffRepository.getListStaffInProject(prjId);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean checkStaffInRemoveFromGroup(GroupRemoveStaffDTO dto) {
+        List<Integer> listStaffId = dto.getStaffId();
+        boolean check = true;
+        for (int i = 0; i < listStaffId.size(); i++) {
+            Staff existedStaff = staffRepository.getById(listStaffId.get(i));
+            List<Staff> listStaffCheck = staffRepository.checkStaffInRemoveFromGroup(existedStaff.getGroup().getId());
+            //neu check = true -> nhan vien dang o trong 1 project processing -> khong duoc xoa
+            if(listStaffCheck.stream().anyMatch(existedStaff::equals) == true) {
+                check = true;
+                break;
+            }
+            //neu check = fale -> nhan vien khong o trong project nao processing -> duoc phep xoa
+            else check = false;
+        }
+        return check;
+    }
+
+    @Override
+    public Staff getStaffById(int staffId) {
+        return staffRepository.findStaffById(staffId);
+    }
+
+    @Override
+    public Page<Staff> getListStaffByGroup(int groupId, Pageable pageable) {
+        return staffRepository.getListMemberByGroup(groupId, pageable);
     }
 
 
-    public Staff convertStaffAddDTOToStaff(StaffAddDTO dto){
+    public Staff convertStaffAddDTOToStaff(StaffAddDTO dto) {
         DateUtil dateUtil = new DateUtil();
-        Staff  staff = new Staff();
+        Staff staff = new Staff();
         staff.setEmail(dto.getEmail());
         staff.setFirstName(dto.getFirstName());
         staff.setSurname(dto.getSurname());
@@ -136,6 +176,6 @@ public class StaffServiceImpl implements StaffService{
         staff.setDateOfBirth(dateUtil.convertStringToLocalDate(dto.getDateOfBirth()));
         staff.setPhone(dto.getPhone());
         staff.setPromotionLevel(promotionLevelRepository.findById(1));
-        return  staff;
+        return staff;
     }
 }

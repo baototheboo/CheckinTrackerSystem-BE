@@ -51,8 +51,10 @@ public class TimesheetServiceImpl implements TimesheetService {
         List<String> listStatus = new ArrayList<>();
         Double workingHours = 0.0;
         boolean check = false;
+        //list la list timesheet 1 thang cua nhan vien day
         if (list == null || list.size() < daysOfMonth) {
             for (int i = 1; i <= daysOfMonth; i++) {
+                //neu list null va thang duoc chon lon hon thang hien tai -> tra ve full listStatus null
                 if (list == null && dateUtil.compareYearMonth(month, YearMonth.now())) {
                     listStatus.add(null);
                 } else {

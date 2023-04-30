@@ -7,12 +7,15 @@ import com.example.ctsbe.dto.staffProject.StaffInProjectDTO;
 import com.example.ctsbe.dto.staffProject.StaffProjectAddDTO;
 import com.example.ctsbe.dto.staffProject.StaffProjectDTO;
 import com.example.ctsbe.entity.Project;
+import com.example.ctsbe.entity.Staff;
 import com.example.ctsbe.entity.StaffProject;
+import com.example.ctsbe.exception.ExceptionObject;
 import com.example.ctsbe.mapper.ProjectMapper;
 import com.example.ctsbe.mapper.StaffProjectMapper;
 import com.example.ctsbe.service.AccountService;
 import com.example.ctsbe.service.ProjectService;
 import com.example.ctsbe.service.StaffProjectService;
+import com.example.ctsbe.service.StaffService;
 import com.example.ctsbe.util.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +47,7 @@ public class ProjectController {
     private StaffProjectService staffProjectService;
 
     @Autowired
-    private AccountService accountService;
+    private StaffService staffService;
 
     @Autowired
     private HttpServletRequest request;
@@ -90,11 +93,24 @@ public class ProjectController {
     }
 
     @PostMapping("/addProject")
+    @RolesAllowed("ROLE_GROUP LEADER")
     public ResponseEntity<?> addProject(@Valid @RequestBody ProjectAddDTO dto){
         try{
-            Project p = projectService.addProject(dto);
-            staffProjectService.addPMToProject(dto.getProjectManagerId(),p.getId());
-            return new ResponseEntity<>("Tạo dự án "+dto.getProjectName()+" thành công.",HttpStatus.OK);
+            int tokenId = getIdFromToken();
+            Staff tokenStaff = staffService.getStaffById(tokenId);
+            ExceptionObject exceptionObject = new ExceptionObject();
+            Map<String, String> errorMap = new HashMap<>();
+            int errorCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
+            exceptionObject.setCode(errorCode);
+            if(tokenStaff.getGroup().getId() != dto.getGroupId()){
+                errorMap.put("exception", "Bạn không có quyền thêm dự án vào nhóm này!");
+                exceptionObject.setError(errorMap);
+                return new ResponseEntity<>(exceptionObject, HttpStatus.FORBIDDEN);
+            }else {
+                Project p = projectService.addProject(dto);
+                staffProjectService.addPMToProject(dto.getProjectManagerId(),p.getId());
+                return new ResponseEntity<>("Tạo dự án "+dto.getProjectName()+" thành công.",HttpStatus.OK);
+            }
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
@@ -114,7 +130,7 @@ public class ProjectController {
     public ResponseEntity<?> editProject(@PathVariable("id") int id,@RequestBody ProjectAddDTO dto){
         try{
             projectService.editProject(id,dto);
-            return new ResponseEntity<>("Update project successfully",HttpStatus.OK);
+            return new ResponseEntity<>("Cập nhật dự án thành công",HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
@@ -124,7 +140,7 @@ public class ProjectController {
     public ResponseEntity<?> changeProjectStatus(@PathVariable("id") int id,@PathVariable("status") int status){
         try{
             projectService.changeProjectStatus(id,status);
-            return new ResponseEntity<>("Update project status successfully",HttpStatus.OK);
+            return new ResponseEntity<>("Cập nhật dự án thành công",HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
         }

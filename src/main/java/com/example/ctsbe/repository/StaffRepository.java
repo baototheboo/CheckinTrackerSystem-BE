@@ -38,7 +38,8 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
 
     @Query(value = "select s from Staff s \n" +
             "where s.id in (select a.staff.id from Account a where a.role.id = 4 and a.enable = 1) \n" +
-            "and s.id not in (select g.groupLeader.id from Group g)")
+            "and s.id not in (select g.groupLeader.id from Group g) " +
+            "and s.group is null ")
     List<Staff> getListGroupLeaderAvailable();
 
     @Query(value = "select s from Staff s \n" +
@@ -95,4 +96,23 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
 
     @Query(value = "select a.staff from Account a where a.role.id = 5 and a.staff.group.id =:groupId and a.enable = 1")
     List<Staff> getListStaffInGroup(int groupId);
+
+    @Query(value = "select a.staff from Account a where a.role.id <> 1 and a.enable = 1")
+    List<Staff> getListStaff();
+
+    @Query(value = "select a.staff from Account a where a.staff.group.id = :groupId AND a.enable = 1 and a.role.id <> 1")
+    List<Staff> getListStaffByGroup(int groupId);
+
+    @Query(value = "SELECT a.staff FROM Account a where a.staff.id in " +
+            "(select sp.staff.id from StaffProject sp where sp.project.id = :prjId) " +
+            "and a.role.id <> 1 " +
+            "and a.enable = 1")
+    List<Staff> getListStaffInProject(int prjId);
+
+    @Query(value = "SELECT s FROM Staff s where s.id in " +
+            "(select sp.staff.id from StaffProject sp where sp.project.id in " +
+            "(select p.id from Project p where p.status = 'Processing' and p.group.id = :groupId))")
+    List<Staff> checkStaffInRemoveFromGroup(int groupId);
+
+
 }

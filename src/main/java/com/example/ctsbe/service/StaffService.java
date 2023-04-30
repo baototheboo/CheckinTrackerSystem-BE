@@ -1,5 +1,6 @@
 package com.example.ctsbe.service;
 
+import com.example.ctsbe.dto.group.GroupRemoveStaffDTO;
 import com.example.ctsbe.dto.staff.StaffAddDTO;
 import com.example.ctsbe.dto.staff.StaffAvailableDTO;
 import com.example.ctsbe.dto.staff.StaffUpdateDTO;
@@ -39,5 +40,11 @@ public interface StaffService {
     List<Staff> getListPMInGroup(int groupId);
 
     void setStaffToPM(int staffId);
+
+    List<Staff> getListStaffForTimeSheet(int staffId,int prjId);
+
+    boolean checkStaffInRemoveFromGroup(GroupRemoveStaffDTO dto);
+
+    Staff getStaffById(int staffId);
 
 }
