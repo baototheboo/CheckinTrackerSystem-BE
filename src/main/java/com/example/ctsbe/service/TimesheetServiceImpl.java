@@ -54,8 +54,9 @@ public class TimesheetServiceImpl implements TimesheetService {
         //list la list timesheet 1 thang cua nhan vien day
         if (list == null || list.size() < daysOfMonth) {
             for (int i = 1; i <= daysOfMonth; i++) {
-                //neu list null va thang duoc chon lon hon thang hien tai -> tra ve full listStatus null
-                if (list == null && dateUtil.compareYearMonth(month, YearMonth.now())) {
+                //neu list null  -> tra ve full listStatus null
+                if (list == null) {
+                    //&& dateUtil.compareYearMonth(month, YearMonth.now()) == true
                     listStatus.add(null);
                 } else {
                     for (int j = 0; j < list.size(); j++) {

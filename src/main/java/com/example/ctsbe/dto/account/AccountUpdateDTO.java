@@ -17,7 +17,7 @@ public class AccountUpdateDTO {
     private String password;
 
     @NotBlank(message = "Vui lòng nhập mật khẩu mới")
-    @Pattern(regexp = ApplicationConstant.PASSWORD_REGEX,message = "Mật khẩu phải bao gồm 1 kí tự viết hoa, " +
+    @Pattern(regexp = ApplicationConstant.PASSWORD_REGEX,message = "Mật khẩu phải có 6 đến 20 kí tự bao gồm 1 kí tự viết hoa, " +
                                                                     "một kí tự viết thường, " +
                                                                     "một chữ số, "+
                                                                     "một kí tự đặc biệt.")

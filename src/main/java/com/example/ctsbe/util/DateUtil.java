@@ -82,7 +82,9 @@ public class DateUtil {
 
     public boolean compareYearMonth(String yearMonth, YearMonth now) {
         YearMonth compare = convertStringToYearMonth(yearMonth);
-        return compare.isAfter(now);
+        if(compare.compareTo(now) >= 0) return true;
+        else return false;
+        //return compare.isAfter(now);
     }
 
     public static boolean checkWeekend(LocalDate date){
@@ -127,5 +129,11 @@ public class DateUtil {
 
     public Instant plusInstant(Instant instant) {
         return instant.plus(7, ChronoUnit.HOURS);
+    }
+
+    public boolean compareLocalDate(String stringDate){
+        LocalDate compareDate = convertStringToLocalDate(stringDate);
+        if(compareDate.compareTo(LocalDate.now()) >= 0) return false;
+        else return true;
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -21,16 +22,20 @@ import java.util.List;
 @EnableScheduling
 public class ScheduleDeleteImage {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @Autowired
     private ImageVerifyRepository imageVerifyRepository;
 
     @Value(ApplicationConstant.IMAGE_PATH)
     private String imagePath;
 
-    @Scheduled(cron = "0 0 0 * * *")
-    public void cleanImageFailTimeTooLimit() throws IOException {
+
+//    @PostConstruct
+//    public void init() {
+//        cleanImageFailTimeTooLimit(); // Thực hiện job ngay khi ứng dụng được khởi động
+//    }
+
+    @Scheduled(cron = "0 0 1 * * *")
+    public void cleanImageFailTimeTooLimit() {
 
         String imagePathLocal = this.imagePath;
         List<ImagesVerify> listImageVerify = imageVerifyRepository.findFailImageByStatusAndTimeVerify(ApplicationConstant.TIME_OF_EXIST_IMAGE_FAIL);
