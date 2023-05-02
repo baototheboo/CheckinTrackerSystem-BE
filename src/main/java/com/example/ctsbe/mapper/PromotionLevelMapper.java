@@ -7,7 +7,8 @@ public class PromotionLevelMapper {
     public static PromotionLevelDTO convertLevelToLevelDTO(PromotionLevel level){
         PromotionLevelDTO dto = new PromotionLevelDTO(
                 level.getId(),
-                level.getName()
+                level.getName(),
+                level.getDescription()
         );
         return dto;
     }

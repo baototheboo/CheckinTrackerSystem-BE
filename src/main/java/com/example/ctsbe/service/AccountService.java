@@ -5,6 +5,7 @@ package com.example.ctsbe.service;
 import com.example.ctsbe.dto.account.AccountAddDTO;
 import com.example.ctsbe.dto.account.AccountUpdateDTO;
 import com.example.ctsbe.dto.account.ProfileUpdateDTO;
+import com.example.ctsbe.dto.account.ResetPasswordAdminDTO;
 import com.example.ctsbe.entity.Account;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +34,8 @@ public interface AccountService {
     void resetPassword(Account account,String newPassword);
 
     void changeEnableAccount(int id);
+
+    void resetPasswordForAdmin(String username, ResetPasswordAdminDTO dto);
 
     Optional<Account> findByUsername(String username);
 }

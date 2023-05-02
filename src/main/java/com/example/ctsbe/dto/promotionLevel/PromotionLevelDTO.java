@@ -10,4 +10,5 @@ import lombok.*;
 public class PromotionLevelDTO {
     private Integer id;
     private String name;
+    private String description;
 }

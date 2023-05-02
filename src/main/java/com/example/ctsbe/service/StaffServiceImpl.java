@@ -69,8 +69,8 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public List<Staff> getListAvailableStaff(int groupId) {
-        return staffRepository.getAvailableStaffAddToProject(groupId);
+    public List<Staff> getListAvailableStaff(int groupId,int projectId) {
+        return staffRepository.getAvailableStaffAddToProject(groupId,projectId);
     }
 
     @Override

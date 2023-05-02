@@ -21,7 +21,7 @@ public interface StaffService {
 
     void changePromotionLevel(StaffUpdateDTO dto);
 
-    List<Staff> getListAvailableStaff(int groupId);
+    List<Staff> getListAvailableStaff(int groupId,int projectId);
 
     List<Staff> getStaffsByRole(int role);
 
