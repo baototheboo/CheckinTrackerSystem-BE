@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +32,8 @@ public interface TimesheetRepository extends JpaRepository<Timesheet,Integer> {
     List<Timesheet> getListTimesheetByStaffIdAndMonth(int staffId,String yearMonth);
 
     List<Timesheet> getTimesheetByStaffAndAndDate(Staff staff, LocalDate date);
+
+    List<Timesheet> getTimesheetByDateAndWorkingHours (LocalDate date, Double workingHours);
 
     Timesheet findByStaffAndAndDate(Optional<Staff> staff, LocalDate date);
 }

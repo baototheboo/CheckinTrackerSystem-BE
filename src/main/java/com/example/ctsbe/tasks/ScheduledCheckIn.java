@@ -93,4 +93,26 @@ public class ScheduledCheckIn {
         //Check working hour = 0, không check out => vắng
     }
 //    }
+
+    @Scheduled(cron = "0 30 0 * * *")
+    public void checkOutForgot() {
+//        for (int i = 42; i <= 102 ; i++){
+//            int minus_day = i;
+        Instant startTime = DateUtil.convertLocalDateTimeToInstant(LocalDate.now().atStartOfDay().minusDays(minus_day));
+        Instant endTime = DateUtil.convertLocalDateTimeToInstant(LocalDate.now().atStartOfDay().minusDays(minus_day).minusSeconds(1));
+        List<Timesheet> timesheetList = timesheetRepository.getTimesheetByDateAndWorkingHours(startTime.atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE)).toLocalDate(), ApplicationConstant.WORKING_HOURS_ABSENT);
+        if(CollectionUtils.isEmpty(timesheetList)) {
+            return;
+        } else {
+            try {
+                for (Timesheet timesheet : timesheetList) {
+                    timesheet.setDateStatus("ABSENT");
+                    timesheet.setLastUpdated(Instant.now());
+                    timesheetRepository.save(timesheet);
+                }
+            }catch (Exception e){
+                logger.error("Không thể đánh vắng cho nhân viên");
+            }
+        }
+    }
 }

@@ -83,7 +83,7 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
                 if (!isCheckedInOrNot(staffId, currentTime)){ //Kiểm tra đã check-in chưa. nếu chưa thì tiến hành xử lý check-in
                     Timesheet timesheet = new Timesheet();
                     timesheet.setStaff(staff);
-                    timesheet.setDate(LocalDate.now());
+                    timesheet.setDate(currentTime.toLocalDate());
                     timesheet.setTimeCheckIn(DateUtil.convertLocalDateTimeToInstant(currentTime));
                     if (!isLateMorningOrNot(currentTime)){ // kiểm tra đi muộn
                         timesheet.setDateStatus("OK");
@@ -223,7 +223,7 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
             }
         }
 
-        String today = LocalDate.now().toString();
+        String today = currentTime.toLocalDate().toString();
         String relativePath = (probability != 0F ? successPath : errorPath) + today + "/";
         if (CollectionUtils.isEmpty(imageSetupVggDTO.getImgs())) {
             return null;
