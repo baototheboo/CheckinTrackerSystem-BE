@@ -6,6 +6,7 @@ import com.example.ctsbe.dto.project.ProjectInProfileDTO;
 import com.example.ctsbe.dto.staff.StaffAvailableDTO;
 import com.example.ctsbe.dto.staff.StaffDTO;
 import com.example.ctsbe.dto.staffProject.StaffProjectAddDTO;
+import com.example.ctsbe.entity.Account;
 import com.example.ctsbe.entity.Group;
 import com.example.ctsbe.entity.Project;
 import com.example.ctsbe.entity.Staff;
@@ -13,6 +14,7 @@ import com.example.ctsbe.exception.ExceptionObject;
 import com.example.ctsbe.mapper.GroupMapper;
 import com.example.ctsbe.mapper.ProjectMapper;
 import com.example.ctsbe.mapper.StaffMapper;
+import com.example.ctsbe.service.AccountService;
 import com.example.ctsbe.service.GroupService;
 import com.example.ctsbe.service.ProjectService;
 import com.example.ctsbe.service.StaffService;
@@ -46,6 +48,8 @@ public class GroupController {
     private StaffService staffService;
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private AccountService accountService;
     @Autowired
     private HttpServletRequest request;
     @Autowired
@@ -168,53 +172,66 @@ public class GroupController {
     }
 
     @PostMapping("/addStaffToGroup")
-    @RolesAllowed("ROLE_GROUP LEADER")
+    @RolesAllowed({"ROLE_GROUP LEADER","ROLE_HUMAN RESOURCE"})
     public ResponseEntity<?> addStaffToGroup(@RequestBody StaffProjectAddDTO dto) {
         try {
             int tokenId = getIdFromToken();
-            Staff tokenStaff = staffService.getStaffById(tokenId);
+            Account tokenAccount = accountService.getAccountById(tokenId);
+            Staff tokenStaff = tokenAccount.getStaff();
             ExceptionObject exceptionObject = new ExceptionObject();
             Map<String, String> errorMap = new HashMap<>();
             int errorCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
             exceptionObject.setCode(errorCode);
-            if(tokenStaff.getGroup().getId() != dto.getProjectId()){
-                errorMap.put("exception", "Bạn không có quyền thêm nhân viên vào nhóm!");
-                exceptionObject.setError(errorMap);
-                return new ResponseEntity<>(exceptionObject, HttpStatus.FORBIDDEN);
+            if(tokenAccount.getRole().getId() != 2){
+                if(tokenStaff.getGroup().getId() != dto.getProjectId()){
+                    errorMap.put("exception", "Bạn không có quyền thêm nhân viên vào nhóm!");
+                    exceptionObject.setError(errorMap);
+                    return new ResponseEntity<>(exceptionObject, HttpStatus.FORBIDDEN);
+                }else {
+                    groupService.addStaffToGroup(dto);
+                    return new ResponseEntity<>("Thêm nhân viên vào nhóm thành công", HttpStatus.OK);
+                }
+            }else {
+                groupService.addStaffToGroup(dto);
+                return new ResponseEntity<>("Thêm nhân viên vào nhóm thành công", HttpStatus.OK);
             }
-            groupService.addStaffToGroup(dto);
-            return new ResponseEntity<>("Add staff to the group successfully", HttpStatus.OK);
         }catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @DeleteMapping("/removeStaffFromGroup")
-    @RolesAllowed("ROLE_GROUP LEADER")
+    @RolesAllowed({"ROLE_GROUP LEADER","ROLE_HUMAN RESOURCE"})
     public ResponseEntity<?> removeStaffFromGroup(@RequestBody GroupRemoveStaffDTO dto) {
         try {
             int tokenId = getIdFromToken();
-            Staff tokenStaff = staffService.getStaffById(tokenId);
-            Staff staff = staffService.getStaffById(dto.getStaffId().get(1));
+
+            Account tokenAccount = accountService.getAccountById(tokenId);
+            Staff tokenStaff = tokenAccount.getStaff();
+            Staff staff = staffService.getStaffById(dto.getStaffId().get(0));
             ExceptionObject exceptionObject = new ExceptionObject();
             Map<String, String> errorMap = new HashMap<>();
             int errorCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
             exceptionObject.setCode(errorCode);
-            if(tokenStaff.getGroup().getId() != staff.getGroup().getId()){
-                errorMap.put("exception", "Bạn không có quyền xóa nhân viên nhóm này!");
-                exceptionObject.setError(errorMap);
-                return new ResponseEntity<>(exceptionObject, HttpStatus.FORBIDDEN);
-            }
-            else if(staffService.checkStaffInRemoveFromGroup(dto)){
-                errorMap.put("exception", "Không thể xóa nhân viên khỏi nhóm vì nhân viên đang thực hiện dự án");
-                exceptionObject.setError(errorMap);
-                return new ResponseEntity<>(exceptionObject, HttpStatus.BAD_REQUEST);
-            }
-            else{
+            if(tokenAccount.getRole().getId() == 4){
+                if(tokenStaff.getGroup().getId() != staff.getGroup().getId()){
+                    errorMap.put("exception", "Bạn không có quyền xóa nhân viên nhóm này!");
+                    exceptionObject.setError(errorMap);
+                    return new ResponseEntity<>(exceptionObject, HttpStatus.FORBIDDEN);
+                }
+                else if(staffService.checkStaffInRemoveFromGroup(dto)){
+                    errorMap.put("exception", "Không thể xóa nhân viên khỏi nhóm vì nhân viên đang thực hiện dự án");
+                    exceptionObject.setError(errorMap);
+                    return new ResponseEntity<>(exceptionObject, HttpStatus.BAD_REQUEST);
+                }
+                else{
+                    groupService.removeStaffFromGroup(dto);
+                    return new ResponseEntity<>("Xóa nhân viên khỏi nhóm thành công", HttpStatus.OK);
+                }
+            }else {
                 groupService.removeStaffFromGroup(dto);
                 return new ResponseEntity<>("Xóa nhân viên khỏi nhóm thành công", HttpStatus.OK);
             }
-
         }catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

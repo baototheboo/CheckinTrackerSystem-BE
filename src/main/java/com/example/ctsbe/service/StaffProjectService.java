@@ -21,4 +21,6 @@ public interface StaffProjectService {
 
     List<Project> getListProjectInProfile(int staffId);
     List<Staff> getListStaffByPrjId(int prjId);
+
+    boolean checkStaffInProjectHavePM(int staffId);
 }

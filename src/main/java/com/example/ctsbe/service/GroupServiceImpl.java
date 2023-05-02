@@ -73,8 +73,8 @@ public class GroupServiceImpl implements GroupService {
         Account oldGLAcc = accountRepository.getById(existedGroup.getGroupLeader().getId());
         Account newGLAcc = accountRepository.getById(dto.getGroupLeaderId());
         //Staff newGL = staffRepository.findStaffById(dto.getGroupLeaderId());
+        existedGroup.setGroupName(dto.getGroupName());
         if(dto.getGroupLeaderId() != existedGroup.getGroupLeader().getId()){
-            existedGroup.setGroupName(dto.getGroupName());
             existedGroup.setGroupLeader(newGLAcc.getStaff());
             existedGroup.setLastUpdated(Instant.now());
             oldGLAcc.setRole(roleRepository.getById(3));
@@ -83,8 +83,8 @@ public class GroupServiceImpl implements GroupService {
             newGLAcc.setLastUpdated(Instant.now());
             accountRepository.save(oldGLAcc);
             accountRepository.save(newGLAcc);
-            groupRepository.save(existedGroup);
         }
+        groupRepository.save(existedGroup);
     }
 
     @Override

@@ -14,6 +14,7 @@ import com.example.ctsbe.service.AccountService;
 import com.example.ctsbe.service.EmailService;
 import com.example.ctsbe.service.StaffProjectService;
 import com.example.ctsbe.service.StaffService;
+import com.example.ctsbe.util.DateUtil;
 import com.example.ctsbe.util.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,8 @@ public class AccountController {
     private EmailService emailService;
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+    DateUtil dateUtil = new DateUtil();
+
     @PostMapping("/addAccount")
     @RolesAllowed("ROLE_ADMIN")
     public ResponseEntity<?> addAccount(@Valid @RequestBody AccountAddDTO dto) {
@@ -71,6 +74,10 @@ public class AccountController {
                 errorMap.put("staffAddDTO.email", "Email này đã được đăng kí!");
                 exceptionObject.setError(errorMap);
                 return new ResponseEntity<>(exceptionObject, HttpStatus.BAD_REQUEST);
+            }else if (dateUtil.compareLocalDate(dto.getStaffAddDTO().getDateOfBirth()) == false){
+                errorMap.put("staffAddDTO.dateOfBirth", "Không được chọn ngày chưa đến hoặc ngày hiện tại!");
+                exceptionObject.setError(errorMap);
+                return new ResponseEntity<>(exceptionObject, HttpStatus.BAD_REQUEST);
             } else {
                 accountService.addAccount(dto);
             }
@@ -84,7 +91,7 @@ public class AccountController {
     public ResponseEntity<?> updateAccount(@PathVariable("id") int id, @RequestBody ProfileUpdateDTO dto) {
         try {
             int tokenId = getIdFromToken();
-            Account acc = accountService.getAccountById(id);
+            Account acc = accountService.getAccountById(tokenId);
             if (acc.getRole().getId() != 2) {
                 if (tokenId != id) {
                     throw new AccessDeniedException("Bạn không có quyền sửa tài khoản này");
@@ -216,6 +223,18 @@ public class AccountController {
             } else {
                 return new ResponseEntity<>("Bạn không có quyền truy cập", HttpStatus.FORBIDDEN);
             }
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/resetPasswordForAdmin/{username}")
+    @RolesAllowed("ROLE_ADMIN")
+    public ResponseEntity<?> resetPasswordForAdmin(@PathVariable("username") String username
+            ,@RequestBody @Valid ResetPasswordAdminDTO dto) {
+        try {
+            accountService.resetPasswordForAdmin(username,dto);
+            return new ResponseEntity<>("Đặt lại mật khẩu của tài khoản "+username+" thành công", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

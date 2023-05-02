@@ -5,6 +5,7 @@ import com.example.ctsbe.constant.ApplicationConstant;
 import com.example.ctsbe.dto.account.AccountAddDTO;
 import com.example.ctsbe.dto.account.AccountUpdateDTO;
 import com.example.ctsbe.dto.account.ProfileUpdateDTO;
+import com.example.ctsbe.dto.account.ResetPasswordAdminDTO;
 import com.example.ctsbe.entity.Account;
 import com.example.ctsbe.mapper.AccountMapper;
 import com.example.ctsbe.repository.AccountRepository;
@@ -120,6 +121,14 @@ public class AccountServiceImpl implements AccountService {
         }
         account.setLastUpdated(Instant.now());
         accountRepository.save(account);
+    }
+
+    @Override
+    public void resetPasswordForAdmin(String username, ResetPasswordAdminDTO dto) {
+        Account existedAccount = getAccountByUsername(username);
+        existedAccount.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+        existedAccount.setLastUpdated(Instant.now());
+        accountRepository.save(existedAccount);
     }
 
     @Override

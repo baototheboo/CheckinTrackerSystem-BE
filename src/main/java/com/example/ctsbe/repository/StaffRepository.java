@@ -24,14 +24,15 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
 
     Staff findByEmail(String email);
 
-    @Query(value = "select a.staff from Account a where a.role.id = 5 and a.enable = 1 and a.staff.group.id is null")
+    @Query(value = "select a.staff from Account a where (a.role.id = 5 or a.role.id = 3) and a.enable = 1 and a.staff.group.id is null")
     List<Staff> getListStaffAvailableAddToGroup();
 
     @Query(value = "SELECT s " +
             "FROM Staff s " +
             "WHERE s.id IN (SELECT a.staff.id FROM Account a WHERE a.enable = 1 and a.role.id = 5) " +
+            "AND s.id NOT IN (SELECT sp.staff.id FROM StaffProject sp WHERE sp.project.id = :projectId) " +
             "AND s.group.id =:groupId")
-    List<Staff> getAvailableStaffAddToProject(int groupId);
+    List<Staff> getAvailableStaffAddToProject(int groupId,int projectId);
 
     @Query(value = "select a.staff from Account a where a.staff.group.id =:groupId and a.enable = 1")
     Page<Staff> getListMemberByGroup(int groupId, Pageable pageable);
@@ -91,7 +92,9 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
     @Query(value = "select a.staff from Account a where a.role.id <> 1")
     Page<Staff> getListStaffExceptAdmin(Pageable pageable);
 
-    @Query(value = "select a.staff from Account a where a.role.id = 3 and a.staff.group.id =:groupId and a.enable = 1")
+    @Query(value = "select a.staff from Account a where (a.role.id = 3 or " +
+            "a.staff.id in (select g.groupLeader.id from Group g where g.id = :groupId)) " +
+            "and a.staff.group.id =:groupId and a.enable = 1 order by a.role.id desc ")
     List<Staff> getListPMInGroup(int groupId);
 
     @Query(value = "select a.staff from Account a where a.role.id = 5 and a.staff.group.id =:groupId and a.enable = 1")
