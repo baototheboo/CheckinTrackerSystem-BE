@@ -14,12 +14,6 @@ public class AccountAddDTO {
     @NotBlank(message = "Tên đăng nhập không được để trống")
     private String username;
     @NotBlank(message = "Mật khẩu không được để trống")
-    //@Length(min = 6,message = "Mật khẩu phải có ít nhất 6 kí tự")
-    @Pattern(regexp = ApplicationConstant.PASSWORD_REGEX,message =
-            "Mật khẩu phải có 6 đến 20 kí tự bao gồm 1 kí tự viết hoa, " +
-            "một kí tự viết thường, " +
-            "một chữ số, "+
-            "một kí tự đặc biệt.")
     private String password;
 
     private Integer roleId;

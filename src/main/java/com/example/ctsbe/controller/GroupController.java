@@ -229,8 +229,14 @@ public class GroupController {
                     return new ResponseEntity<>("Xóa nhân viên khỏi nhóm thành công", HttpStatus.OK);
                 }
             }else {
-                groupService.removeStaffFromGroup(dto);
-                return new ResponseEntity<>("Xóa nhân viên khỏi nhóm thành công", HttpStatus.OK);
+                if(staffService.checkStaffInRemoveFromGroup(dto)){
+                    errorMap.put("exception", "Không thể xóa nhân viên khỏi nhóm vì nhân viên đang thực hiện dự án");
+                    exceptionObject.setError(errorMap);
+                    return new ResponseEntity<>(exceptionObject, HttpStatus.BAD_REQUEST);
+                }else {
+                    groupService.removeStaffFromGroup(dto);
+                    return new ResponseEntity<>("Xóa nhân viên khỏi nhóm thành công", HttpStatus.OK);
+                }
             }
         }catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
