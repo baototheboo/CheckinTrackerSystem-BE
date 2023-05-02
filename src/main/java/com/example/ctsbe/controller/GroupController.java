@@ -172,22 +172,29 @@ public class GroupController {
     }
 
     @PostMapping("/addStaffToGroup")
-    @RolesAllowed("ROLE_GROUP LEADER")
+    @RolesAllowed({"ROLE_GROUP LEADER","ROLE_HUMAN RESOURCE"})
     public ResponseEntity<?> addStaffToGroup(@RequestBody StaffProjectAddDTO dto) {
         try {
             int tokenId = getIdFromToken();
-            Staff tokenStaff = staffService.getStaffById(tokenId);
+            Account tokenAccount = accountService.getAccountById(tokenId);
+            Staff tokenStaff = tokenAccount.getStaff();
             ExceptionObject exceptionObject = new ExceptionObject();
             Map<String, String> errorMap = new HashMap<>();
             int errorCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
             exceptionObject.setCode(errorCode);
-            if(tokenStaff.getGroup().getId() != dto.getProjectId()){
-                errorMap.put("exception", "Bạn không có quyền thêm nhân viên vào nhóm!");
-                exceptionObject.setError(errorMap);
-                return new ResponseEntity<>(exceptionObject, HttpStatus.FORBIDDEN);
+            if(tokenAccount.getRole().getId() != 2){
+                if(tokenStaff.getGroup().getId() != dto.getProjectId()){
+                    errorMap.put("exception", "Bạn không có quyền thêm nhân viên vào nhóm!");
+                    exceptionObject.setError(errorMap);
+                    return new ResponseEntity<>(exceptionObject, HttpStatus.FORBIDDEN);
+                }else {
+                    groupService.addStaffToGroup(dto);
+                    return new ResponseEntity<>("Thêm nhân viên vào nhóm thành công", HttpStatus.OK);
+                }
+            }else {
+                groupService.addStaffToGroup(dto);
+                return new ResponseEntity<>("Thêm nhân viên vào nhóm thành công", HttpStatus.OK);
             }
-            groupService.addStaffToGroup(dto);
-            return new ResponseEntity<>("Add staff to the group successfully", HttpStatus.OK);
         }catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

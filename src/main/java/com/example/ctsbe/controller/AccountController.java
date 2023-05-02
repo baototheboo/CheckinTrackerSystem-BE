@@ -91,7 +91,7 @@ public class AccountController {
     public ResponseEntity<?> updateAccount(@PathVariable("id") int id, @RequestBody ProfileUpdateDTO dto) {
         try {
             int tokenId = getIdFromToken();
-            Account acc = accountService.getAccountById(id);
+            Account acc = accountService.getAccountById(tokenId);
             if (acc.getRole().getId() != 2) {
                 if (tokenId != id) {
                     throw new AccessDeniedException("Bạn không có quyền sửa tài khoản này");
@@ -223,6 +223,18 @@ public class AccountController {
             } else {
                 return new ResponseEntity<>("Bạn không có quyền truy cập", HttpStatus.FORBIDDEN);
             }
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/resetPasswordForAdmin/{username}")
+    @RolesAllowed("ROLE_ADMIN")
+    public ResponseEntity<?> resetPasswordForAdmin(@PathVariable("username") String username
+            ,@RequestBody @Valid ResetPasswordAdminDTO dto) {
+        try {
+            accountService.resetPasswordForAdmin(username,dto);
+            return new ResponseEntity<>("Đặt lại mật khẩu của tài khoản "+username+" thành công", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

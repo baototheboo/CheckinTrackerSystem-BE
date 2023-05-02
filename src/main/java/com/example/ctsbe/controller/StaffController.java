@@ -6,12 +6,11 @@ import com.example.ctsbe.dto.staff.StaffAvailableDTO;
 import com.example.ctsbe.dto.staff.StaffDTO;
 import com.example.ctsbe.dto.staff.StaffUpdateDTO;
 import com.example.ctsbe.entity.Account;
+import com.example.ctsbe.entity.Group;
 import com.example.ctsbe.entity.Staff;
 import com.example.ctsbe.exception.ExceptionObject;
 import com.example.ctsbe.mapper.StaffMapper;
-import com.example.ctsbe.service.AccountService;
-import com.example.ctsbe.service.ImageSetupService;
-import com.example.ctsbe.service.StaffService;
+import com.example.ctsbe.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,7 +34,10 @@ public class StaffController {
     private StaffService staffService;
 
     @Autowired
-    private AccountService accountService;
+    private StaffProjectService staffProjectService;
+
+    @Autowired
+    private GroupService groupService;
 
     @Autowired
     private ImageSetupService imageSetupService;
@@ -59,12 +61,30 @@ public class StaffController {
             Map<String, String> errorMap = new HashMap<>();
             int errorCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
             exceptionObject.setCode(errorCode);
-            Account account = accountService.getAccountById(dto.getStaffId());
-            if(dto.getRoleId() == 4 && account.getStaff().getGroup() != null){
-                errorMap.put("exception", "Nhóm của người này hiện đã có Group Leader.");
-                exceptionObject.setError(errorMap);
-                return new ResponseEntity<>(exceptionObject, HttpStatus.BAD_REQUEST);
+            Staff staff = staffService.getStaffById(dto.getStaffId());
+            //Account account = accountService.getAccountById(dto.getStaffId());
+            Group group = groupService.findById(staff.getGroup().getId());
+            if(dto.getRoleId() == 4){
+                if (group.getGroupLeader().getId() == dto.getStaffId()){
+                    staffService.changePromotionLevel(dto);
+                    return new ResponseEntity<>("Cập nhật nhân viên với id " + dto.getStaffId() + " thành công", HttpStatus.OK);
+                }
+                else {
+                    errorMap.put("exception", "Nhóm của người này hiện đã có Group Leader.");
+                    exceptionObject.setError(errorMap);
+                    return new ResponseEntity<>(exceptionObject, HttpStatus.BAD_REQUEST);
+                }
             }
+            /*else if(dto.getRoleId() == 3){
+                if(staffProjectService.checkStaffInProjectHavePM(dto.getStaffId()) == true){
+                    staffService.changePromotionLevel(dto);
+                    return new ResponseEntity<>("Cập nhật nhân viên với id " + dto.getStaffId() + " thành công", HttpStatus.OK);
+                }else {
+                    errorMap.put("exception", "Dự án này hiện đã có Project Manager.");
+                    exceptionObject.setError(errorMap);
+                    return new ResponseEntity<>(exceptionObject, HttpStatus.BAD_REQUEST);
+                }
+            }*/
             staffService.changePromotionLevel(dto);
             return new ResponseEntity<>("Cập nhật nhân viên với id " + dto.getStaffId() + " thành công", HttpStatus.OK);
         } catch (Exception e) {

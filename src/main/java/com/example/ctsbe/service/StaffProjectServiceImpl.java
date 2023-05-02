@@ -78,4 +78,10 @@ public class StaffProjectServiceImpl implements StaffProjectService {
     public List<Staff> getListStaffByPrjId(int prjId) {
         return repository.getListStaffByProjectId(prjId);
     }
+
+    @Override
+    public boolean checkStaffInProjectHavePM(int staffId) {
+        if(repository.checkStaffInProjectHavePM(staffId) == null) return true;
+        else return false;
+    }
 }
