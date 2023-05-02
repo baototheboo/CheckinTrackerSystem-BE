@@ -90,7 +90,7 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
                     } else
                     {
                         timesheet.setDateStatus("LATE");
-                        long lateMinutes = Duration.between(LocalDateTime.of(LocalDate.now(), ApplicationConstant.MORNING_START) , currentTime).toMinutes();
+                        long lateMinutes = Duration.between(LocalDateTime.of(currentTime.toLocalDate(), ApplicationConstant.MORNING_START) , currentTime).toMinutes();
                         timesheet.setLateCheckInMinutes((double) lateMinutes);
                     }
                     timesheet.setDayWorkingStatus("Làm cả ngày");
@@ -108,20 +108,20 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
                         } else if (currentTime.toLocalTime().isBefore(ApplicationConstant.MORNING_START)){
                             timesheet.setWorkingHours(0.0); // check-out trước giờ làm việc sáng, không tính công ngày hôm đó.
                             timesheet.setNote("Check-in sáng đúng giờ, Check-out sáng trước giờ làm");
-                            long earlyMinutes = Duration.between(currentTime,LocalDateTime.of(LocalDate.now(), ApplicationConstant.AFTERNOON_END) ).toMinutes();
+                            long earlyMinutes = Duration.between(currentTime,LocalDateTime.of(currentTime.toLocalDate(), ApplicationConstant.AFTERNOON_END) ).toMinutes();
                             timesheet.setEarlyCheckOutMinutes((double) earlyMinutes);
                         }  else if (currentTime.toLocalTime().isBefore(ApplicationConstant.MORNING_END)){
                             long morningWorkingHours = Duration.between(ApplicationConstant.MORNING_START, currentTime.toLocalTime()).toSeconds();
                             if (morningWorkingHours >= 0) {
                                 timesheet.setWorkingHours(toHours((double) morningWorkingHours)); // check-out trước giờ quy định buổi sáng, giờ làm việc tính từ giờ mặc định của buổi sáng đến khi check-out
                                 timesheet.setNote("Check-in sáng đúng giờ, Check-out sáng sớm hơn quy định");
-                                long earlyMinutes = Duration.between(currentTime,LocalDateTime.of(LocalDate.now(), ApplicationConstant.AFTERNOON_END) ).toMinutes();
+                                long earlyMinutes = Duration.between(currentTime,LocalDateTime.of(currentTime.toLocalDate(), ApplicationConstant.AFTERNOON_END) ).toMinutes();
                                 timesheet.setEarlyCheckOutMinutes((double) earlyMinutes);
                             }
                         }else if ((currentTime.toLocalTime().isBefore(ApplicationConstant.AFTERNOON_START))){
                                 timesheet.setWorkingHours(ApplicationConstant.WORKING_HOURS_MORNING); // check-out trước buổi chiều, giờ làm việc tính theo giờ mặc định buổi sáng.
                                 timesheet.setNote("Check-in sáng đúng giờ, Check-out sáng");
-                            long earlyMinutes = Duration.between(currentTime,LocalDateTime.of(LocalDate.now(), ApplicationConstant.AFTERNOON_END) ).toMinutes();
+                            long earlyMinutes = Duration.between(currentTime,LocalDateTime.of(currentTime.toLocalDate(), ApplicationConstant.AFTERNOON_END) ).toMinutes();
                             timesheet.setEarlyCheckOutMinutes((double) earlyMinutes);
                         } else {
                             long afternoonWorkingHours = Duration.between(ApplicationConstant.AFTERNOON_START, currentTime.toLocalTime()).toSeconds();
@@ -129,11 +129,11 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
                                 double totalWorkingHours = ApplicationConstant.WORKING_HOURS_MORNING + toHours((double) afternoonWorkingHours);
                                 timesheet.setWorkingHours(totalWorkingHours); // check-out sớm, giờ làm việc tính theo giờ mặc định buổi sáng và giờ làm thực tế buổi chiều.
                                 timesheet.setNote("Check-in sáng đúng giờ, Check-out chiều sớm hơn quy định");
-                                long earlyMinutes = Duration.between(currentTime,LocalDateTime.of(LocalDate.now(), ApplicationConstant.AFTERNOON_END) ).toMinutes();
+                                long earlyMinutes = Duration.between(currentTime,LocalDateTime.of(currentTime.toLocalDate(), ApplicationConstant.AFTERNOON_END) ).toMinutes();
                                 timesheet.setEarlyCheckOutMinutes((double) earlyMinutes);
                             }
                         }
-                    } else if (timesheet.getTimeCheckIn().isAfter(DateUtil.convertLocalDateTimeToInstant(LocalDateTime.of(LocalDate.now(), //check-in chiều muộn
+                    } else if (timesheet.getTimeCheckIn().isAfter(DateUtil.convertLocalDateTimeToInstant(LocalDateTime.of(currentTime.toLocalDate(), //check-in chiều muộn
                                                         ApplicationConstant.AFTERNOON_START)))) {
                         if (!isEarlyAfternoonOrNot(currentTime)){
                             long afternoonWorkingHours = Duration.between((timesheet.getTimeCheckIn().atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE)).toLocalTime()),
@@ -149,11 +149,11 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
                             if (afternoonWorkingHours >= 0) {
                                 timesheet.setWorkingHours(toHours((double) afternoonWorkingHours)); // check-out sớm, giờ làm việc tính theo giờ làm thực tế buổi chiều.
                                 timesheet.setNote("Check-in chiều muộn, Check-out chiều sớm hơn quy định");
-                                long earlyMinutes = Duration.between(currentTime,LocalDateTime.of(LocalDate.now(), ApplicationConstant.AFTERNOON_END) ).toMinutes();
+                                long earlyMinutes = Duration.between(currentTime,LocalDateTime.of(currentTime.toLocalDate(), ApplicationConstant.AFTERNOON_END) ).toMinutes();
                                 timesheet.setEarlyCheckOutMinutes((double) earlyMinutes);
                             }
                         }
-                    } else if (timesheet.getTimeCheckIn().isAfter(DateUtil.convertLocalDateTimeToInstant(LocalDateTime.of(LocalDate.now(), //check-in đúng giờ buổi chiều
+                    } else if (timesheet.getTimeCheckIn().isAfter(DateUtil.convertLocalDateTimeToInstant(LocalDateTime.of(currentTime.toLocalDate(), //check-in đúng giờ buổi chiều
                                                             ApplicationConstant.MORNING_END)))) {
                         if (!isEarlyAfternoonOrNot(currentTime)){
                                 timesheet.setWorkingHours(ApplicationConstant.WORKING_HOURS_AFTERNOON); // check-out đúng giờ, giờ làm việc tính theo từ lúc check-in đến cuối buổi chiều.
@@ -162,7 +162,7 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
                         } else if (currentTime.toLocalTime().isBefore(ApplicationConstant.AFTERNOON_START)){
                                 timesheet.setWorkingHours(0.0); // check-out trước giờ chiều, không tính công ngày hôm đó.
                                 timesheet.setNote("Check-in chiều đúng giờ, Check-out chiều trước giờ làm");
-                            long earlyMinutes = Duration.between(currentTime,LocalDateTime.of(LocalDate.now(), ApplicationConstant.AFTERNOON_END) ).toMinutes();
+                            long earlyMinutes = Duration.between(currentTime,LocalDateTime.of(currentTime.toLocalDate(), ApplicationConstant.AFTERNOON_END) ).toMinutes();
                             timesheet.setEarlyCheckOutMinutes((double) earlyMinutes);
                         } else {
                             long afternoonWorkingHours = Duration.between(ApplicationConstant.AFTERNOON_START,
@@ -170,11 +170,11 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
                             if (afternoonWorkingHours >= 0) {
                                 timesheet.setWorkingHours(toHours((double) afternoonWorkingHours)); // check-out sớm, giờ làm việc tính từ đầu giờ chiều đến lúc check-out.
                                 timesheet.setNote("Check-in chiều đúng giờ, Check-out chiều sớm hơn quy định");
-                                long earlyMinutes = Duration.between(currentTime,LocalDateTime.of(LocalDate.now(), ApplicationConstant.AFTERNOON_END) ).toMinutes();
+                                long earlyMinutes = Duration.between(currentTime,LocalDateTime.of(currentTime.toLocalDate(), ApplicationConstant.AFTERNOON_END) ).toMinutes();
                                 timesheet.setEarlyCheckOutMinutes((double) earlyMinutes);
                             }
                         }
-                    } else if (timesheet.getTimeCheckIn().isAfter(DateUtil.convertLocalDateTimeToInstant(LocalDateTime.of(LocalDate.now(),
+                    } else if (timesheet.getTimeCheckIn().isAfter(DateUtil.convertLocalDateTimeToInstant(LocalDateTime.of(currentTime.toLocalDate(),
                                                             ApplicationConstant.MORNING_START)))) { // check-in sáng muộn.
                         if (!isEarlyAfternoonOrNot(currentTime)){
                             long morningWorkingHours = Duration.between((timesheet.getTimeCheckIn().atZone(ZoneId.of(ApplicationConstant.VN_TIME_ZONE)).toLocalTime()),
@@ -191,7 +191,7 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
                             if (morningWorkingHours >= 0) {
                                 timesheet.setWorkingHours(toHours((double) morningWorkingHours)); // check-out trước giờ quy định buổi sáng, thời gian làm việc tính theo thời gian làm việc thực tế.
                                 timesheet.setNote("Check-in sáng muộn, Check-out sáng sớm hơn quy định");
-                                long earlyMinutes = Duration.between(currentTime,LocalDateTime.of(LocalDate.now(), ApplicationConstant.AFTERNOON_END) ).toMinutes();
+                                long earlyMinutes = Duration.between(currentTime,LocalDateTime.of(currentTime.toLocalDate(), ApplicationConstant.AFTERNOON_END) ).toMinutes();
                                 timesheet.setEarlyCheckOutMinutes((double) earlyMinutes);
                             }
                         } else if (currentTime.toLocalTime().isBefore(ApplicationConstant.AFTERNOON_START)){
@@ -200,7 +200,7 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
                             if (morningWorkingHours >=0)  {
                                 timesheet.setWorkingHours(toHours(morningWorkingHours)); // check-out sáng đúng giờ, giờ làm việc tính theo thời gian làm việc thực tế buổi sáng.
                                 timesheet.setNote("Check-in sáng muộn, Check-out sáng đúng giờ");
-                                long earlyMinutes = Duration.between(currentTime,LocalDateTime.of(LocalDate.now(), ApplicationConstant.AFTERNOON_END) ).toMinutes();
+                                long earlyMinutes = Duration.between(currentTime,LocalDateTime.of(currentTime.toLocalDate(), ApplicationConstant.AFTERNOON_END) ).toMinutes();
                                 timesheet.setEarlyCheckOutMinutes((double) earlyMinutes);
                             }
                         }else if (currentTime.toLocalTime().isBefore(ApplicationConstant.AFTERNOON_END)){
@@ -212,7 +212,7 @@ public class ImageVerifyServiceImpl implements ImageVerifyService{
                                 double totalWorkingHours = ((double) morningWorkingHours) + (double) afternoonWorkingHours;
                                 timesheet.setWorkingHours(toHours(totalWorkingHours)); // check-out sớm, giờ làm việc tính theo thời gian làm việc thực tế.
                                 timesheet.setNote("Check-in sáng muộn, Check-out chiều sớm hơn quy định");
-                                long earlyMinutes = Duration.between(currentTime,LocalDateTime.of(LocalDate.now(), ApplicationConstant.AFTERNOON_END) ).toMinutes();
+                                long earlyMinutes = Duration.between(currentTime,LocalDateTime.of(currentTime.toLocalDate(), ApplicationConstant.AFTERNOON_END) ).toMinutes();
                                 timesheet.setEarlyCheckOutMinutes((double) earlyMinutes);
                             }
                         }
