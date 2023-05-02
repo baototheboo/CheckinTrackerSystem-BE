@@ -63,13 +63,16 @@ public class StaffController {
             exceptionObject.setCode(errorCode);
             Staff staff = staffService.getStaffById(dto.getStaffId());
             //Account account = accountService.getAccountById(dto.getStaffId());
-            Group group = groupService.findById(staff.getGroup().getId());
-            if(dto.getRoleId() == 4){
-                if (group.getGroupLeader().getId() == dto.getStaffId()){
+            Group group = (staff.getGroup() == null) ? null : groupService.findById(staff.getGroup().getId());
+            if (dto.getRoleId() == 4) {
+                if(group == null){
                     staffService.changePromotionLevel(dto);
                     return new ResponseEntity<>("Cập nhật nhân viên với id " + dto.getStaffId() + " thành công", HttpStatus.OK);
                 }
-                else {
+                else if (group.getGroupLeader().getId() == dto.getStaffId()) {
+                    staffService.changePromotionLevel(dto);
+                    return new ResponseEntity<>("Cập nhật nhân viên với id " + dto.getStaffId() + " thành công", HttpStatus.OK);
+                } else {
                     errorMap.put("exception", "Nhóm của người này hiện đã có Group Leader.");
                     exceptionObject.setError(errorMap);
                     return new ResponseEntity<>(exceptionObject, HttpStatus.BAD_REQUEST);
@@ -149,9 +152,9 @@ public class StaffController {
     }
 
     @GetMapping("/getAvailableStaff/{groupId}")
-    public ResponseEntity<Map<String, Object>> getAvailableStaff(@PathVariable("groupId") int groupId,@RequestParam int projectId) {
+    public ResponseEntity<Map<String, Object>> getAvailableStaff(@PathVariable("groupId") int groupId, @RequestParam int projectId) {
         try {
-            List<Staff> list = staffService.getListAvailableStaff(groupId,projectId);
+            List<Staff> list = staffService.getListAvailableStaff(groupId, projectId);
             List<StaffAvailableDTO> listDto = list.stream().
                     map(StaffMapper::convertStaffToStaffAvailableDto).collect(Collectors.toList());
             Map<String, Object> response = new HashMap<>();

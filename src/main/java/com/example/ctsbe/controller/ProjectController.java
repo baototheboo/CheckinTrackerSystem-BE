@@ -93,7 +93,7 @@ public class ProjectController {
     }
 
     @PostMapping("/addProject")
-    @RolesAllowed("ROLE_GROUP LEADER")
+    @RolesAllowed({"ROLE_GROUP LEADER","ROLE_PROJECT MANAGER"})
     public ResponseEntity<?> addProject(@Valid @RequestBody ProjectAddDTO dto){
         try{
             int tokenId = getIdFromToken();
