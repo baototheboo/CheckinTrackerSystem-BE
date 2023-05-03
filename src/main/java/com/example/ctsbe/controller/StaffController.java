@@ -42,16 +42,6 @@ public class StaffController {
     @Autowired
     private ImageSetupService imageSetupService;
 
-    @PostMapping("/addStaff")
-    public String addStaff(@RequestBody StaffAddDTO dto) {
-        try {
-            staffService.addStaff(dto);
-            return "Add successfully";
-        } catch (Exception e) {
-            return e.getMessage();
-        }
-
-    }
 
     @PutMapping("/changePromotionLevel")
     @RolesAllowed("ROLE_HUMAN RESOURCE")
