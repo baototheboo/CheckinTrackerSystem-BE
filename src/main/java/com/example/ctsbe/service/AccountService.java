@@ -33,7 +33,7 @@ public interface AccountService {
 
     void resetPassword(Account account,String newPassword);
 
-    void changeEnableAccount(int id);
+    void changeEnableAccount(Account account);
 
     void resetPasswordForAdmin(String username, ResetPasswordAdminDTO dto);
 

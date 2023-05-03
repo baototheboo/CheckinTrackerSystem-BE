@@ -112,8 +112,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void changeEnableAccount(int id) {
-        Account account = accountRepository.getById(id);
+    public void changeEnableAccount(Account account) {
         if (account.getEnable() == 1) {
             account.setEnable((byte) 0);
         } else {
