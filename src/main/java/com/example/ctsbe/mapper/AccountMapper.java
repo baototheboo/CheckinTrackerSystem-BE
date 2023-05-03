@@ -49,6 +49,8 @@ public class AccountMapper {
         dto.setPhone(account.getStaff().getPhone());
         dto.setRoleName(stringUtil.cutStringRole(account.getRole().getRoleName()));
         dto.setPromotionLevel(account.getStaff().getPromotionLevel().getId());
+        dto.setGroupId((account.getStaff().getGroup() == null) ? null:account.getStaff().getGroup().getId());
+        dto.setGroupName((account.getStaff().getGroup() == null) ? null:account.getStaff().getGroup().getGroupName());
         return dto;
     }
 

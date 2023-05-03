@@ -76,14 +76,18 @@ public class MonthlyReportServiceImpl implements MonthlyReportService {
                     MonthlyReport monthlyReport = new MonthlyReport();
                     monthlyReport.setStaff(staffRepository.findStaffById(dto.getStaffId()));
                     monthlyReport.setMonth(dateUtil.convertStringToLocalDate(dto.getMonthYear() + "-01"));
-                    monthlyReport.setActiveDay(activeDay);
+                    //active day la so ngay di lam
+                    monthlyReport.setActiveDay(activeDay + lateDay);
+                    //late day la so ngay di lam muon
                     monthlyReport.setLateDay(lateDay);
                     monthlyReport.setOffDay(dayOff);
                     monthlyReport.setWorkingHour(dto.getWorkingHours().intValue());
                     monthlyReport.setCreatedDate(Instant.now());
                     monthlyReportRepository.save(monthlyReport);
                 }else{
-                    existed.setActiveDay(activeDay);
+                    //active day la so ngay di lam
+                    existed.setActiveDay(activeDay + lateDay);
+                    //late day la so ngay di lam muon
                     existed.setLateDay(lateDay);
                     existed.setOffDay(dayOff);
                     existed.setWorkingHour(dto.getWorkingHours().intValue());
