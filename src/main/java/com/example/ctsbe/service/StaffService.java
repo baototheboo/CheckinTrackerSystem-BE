@@ -4,6 +4,7 @@ import com.example.ctsbe.dto.group.GroupRemoveStaffDTO;
 import com.example.ctsbe.dto.staff.StaffAddDTO;
 import com.example.ctsbe.dto.staff.StaffAvailableDTO;
 import com.example.ctsbe.dto.staff.StaffUpdateDTO;
+import com.example.ctsbe.entity.Account;
 import com.example.ctsbe.entity.Staff;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -46,5 +47,7 @@ public interface StaffService {
     boolean checkStaffInRemoveFromGroup(GroupRemoveStaffDTO dto);
 
     Staff getStaffById(int staffId);
+
+    boolean checkStaffInProjectProcessing(Account account);
 
 }

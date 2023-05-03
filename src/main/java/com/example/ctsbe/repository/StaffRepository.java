@@ -117,5 +117,8 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
             "(select p.id from Project p where p.status = 'Processing' and p.group.id = :groupId))")
     List<Staff> checkStaffInRemoveFromGroup(int groupId);
 
-
+    @Query(value = "SELECT s FROM Staff s where s.id in " +
+            "(select sp.staff.id from StaffProject sp where sp.project.id in " +
+            "(select p.id from Project p where p.status = 'Processing'))")
+    List<Staff> checkStaffInProjectProcessing();
 }

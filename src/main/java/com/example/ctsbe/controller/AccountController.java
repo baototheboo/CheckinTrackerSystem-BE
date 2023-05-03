@@ -10,10 +10,7 @@ import com.example.ctsbe.exception.ExceptionObject;
 import com.example.ctsbe.filter.JwtTokenFilter;
 import com.example.ctsbe.mapper.AccountMapper;
 import com.example.ctsbe.mapper.ProjectMapper;
-import com.example.ctsbe.service.AccountService;
-import com.example.ctsbe.service.EmailService;
-import com.example.ctsbe.service.StaffProjectService;
-import com.example.ctsbe.service.StaffService;
+import com.example.ctsbe.service.*;
 import com.example.ctsbe.util.DateUtil;
 import com.example.ctsbe.util.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +43,8 @@ public class AccountController {
     private AccountService accountService;
     @Autowired
     private StaffService staffService;
+    @Autowired
+    private GroupService groupService;
     @Autowired
     private StaffProjectService staffProjectService;
     @Autowired
@@ -158,11 +157,27 @@ public class AccountController {
     @RolesAllowed("ROLE_ADMIN")
     public ResponseEntity<?> changeEnableAccount(@PathVariable("id") int id) {
         try {
+            Account account = accountService.getAccountById(id);
+            int tokenId = getIdFromToken();
+            ExceptionObject exceptionObject = new ExceptionObject();
+            Map<String, String> errorMap = new HashMap<>();
+            int errorCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
+            exceptionObject.setCode(errorCode);
             int currentAdmin = getIdFromToken();
             if (id == currentAdmin) {
                 throw new StaffSelfDisableException("Không thể khoá tài khoản của chính bản thân!");
             }
-            accountService.changeEnableAccount(id);
+            else if (staffService.checkStaffInProjectProcessing(account) == true) {
+                errorMap.put("exception", "Nhân viên này hiện đang thực hiện dự án!");
+                exceptionObject.setError(errorMap);
+                return new ResponseEntity<>(exceptionObject, HttpStatus.BAD_REQUEST);
+            }
+            else if (groupService.checkGL(account.getStaff().getId()) == false) {
+                errorMap.put("exception", "Nhân viên này hiện đang quản lý 1 nhóm!");
+                exceptionObject.setError(errorMap);
+                return new ResponseEntity<>(exceptionObject, HttpStatus.BAD_REQUEST);
+            }
+            accountService.changeEnableAccount(account);
             return new ResponseEntity<>("Chỉnh sửa trạng thái tài khoản thành công.", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);

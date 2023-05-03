@@ -30,4 +30,6 @@ public interface GroupService {
     void deleteGroup(int id) ;
 
     void addGLToGroup(int glId,int groupId);
+
+    boolean checkGL(int staffId);
 }
