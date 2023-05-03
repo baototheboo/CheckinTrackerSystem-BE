@@ -160,6 +160,19 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
+    public boolean checkStaffInProjectProcessing(Account account) {
+        boolean check = true;
+        List<Staff> list = staffRepository.checkStaffInProjectProcessing();
+        //neu check = true -> nhan vien dang o trong 1 project processing -> khong duoc xoa
+        if(list.stream().anyMatch(account.getStaff()::equals) == true) {
+            check = true;
+        }
+        //neu check = fale -> nhan vien khong o trong project nao processing -> duoc phep xoa
+        else check = false;
+        return check;
+    }
+
+    @Override
     public Page<Staff> getListStaffByGroup(int groupId, Pageable pageable) {
         return staffRepository.getListMemberByGroup(groupId, pageable);
     }

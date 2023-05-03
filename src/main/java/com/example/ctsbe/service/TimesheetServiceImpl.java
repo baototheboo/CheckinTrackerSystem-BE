@@ -147,17 +147,18 @@ public class TimesheetServiceImpl implements TimesheetService {
         List<Integer> listStaffId = staffRepository.getListStaffIdEnable();
         for (Integer staffId : listStaffId) {
             List<Timesheet> listTimesheetByMonth = getTimesheetByStaffIdAndMonth(staffId, monthYear);
-            Staff staff = staffRepository.findStaffById(staffId);
-            if (listTimesheetByMonth == null) {
+ //           Staff staff = staffRepository.findStaffById(staffId);
+ /*           if (listTimesheetByMonth == null) {
+                int daysOfMonth = dateUtil.getLengthOfMonth(monthYear);
                 listDto.add(new TimesheetDTO(staffId,
                         staff.getFullName(),
                         monthYear,
                         null,
                         null));
-            } else {
+            } else {*/
                 TimesheetDTO timesheetDTO = checkDayStatus(listTimesheetByMonth, staffId, monthYear);
                 listDto.add(timesheetDTO);
-            }
+          //  }
         }
         return listDto;
     }

@@ -18,4 +18,7 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
 
     @Query(value = "select g from Group g where g.groupLeader.id =:staffId and g.groupName like %:name%")
     Page<Group> getListGroupByStaffIdAndGroupName(int staffId, String name, Pageable pageable);
+
+    @Query(value = "select g from Group g where g.groupLeader.id =:staffId")
+    Group getByGLId(int staffId);
 }

@@ -126,4 +126,12 @@ public class GroupServiceImpl implements GroupService {
         existedStaff.setGroup(groupRepository.getById(groupId));
         staffRepository.save(existedStaff);
     }
+
+    @Override
+    public boolean checkGL(int staffId) {
+        //true -> nhan vien dang khong lam GL cua 1 nhom nao -> co the the disable
+        if(groupRepository.getByGLId(staffId) == null) return true;
+        //false -> nhan vien dang lam GL cua 1 nhom -> khong the disable
+        else return false;
+    }
 }
