@@ -144,7 +144,7 @@ public class AccountServiceImpl implements AccountService {
         account.setLastLogin(Instant.now());
         account.setLastUpdated(Instant.now());
         account.setCreatedDate(Instant.now());
-        account.setStaff(staffService.addStaff(accountAddDTO.getStaffAddDTO()));
+        account.setStaff(staffService.addStaff(accountAddDTO.getStaffAddDTO(),accountAddDTO.getRoleId()));
         return account;
     }
 }

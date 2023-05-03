@@ -36,8 +36,9 @@ public class StaffServiceImpl implements StaffService {
     private RoleRepository roleRepository;
 
     @Override
-    public Staff addStaff(StaffAddDTO staffAddDTO) {
+    public Staff addStaff(StaffAddDTO staffAddDTO, int roleId) {
         Staff staff = convertStaffAddDTOToStaff(staffAddDTO);
+        staff.setPromotionLevel(promotionLevelRepository.findById(roleId == 1 ? 13 : roleId == 2 ? 10 : 1));
         return staffRepository.save(staff);
     }
 
@@ -69,8 +70,8 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public List<Staff> getListAvailableStaff(int groupId,int projectId) {
-        return staffRepository.getAvailableStaffAddToProject(groupId,projectId);
+    public List<Staff> getListAvailableStaff(int groupId, int projectId) {
+        return staffRepository.getAvailableStaffAddToProject(groupId, projectId);
     }
 
     @Override
@@ -144,7 +145,7 @@ public class StaffServiceImpl implements StaffService {
             Staff existedStaff = staffRepository.getById(listStaffId.get(i));
             List<Staff> listStaffCheck = staffRepository.checkStaffInRemoveFromGroup(existedStaff.getGroup().getId());
             //neu check = true -> nhan vien dang o trong 1 project processing -> khong duoc xoa
-            if(listStaffCheck.stream().anyMatch(existedStaff::equals) == true) {
+            if (listStaffCheck.stream().anyMatch(existedStaff::equals) == true) {
                 check = true;
                 break;
             }
@@ -164,7 +165,7 @@ public class StaffServiceImpl implements StaffService {
         boolean check = true;
         List<Staff> list = staffRepository.checkStaffInProjectProcessing();
         //neu check = true -> nhan vien dang o trong 1 project processing -> khong duoc xoa
-        if(list.stream().anyMatch(account.getStaff()::equals) == true) {
+        if (list.stream().anyMatch(account.getStaff()::equals) == true) {
             check = true;
         }
         //neu check = fale -> nhan vien khong o trong project nao processing -> duoc phep xoa
@@ -188,7 +189,6 @@ public class StaffServiceImpl implements StaffService {
         staff.setLastUpdated(Instant.now());
         staff.setDateOfBirth(dateUtil.convertStringToLocalDate(dto.getDateOfBirth()));
         staff.setPhone(dto.getPhone());
-        staff.setPromotionLevel(promotionLevelRepository.findById(1));
         return staff;
     }
 }
