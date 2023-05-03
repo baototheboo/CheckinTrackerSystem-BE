@@ -34,7 +34,11 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
             "AND s.group.id =:groupId")
     List<Staff> getAvailableStaffAddToProject(int groupId,int projectId);
 
-    @Query(value = "select a.staff from Account a where a.staff.group.id =:groupId and a.enable = 1")
+    @Query(value = "select a.staff from Account a where a.staff.group.id =:groupId and a.enable = 1 order by case " +
+            "when a.role.id = 4 then 1 " +
+            "when a.role.id = 3 then 1 " +
+            "when a.role.id = 5 then 1 " +
+            "else 4 end asc ")
     Page<Staff> getListMemberByGroup(int groupId, Pageable pageable);
 
     @Query(value = "select s from Staff s \n" +
