@@ -50,12 +50,12 @@ public class CheckInController {
         logger.info("verifyEmployeeByFacialRecognition()");
         LocalDateTime currentDateTime = LocalDateTime.now();
 
-//        for (int i= 3; ;i++){
-//            LocalDateTime currentDateTime = LocalDateTime.of(2023,4,i,7,42,20);
+//        for (int i= 1; ;i++){
+//            LocalDateTime currentDateTime = LocalDateTime.of(2023,4,i,17,52,20);
 //            if (!DateUtil.checkWeekend(currentDateTime.toLocalDate())){
 //                StaffVerifyDTO staffVerifyDTO =
 //                        facialRecognition.verifyStaffByFacialRecognition(currentDateTime, imageVerifyVggDTO.getImageSetupDTO());
-//                if (i == 7) {return new ResponseEntity<>(staffVerifyDTO, HttpStatus.OK);}
+//                if (i == 28) {return new ResponseEntity<>(staffVerifyDTO, HttpStatus.OK);}
 //            }
 //        }
 //        LocalDateTime currentDateTime = LocalDateTime.of(2023,5,1,16,33,20);

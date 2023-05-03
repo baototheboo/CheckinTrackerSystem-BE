@@ -19,6 +19,6 @@ public class PromotionLevelServiceImpl implements PromotionLevelService{
 
     @Override
     public List<PromotionLevel> getAllLevels() {
-        return promotionLevelRepository.findAll();
+        return promotionLevelRepository.findAllLevel();
     }
 }
