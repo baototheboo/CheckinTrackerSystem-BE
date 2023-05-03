@@ -32,4 +32,6 @@ public interface GroupService {
     void addGLToGroup(int glId,int groupId);
 
     boolean checkGL(int staffId);
+
+    Group findGroupByGroupName(String name);
 }

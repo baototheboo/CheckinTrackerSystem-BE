@@ -121,4 +121,9 @@ public class ProjectServiceImpl implements ProjectService {
         return projectRepository.getListProjectByGroupId(groupId);
     }
 
+    @Override
+    public Project findProjectByProjectName(String name) {
+        return projectRepository.findProjectByProjectName(name);
+    }
+
 }
