@@ -16,5 +16,7 @@ public class ProfileDTO {
     private String phone;
     private String roleName;
     private Integer promotionLevel;
+    private Integer groupId;
+    private String groupName;
     private List<ProjectInProfileDTO> listProject;
 }

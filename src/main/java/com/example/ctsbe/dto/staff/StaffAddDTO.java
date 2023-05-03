@@ -1,10 +1,12 @@
 package com.example.ctsbe.dto.staff;
 
+import com.example.ctsbe.constant.ApplicationConstant;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 @Data
 public class StaffAddDTO {
@@ -19,6 +21,7 @@ public class StaffAddDTO {
     private String dateOfBirth;
     @NotBlank(message = "Số điện thoại không được để trống")
     @Length(min = 10,max = 10,message = "Số điện thoại phải bao gồm 10 chữ số")
+    @Pattern(regexp = ApplicationConstant.PHONE_REGEX,message = "Số điên thoại phải bao gồm các chữ số.")
     private String phone;
     //private Integer promotionLevelId;
 

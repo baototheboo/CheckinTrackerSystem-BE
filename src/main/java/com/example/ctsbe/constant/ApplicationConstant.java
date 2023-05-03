@@ -29,6 +29,7 @@ public class ApplicationConstant {
 //    public static final String IMAGE_PATH = "D:/images";
     public static final String IMAGE_PATH = "D:/Capstone Project/CheckinTrackerSystem/CTS_FE/fe_check_in_checker/src/assets/Images";
     public static final String IMAGE_THRESHOLD = "80";
+    public static final String PHONE_REGEX = "^\\d+$";
 
     public static final String VGG_URL_LOCAL = "http://localhost:5001";
     public static final String VGG_URL_AWS = "http://13.229.226.24";

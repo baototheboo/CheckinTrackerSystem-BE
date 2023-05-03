@@ -134,4 +134,9 @@ public class GroupServiceImpl implements GroupService {
         //false -> nhan vien dang lam GL cua 1 nhom -> khong the disable
         else return false;
     }
+
+    @Override
+    public Group findGroupByGroupName(String name) {
+        return groupRepository.findGroupByGroupName(name);
+    }
 }

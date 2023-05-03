@@ -17,4 +17,5 @@ public interface ProjectService {
     void editProject(int id,ProjectAddDTO dto);
     void changeProjectStatus(int id,int status);
     List<Project> getListProjectByGroupId(int groupId);
+    Project findProjectByProjectName(String name);
 }
