@@ -20,4 +20,9 @@ public class TimesheetUpdateDTO {
 
     @JsonProperty
     private String dayWorkingStatus;
+
+    @JsonProperty
+    public void setDayWorkingStatus(String dayWorkingStatus) {
+        this.dayWorkingStatus = (dayWorkingStatus == null) ? "Làm cả ngày" : dayWorkingStatus;
+    }
 }

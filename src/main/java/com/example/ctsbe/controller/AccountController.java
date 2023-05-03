@@ -87,7 +87,7 @@ public class AccountController {
     }
 
     @PutMapping("/updateAccount/{id}")
-    public ResponseEntity<?> updateAccount(@PathVariable("id") int id, @RequestBody ProfileUpdateDTO dto) {
+    public ResponseEntity<?> updateAccount(@PathVariable("id") int id,@Valid @RequestBody ProfileUpdateDTO dto) {
         try {
             int tokenId = getIdFromToken();
             Account acc = accountService.getAccountById(tokenId);

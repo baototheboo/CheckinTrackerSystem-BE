@@ -130,16 +130,20 @@ public class TimesheetServiceImpl implements TimesheetService {
                     ? null : timesheetUpdateDTO.getNote());
             timesheet.setDayWorkingStatus(timesheetUpdateDTO.getDayWorkingStatus());
             timesheet.setUpdatedHistory("Được thay đổi lần cuối bởi " + hr.getFullName());
-            switch (timesheetUpdateDTO.getDayWorkingStatus()) {
-                case "Làm cả ngày" -> timesheet.setWorkingHours(ApplicationConstant.WORKING_HOURS_DEFAULT);
-                case "Chỉ làm sáng" -> timesheet.setWorkingHours(ApplicationConstant.WORKING_HOURS_MORNING);
-                case "Chỉ làm chiều" -> timesheet.setWorkingHours(ApplicationConstant.WORKING_HOURS_AFTERNOON);
-                default -> timesheet.setWorkingHours(ApplicationConstant.WORKING_HOURS_ABSENT);
+            if (!Objects.equals(timesheetUpdateDTO.getDateStatus(), "ABSENT")) {
+                switch (timesheetUpdateDTO.getDayWorkingStatus()) {
+                    case "Làm cả ngày" -> timesheet.setWorkingHours(ApplicationConstant.WORKING_HOURS_DEFAULT);
+                    case "Chỉ làm sáng" -> timesheet.setWorkingHours(ApplicationConstant.WORKING_HOURS_MORNING);
+                    case "Chỉ làm chiều" -> timesheet.setWorkingHours(ApplicationConstant.WORKING_HOURS_AFTERNOON);
+                    default -> timesheet.setWorkingHours(ApplicationConstant.WORKING_HOURS_ABSENT);
+                }
+            }else {
+                    timesheet.setWorkingHours(ApplicationConstant.WORKING_HOURS_ABSENT);
+                }
             }
             timesheet.setLastUpdated(Instant.now());
             timesheetRepository.save(timesheet);
         }
-    }
 
     @Override
     public List<TimesheetDTO> getListTimeSheetByMonth(String monthYear) {
