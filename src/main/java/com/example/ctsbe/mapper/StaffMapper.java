@@ -35,6 +35,8 @@ public class StaffMapper {
                 accountService.getAccountById(staff.getId()).getRole().getRoleName()));
         dto.setRoleId(
                 accountService.getAccountById(staff.getId()).getRole().getId());
+        dto.setGroupName(staff.getGroup() == null ? null : staff.getGroup().getGroupName());
+        dto.setGroupId(staff.getGroup() == null ? null : staff.getGroup().getId());
         dto.setEnable((accountService.getAccountById(staff.getId()).getEnable() == 1) ? true : false);
         return dto;
     }

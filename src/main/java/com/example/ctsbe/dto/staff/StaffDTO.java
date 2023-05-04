@@ -21,5 +21,7 @@ public class StaffDTO {
     private Integer promotionLevelId;
     private String roleName;
     private Integer roleId;
+    private String groupName;
+    private Integer groupId;
     private boolean enable;
 }
